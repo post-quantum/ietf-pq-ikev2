@@ -116,26 +116,26 @@ Table of Contents
        2.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 10
        2.5.2. Protocol from the responder . . . . . . . . . . . . . . 11
      2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 12
-     2.7. Protection against roll-back attacks  . . . . . . . . . . . 12
-   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 12
-     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 13
-     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 13
-     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 14
-       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 15
-       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 15
-       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 16
-     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 17
-   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 17
-     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 18
-     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 19
-     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 20
-   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 20
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 21
-   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 22
-   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 24
-   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 24
-   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 29
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 30
+     2.7. Protection against roll-back attacks  . . . . . . . . . . . 14
+   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 14
+     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 14
+     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 15
+     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 16
+       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 16
+       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 17
+       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 18
+     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 18
+   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 19
+     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 20
+     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 21
+     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 21
+   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 22
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 23
+   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 25
+   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 26
+   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 30
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 32
 .fi
 .in 3
 
@@ -635,8 +635,39 @@ We assume that the responder has a similar local policy governing what it is wil
 .ti 0
 2.6. Fragmentation support
 
-.fi 
-When the fragmentation flag [0x9001] is exchanged...
+.ti 3
+2.6.1. Fragmentation Problem Description
+
+When the IKE message size exceeds the path MTU, the IKE messages are fragmented at the IP level.  IP fragments can be blocked or dropped by network devices such as NAT/PAT gateways, firewalls, proxies and load balancers. If IKE messages are dropped, the IKE and subsequent IPsec Security Association (SA) will fail to be established. In many instances the quantum safe key exchange data could be too large to send in a single IKE payload as the path MTU between hosts is set below the total size of the IKE payload. As this draft defines multiple key exchanges, there is a high chance that fragmentation will occur.
+
+The maximum length of an IKE payload is 65535 octets, it is anticipated that many post quantum algorithms will require a payload size that is greater than 65535 octets. To overcome this limitation we present a method to split the quantum secure payload into multiple fragments and send these fragments individually, therefore providing a method to overcome the maximum length limitation.
+
+.ti 3
+2.6.2. Fragmentation Proposed Solution 
+
+To overcome issues with fragmentation the IKE_SA_INIT message can be broken into smaller messages and rather that sending a single IKE_SA_INIT message that is fragmented at the IP layer, multiple IKE_SA_INIT messages can be sent, each IKE_SA_INIT message containing one or more IKE payloads which will overcome any issues with path MTU fragmentation causing the IKE SA to fail. If an IKE payload is too large to be sent in a single IKE_SA_INIT message it can split across multiple IKE_SA_INIT messages. All IKE_SA_INIT messages will have a message ID of 0, as per RFC7296. To notify the peer that an IKE payload is fragmented the Fragment bit, denoted F (below), specifies if the payload is fragmented. If this is set to '1', meaning the payload is fragmented the Fragment Number and Total Fragments fields will be populated. If the Fragment bit is not set (set to '0'), then the Fragment Number and Total Fragments fields will not exist. The Payload N, denoting the Payload Number is set to '1' for the first IKE payload that is fragmented and incremented by one for every subsequent payload that requires fragmentation. The Payload Number is used to re-assemble any fragments that arrive out of order and will have as many fragments as the Total Fragment field denotes. The Fragment Number is the first fragment, increasing by one for every other fragment that is sent. The Total Fragments field denotes the maximum number of fragments that are to be sent for this payload.
+
+.in 6
+.nf
+                           1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      | Next Payload  |C|F| Payload N |            Payload Length       |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      ~        Fragment Number            |     Total Fragments       ~
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+.fi
+
+Should a payload be too large that it requires fragmentation, the contents of the payload to be split is treated as a binary blob and split into chunks of data which is then sent in multiple fragmented payloads. Each IKE message will contain the generic IKE header and one or more payloads. There is no strict limit on the size of the fragmented payload, it is recommended that the size of the fragmented payload have a size within a range that does not cause the IP payload to be fragmented. As the maximum size of the IP MTU is sometimes not normally known, implementations should allow for administrators to configure a maximum IKE message size.
+
+For a host that receives fragmented IKE payloads, the receiving host should verify that the received message is not a retransmission, it can achieve this by checking the Payload Number field and the corresponding Fragment Number to then perform a reassembly of the traffic. The extracted payload contents can then be reassembled.
+
+Should a single message be lost, the retransmission of the whole message MUST occur, there is no mechanism to single fragmented payload being lost.
+
+To mitigate the attack, whereby an attacker (who reveals their own IP address), negotiates a hybrid exchange, then sends a large number of fragmented payload, but does not send all the relevant payloads, implementations should monitor for such cases and allow for the ability block IP addresses or ranges of addresses should this occur. Note that this is not a fail safe mechanism and allows for potentially legitimate users to be punished should an attacker and legitimate users be behind the same NAT/PAT gateway.
+
+The length field within the IKE header could be used to indicate the total length of the IKE message ? ** Thought needed **
+
 
 .fi 
 insert text from Graham on fragmentation support.
