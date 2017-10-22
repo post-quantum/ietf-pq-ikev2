@@ -118,23 +118,23 @@ Table of Contents
      2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 12
      2.7. Protection against roll-back attacks  . . . . . . . . . . . 14
    2. Text from the old design  . . . . . . . . . . . . . . . . . . . 14
-     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 14
+     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 15
      2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 15
      2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 16
-       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 16
+       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 17
        2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 17
        2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 18
-     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 18
+     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 19
    3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 19
      3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 20
      3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 21
-     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 21
+     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 22
    4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 22
    5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 23
    6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 24
-   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 25
+   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 26
    Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 26
-   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 30
+   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 31
    Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 32
 .fi
 .in 3
@@ -508,8 +508,8 @@ To define the protocol, we first define a "DH_Group_List", this is a list of gro
 .fi
 
 where:
-.ti 3
-T is the type of the groups in this list, example encoding:
+.ti 6
+* T is the type of the groups in this list, example encoding:
 .ti 6
            0x0001 is classical (DH or ECDH)
 .ti 6
@@ -520,11 +520,13 @@ T is the type of the groups in this list, example encoding:
            0x0004 is Isogeny-based (SIDH).ti 6
 .ti 6
            0x0005 is preshared key 
-.ti 3
-   N is the number of groups that make up the list
-.ti 3 
-   DH_1, DH_2, ..., DH_N are the groups that make up the list, in order of preference.
-   0 is padding, present if N is odd
+.ti 6
+* N is the number of groups that make up the list
+.ti 6 
+* DH_1, DH_2, ..., DH_N are the groups that make up the list, in order of preference.
+.ti 6 
+* 0 is padding, present if N is odd
+ 
 
 The semantics of this list is that these are the groups of type T that are acceptable to the initiator.
 
@@ -547,35 +549,35 @@ We can now given the format that the initiator sends to the responder, in the KE
 .fi
 
 where:
-.ti 3
-     K is the minimum number of group lists that must be satisfied
-.ti 3
-     M is the number of group lists
-.ti 3
-     DH_Group_LIST_1, ..., DH_Group_List_N are the lists of different types of DH groups, in order of preference.
+.ti 6
+* K is the minimum number of group lists that must be satisfied
+.ti 6
+* M is the number of group lists
+.ti 6
+* DH_Group_LIST_1, ..., DH_Group_List_N are the lists of different types of DH groups, in order of preference.
 
-.ti 3
-Example; suppose our policy is "we must agree on at least 2 groups from the list (P256, P384), (NewHope, Frodo), (SIDH)  (and NewHope is group 40, Frodo is group 41, SIDH is group 60)"; we have the list
+
+Example: suppose our policy is "we must agree on at least 2 groups from the list (P256, P384), (NewHope, Frodo), (SIDH)  (and NewHope is group 40, Frodo is group 41, SIDH is group 60)"; we have the list
      0002 0003 0001 0002 0019 0020 0002 0002 0040 0041 0004 0001 0060 0000
 Parsed as:
-.ti 3
-     0002 K = 2
-.ti 3
-     0003 We have 3 group lists
-.ti 3
-     0001 0002  First list is of type classical, and consists of two groups;
-.ti 3
-           0019 0020  Group 19 (P256) and group 20 (P384)
-.ti 3
-     0002 0002  Second list is of type lattice, and consists of two groups
-.ti 3
-           0040 0041  Group 40 (NewHope) and group 41 (Frodo)
-.ti 3
-     0004 0001  Third list is of type isogeny, and consists of one group
-.ti 3
-           0060       Group 60 (SIDH)
-.ti 3
-           0000       Zero-pad
+.ti 9
+0002 K = 2
+.ti 9
+0003 We have 3 group lists
+.ti 9
+0001 0002  First list is of type classical, and consists of two groups;
+.ti 12
+0019 0020  Group 19 (P256) and group 20 (P384)
+.ti 9
+0002 0002  Second list is of type lattice, and consists of two groups
+.ti 12
+0040 0041  Group 40 (NewHope) and group 41 (Frodo)
+.ti 9
+0004 0001  Third list is of type isogeny, and consists of one group
+.ti 12
+0060       Group 60 (SIDH)
+.ti 12
+0000       Zero-pad
 
 
 .ti 0
@@ -598,39 +600,48 @@ If the responder finds a combination of groups that are mutually acceptable, the
 .fi
 
 where:
-.ti 3
-	0 is a fixed 0000 pattern
-.ti 3
-  	N is the number of groups that are selected
-.ti 3
-	DH_1, DH_2, ..., DH_N are the selected groups
+.ti 6
+* 0 is a fixed 0000 pattern
+.ti 6
+* N is the number of groups that are selected
+.ti 6
+* DH_1, DH_2, ..., DH_N are the selected groups
 
-.ti 3
-If the responder does not find an acceptable combination, then [what to do? should the responder send its own policy?].
 
-We assume that the responder has a similar local policy governing what it is willing to negotiate.  To search the initiator's vector to find such a mutally acceptable combination, the responder can run the following algorithm.
-.ti 3
-     Set list of accepted DH groups to empty
-.ti 3
-     Set K to the maximum of (minimum number of group lists specified by the initiator, minimum number of group lists acceptable according to the responder's policy)
-.ti 3
-     For every DH_Group_list in the initiator's proposal
-.ti 3
-           Set T to the DH_Group_list type
-.ti 3
-           Search for the responder's DH_Group_list of type T
-.ti 3
-           If the responder has such a group list
-.ti 3
-                Scan for a DH element that the two lists have in common
-.ti 3
-                If there is such a group
-.ti 3
-                     Append that to the 'list of accepted DH groups'
-                     (Optional) if the list is at least K elements long, stop searching (and accept)
-.ti 3
-     If the list of accepted DH groups is not at least K elements long, fail.
-     Otherwise, accept.
+If the responder does not find an acceptable combination, then [the responder sends its own policy to the initiator that can then decide to update its choices.].
+
+We assume that the responder has a similar local policy governing what it is willing to negotiate.  To search the initiator's vector to find such a mutually acceptable combination, the responder can run the following algorithm.
+
+.ti 9
+1. Set list of accepted DH groups to empty
+.ti 9
+2. Set K to the maximum of (minimum number of group lists specified by the initiator, minimum number of group lists acceptable according to the responder's policy)
+.ti 9
+3. For every DH_Group_list in the initiator's proposal
+
+.ti 12
+Set T to the DH_Group_list type
+.ti 12
+Search for the responder's DH_Group_list of type T
+.ti 12
+If the responder has such a group list
+.ti 15
+Scan for a DH element that the two lists have in common
+.ti 18
+If there is such a group
+.ti 21
+Append that to the 'list of accepted DH groups'
+.ti 21
+(Optional) if the list is at least K elements long, stop searching (and accept)
+
+.ti 9
+4. If the list of accepted DH groups is not at least K elements long, 
+.ti 12
+fail.
+.ti 9
+Otherwise, 
+.ti 12
+accept.
 
 .ti 0
 2.6. Fragmentation support
@@ -649,13 +660,13 @@ To overcome issues with fragmentation the IKE_SA_INIT message can be broken into
 
 .in 6
 .nf
-                           1                   2                   3
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      | Next Payload  |C|F| Payload N |            Payload Length       |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      ~        Fragment Number            |     Total Fragments       ~
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                    1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| Next Payload  |C|F| Payload N |            Payload Length     |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+~        Fragment Number            |     Total Fragments       ~
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 .fi
 
 Should a payload be too large that it requires fragmentation, the contents of the payload to be split is treated as a binary blob and split into chunks of data which is then sent in multiple fragmented payloads. Each IKE message will contain the generic IKE header and one or more payloads. There is no strict limit on the size of the fragmented payload, it is recommended that the size of the fragmented payload have a size within a range that does not cause the IP payload to be fragmented. As the maximum size of the IP MTU is sometimes not normally known, implementations should allow for administrators to configure a maximum IKE message size.
