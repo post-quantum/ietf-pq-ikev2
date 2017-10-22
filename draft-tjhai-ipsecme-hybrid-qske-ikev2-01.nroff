@@ -54,12 +54,14 @@ draft-tjhai-ipsecme-hybrid-qske-ikev2-01
 .ti 0
 Abstract
 
-This document describes the optional key-exchange payload of Internet Key
-Exchange Protocol Version 2 (IKEv2) that carries quantum-safe key exchange
-data.  This optional payload is used in conjunction with the existing
-Diffie-Hellman key exchange to establish a quantum-safe shared secret
-between an initiator and a responder.  The optional payload supports a
-number of quantum-safe key exchange schemes.
+This document describes how to extend Internet Key Exchange Protocol 
+Version 2 (IKEv2) so that the shared secret exchanged between peers is
+not vulnerable against quantum computer attacks.  The basic idea is
+to exchange one or more post quantum key exchange payloads in conjunction
+with the existing (Elliptic Curve) Diffie-Hellman payload.  This document
+also addresses the challenge of fragmentation as a result of sending
+large post quantum key exchange data in the first pair of message of
+the initial exchange phase.
 
 .ti 0
 Status of This Memo
@@ -105,37 +107,38 @@ Table of Contents
    1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
      1.1.  Problem Description  . . . . . . . . . . . . . . . . . . .  3
      1.2.  Proposed Extension . . . . . . . . . . . . . . . . . . . .  3
-     1.3. Document organization . . . . . . . . . . . . . . . . . . .  3
-   2. Design criteria:  . . . . . . . . . . . . . . . . . . . . . . .  4
-   2.  Hybrid Quantum-Safe Key Exchange . . . . . . . . . . . . . . .  5
-     2.1. Overall design  . . . . . . . . . . . . . . . . . . . . . .  5
-     2.2. Overall Protocol  . . . . . . . . . . . . . . . . . . . . .  6
-     2.3.  Computation of a quantum-safe shared secret  . . . . . . .  8
-     2.4.  Quantum-Safe Group Transform Type and Group Identifiers  .  8
-     2.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . .  9
-       2.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 10
-       2.5.2. Protocol from the responder . . . . . . . . . . . . . . 11
-     2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 12
-     2.7. Protection against roll-back attacks  . . . . . . . . . . . 14
-   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 14
+     1.3.  Changes  . . . . . . . . . . . . . . . . . . . . . . . . .  4
+     1.4. Document organization . . . . . . . . . . . . . . . . . . .  4
+   2. Design criteria:  . . . . . . . . . . . . . . . . . . . . . . .  5
+   2.  Hybrid Quantum-Safe Key Exchange . . . . . . . . . . . . . . .  6
+     2.1. Overall design  . . . . . . . . . . . . . . . . . . . . . .  6
+     2.2. Overall Protocol  . . . . . . . . . . . . . . . . . . . . .  7
+     2.3.  Computation of a quantum-safe shared secret  . . . . . . .  9
+     2.4.  Quantum-Safe Group Transform Type and Group Identifiers  .  9
+     2.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . . 10
+       2.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 11
+       2.5.2. Protocol from the responder . . . . . . . . . . . . . . 12
+     2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 13
+     2.7. Protection against roll-back attacks  . . . . . . . . . . . 15
+   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 15
      2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 15
-     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 15
-     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 16
-       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 17
-       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 17
-       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 18
+     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 16
+     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 17
+       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 18
+       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 18
+       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 19
      2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 19
-   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 19
-     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 20
-     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 21
+   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 20
+     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 21
+     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 22
      3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 22
-   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 22
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 23
-   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 23
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 24
+   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 25
    Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 26
-   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 26
-   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 31
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 32
+   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 27
+   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 32
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 33
 .fi
 .in 3
 
@@ -150,33 +153,87 @@ Table of Contents
 1.1.  Problem Description
 
 .fi
-Internet Key Exchange Protocol (IKEv2) as specified in RFC 7296 [RFC7296]
-uses the Diffie-Hellman algorithm [DH] to establish a shared secret between
-an initiator and a responder.  The security of the Diffie-Hellman algorithm
-relies on the difficulty to solve a discrete logarithm problem when the
-order of the group parameter is large enough.  While solving such a problem
-remains difficult with current computing power, it is believed that general
-purpose quantum computers can easily crack this problem, implying that the
-security of IKEv2 is compromised.  There are, however, a number of
-cryptosystems that are conjectured to be resistant against quantum
-computer attack.
+Internet Key Exchange Protocol (IKEv2) as specified in RFC 7296
+[RFC7296] uses the Diffie-Hellman (DH) or Elliptic Curve Diffie-
+Hellman (ECDH) algorithm to establish a shared secret between an 
+initiator and a responder.  The security of the DH and ECDH algorithms 
+rely on the difficulty to solve a discrete logarithm problem in
+multiplicative and elliptic curve groups respectively when the order 
+of the group parameter is large enough.  While solving such a problem
+remains difficult with current computing power, it is believed that
+general purpose quantum computers can easily crack this problem, 
+implying that the security of IKEv2 is compromised.  There are,
+however, a number of cryptosystems that are conjectured to be 
+resistant against quantum computer attack.
 
 .ti 0
 1.2.  Proposed Extension
 
 .fi
-This document describes a method to extend IKEv2, whilst maintaining backwards
-compatibility, to perform key exchange that is quantum-safe. 
-The idea is to perform a hybrid quantum-safe key exchange in which the shared key is computed by means of a traditional Diffie-Hellman key exchange and several quantum-safe key exchange algorithms.
-The secrets established from each key exchange are combined in a way such that should the quantum-safe secret not be present, the derived shared secret is equivalent to that of the
-standard IKEv2; on the other hand, a quantum-safe shared secret is obtained if both key exchange payloads are present.  This extension also
-applies to key exchanges in IKE Security Associations (SAs) for
-Encapsulating Security Payload (ESP) [ESP] or Authentication Header
-(AH) [AH], i.e. Child SAs, in order to provide a stronger guarantee
+This document describes a method to extend IKEv2, whilst maintaining
+backwards compatibility, to exchange a shared secret such that it is
+not vulnerable to quantum computer attacks.  The idea is to use one 
+or more post quantum algorithm to exchange data, in addition to the
+existing DH or ECDH key exchange data.  We believe that the feature
+of using more than one post quantum algorithm is important as many
+of these algorithms are relatively new and there may be a need to
+hedge the security risk with multiple post quantum key exchanges.
+
+The secrets established from each key exchange are combined in a way
+such that should the post quantum secrets not be present, the derived
+shared secret is equivalent to that of the standard IKEv2; on the
+other hand, a post quantum shared secret is obtained if both classical
+and post quantum key exchange data are present.  This extension also 
+applies to key exchanges in IKE Security Associations (SAs) for 
+Encapsulating Security Payload (ESP) [ESP] or Authentication Header 
+(AH) [AH], i.e. Child SAs, in order to provide a stronger guarantee 
 of forward security.
 
+One of the key challenges in this extension is on fragmentation
+handling during the first message pair of the initial exchange
+phase, i.e. IKE_SA_INIT.  Almost all of the known post quantum 
+algorithms to date have key exchange data size that is larger than 
+1K octets.  When transmitted alongside other payloads, the total
+payload size could easily exceed the network maximum transmission
+unit (MTU) size of 1500 octets, and hence this may lead to IP
+level fragmentation.  While IKEv2 has a mechanism to handle
+fragmentation [RFC7383], it is applicable to messages exchanged
+after IKE_SA_INIT.  Of course, fragmentation will not be an issue
+if messages are sent over TCP [RFC8229]; however, we believe 
+that a UDP-based solution will also be required.  This document
+describes a simple mechanism to fragment IKE_SA_INIT messages,
+which also allows exchanges for payload larger than 65,535 octets.
+
+Note that the readers should consider the approach in this document
+as to provide a long term solution in upgrading IKEv2 protocol to
+support post quantum algorithms.  A short term solution to make
+IKEv2 key exchange quantum secure is using post quantum pre-shared
+keys as discussed in [FMKS].
+
+
 .ti 0
-1.3. Document organization
+1.3.  Changes
+
+.fi
+Changes in this draft in each version iterations.
+
+draft-tjhai-ipsecme-hybrid-qske-ikev2-00
+
+.ti 3
+.in 6
+o  We added a feature to allow more than one post quantum key
+exchange algorithms to be used to exchange a post quantum
+shared secret.
+
+.ti 3
+.in 6
+o  Instead of relying on TCP encapsulation to deal with IP level
+fragmentation, we introduced a new key exchange payload that
+can be sent as multiple fragments within IKE_SA_INIT message.
+
+
+.ti 0
+1.4. Document organization
 
 The remainder of this document is organized as follows.  
 Section 2 summarizes design criteria. 
@@ -197,11 +254,9 @@ uses the following list of abbreviations:
 
 The design of the proposed quantum-safe IKEv2 is driven by the following criteria:
 
-.in 9
-
-
+.in 10
 .ti 6
-1) Need for quantum-safe cryptography in IPSec. Quantum computers
+1)  Need for quantum-safe cryptography in IPSec. Quantum computers
 might become feasible in the next 5-10 years.  If current Internet
 communications are monitored and recorded today (D), the
 communications could be decrypted as soon as a quantum-computer is
@@ -213,25 +268,25 @@ years.  Such a value of T is typical in classified or healthcare
 data.
 
 .ti 6
-2) Hybrid.  Currently, there does not exist a quantum-safe key
+2)  Hybrid.  Currently, there does not exist a quantum-safe key
 exchange that is trusted at the level that ECDH is trusted against
 conventional (non-quantum) adversaries.  A hybrid approach allows
 introducing promising quantum-safe candidates next to well-
 established primitives.
 
 .ti 6
-3) Aligned with IKEv2 features.  The protocol
+3)  Aligned with IKEv2 features.  The protocol
 operation should not affect existing features in IKEv2.
 
 .ti 6
-4) Limit amount of exchanged data.  The protocol design should be
+4)  Limit amount of exchanged data.  The protocol design should be
 such that the amount of exchanged data, such as public-keys, is
 kept as limited as possible even if initiator and responder need to 
 agree on a hybrid group or multiple public-keys are needed
 to be exchanged.
 
 .ti 6
-5) Future proof.  Any cryptographic algorithm could be potentially 
+5)  Future proof.  Any cryptographic algorithm could be potentially 
 broken in the future by currently unknown or impractical
 attacks: quantum computers are merely the most concrete example of
 this.  The design does not categorize algorithms as "quantum-safe"
@@ -241,7 +296,7 @@ different properties become necessary in future, this framework can
 be used unchanged to facilitate migration to those algorithms.
 
 .ti 6
-6) Identification of hybrid algorithms.  The usage of a hybrid
+6)  Identification of hybrid algorithms.  The usage of a hybrid
 approach in which each hybrid combination of several classical and
 quantum-safe algorithms leads to a different group identifier can
 mean an exponential number of combinations. Thus, the design should seek an
@@ -249,18 +304,18 @@ approach in which a hybrid group -- comprising multiple quantum safe
 algorithms -- can be efficiently negotiated.
 
 .ti 6
-7) Limited amount of changes.  A key goal is to limit
+7)  Limited amount of changes.  A key goal is to limit
 the number of changes in when enabling a quantum-safe
 handshake.  This ensures easier and faster adoption.
 
 .ti 6
-8) Localized changes.  Another key requirement is that changes to
+8)  Localized changes.  Another key requirement is that changes to
 the protocol are limited in scope, in particular, limiting changes
 in the exchanged messages and in the state machine, so that they
 can be easily implemented.
 
 .ti 6
-9) Deterministic operation.  This requirement means that the hybrid
+9)  Deterministic operation.  This requirement means that the hybrid
 quantum-safe exchange, and thus, the computed key, will be based on
 algorithms that both client and server wish to support.
 
@@ -1085,7 +1140,7 @@ attributes sent in the CFG exchange, MitM attack, DoS, etc.  It is believed
 that the trade off to deliver a quantum resistant IKE SA is of greater
 security benefit than the issues that could be encountered due to
 fragmentation at the IP layer.  It is worth noting that encapsulating
-IKE traffic within TCP [IKETCPENCAP] is a simple method to prevent
+IKE traffic within TCP [RFC8229] is a simple method to prevent
 IKE_SA_INIT traffic being fragmented at the IP layer.
 
 The following table gives an idea of the common size of the QSKE payload
@@ -1148,7 +1203,7 @@ fragmented at the IP level.  This presents the possibility of an attack
 vector that relies on IP fragmentation.  One such attack vector is to mount
 a denial of service by swamping a receiver with IP fragments
 [DOSUDPPROT].  This issue could be mitigated by employing TCP encapsulation
-[IKETCPENCAP].
+[RFC8229].
 
 The authenticity of the SAs established under IKEv2 is protected using a
 pre-shared key, RSA, DSS, or ECDSA algorithms.  Whilst the pre-shared key
@@ -1254,10 +1309,6 @@ Key Exchange for the TLS Protocol from the Ring Learning with Errors Problem",
 IEEE Symposium on Security and Privacy, pp. 553-570, 2015.
 
 .ti 3
-[DH]       Diffie, W., and Hellman, M., "New Directions in Cryptography",
-IEEE Transactions on Information Theory, V.IT-22 n. 6, June 1977.
-
-.ti 3
 [DOSUDPPROT]
 .ti 14
 Kaufman, C., Perlman, R., and Sommerfeld, B., "DoS
@@ -1269,15 +1320,14 @@ Communications Security, October 2003.
 December 2005, <http://www.rfc-editor.org/info/rfc4303>.
 
 .ti 3
+[FMKS]     Fluhrer, S., McGrew, D., Kampanakis, P., and Smyslov, V.,
+"Postquantum Preshared Keys for IKEv2", Internet draft,
+https://datatracker.ietf.org/doc/draft-ietf-ipsecme-qr-ikev2, 2017.
+
+.ti 3
 [GROVER]   Grover, L., "A Fast Quantum Mechanical Algorithm for
 Database Search", Proc. of the Twenty-Eighth Annual ACM Symposium
 on the Theory of Computing (STOC 1996), 1996
-
-.ti 3
-[IKETCPENCAP]
-.ti 14
-Pauly, T., Touati, S., and Mantha, R., "TCP Encapsulation of IKE and IPsec
-Packets", draft RFC, May 2017, <https://tools.ietf.org/html/draft-ietf-ipsecme-tcp-encaps-10>.
 
 .ti 3
 [IKEV2IANA]
@@ -1320,6 +1370,9 @@ Message Fragmentation", RFC 7383, November 2014.
 [RFC8019]  Nir, Y., Smyslov, V., "Protecting Internet Key Exchange Protocol
 Version 2 (IKEv2) Implementations from Distributed Denial-of-Service Attacks", 
 RFC 8019, November 2016.
+
+.ti 3
+[RFC8229]  Pauly, T., Touati, S., and Mantha, R., "TCP Encapsulation of IKE and IPsec Packets", RFC8229, August 2017.
 
 .ti 3
 [XMSS]     Huelsing, A., Butin, D., Gazdag, S., and Mohaisen, A.,
