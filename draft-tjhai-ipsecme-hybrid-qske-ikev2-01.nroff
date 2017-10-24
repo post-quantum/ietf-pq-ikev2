@@ -120,22 +120,22 @@ Table of Contents
        2.5.2. Protocol from the responder . . . . . . . . . . . . . . 12
      2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 13
      2.7. Protection against roll-back attacks  . . . . . . . . . . . 15
-   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 15
-     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 15
+   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 16
+     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 16
      2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 16
      2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 17
        2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 18
        2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 18
        2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 19
-     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 19
-   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 20
+     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 20
+   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 21
      3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 21
      3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 22
-     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 22
+     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 23
    4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 23
    5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 24
    6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 25
-   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 26
+   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 27
    Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 27
    Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 32
    Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 33
@@ -172,8 +172,7 @@ resistant against quantum computer attack.
 .fi
 This document describes a method to extend IKEv2, whilst maintaining
 backwards compatibility, to exchange a shared secret such that it is
-not vulnerable to quantum computer attacks.  The idea is to use one 
-or more post quantum algorithm to exchange data, in addition to the
+not vulnerable to quantum computer attacks.  The idea is to negotiate the use of one or more post quantum algorithm to exchange data, in addition to the
 existing DH or ECDH key exchange data.  We believe that the feature
 of using more than one post quantum algorithm is important as many
 of these algorithms are relatively new and there may be a need to
@@ -222,8 +221,9 @@ draft-tjhai-ipsecme-hybrid-qske-ikev2-00
 .ti 3
 .in 6
 o  We added a feature to allow more than one post quantum key
-exchange algorithms to be used to exchange a post quantum
+exchange algorithms to be negotiated and used to exchange a post quantum
 shared secret.
+
 
 .ti 3
 .in 6
@@ -275,18 +275,14 @@ introducing promising quantum-safe candidates next to well-
 established primitives.
 
 .ti 6
-3)  Aligned with IKEv2 features.  The protocol
-operation should not affect existing features in IKEv2.
-
-.ti 6
-4)  Limit amount of exchanged data.  The protocol design should be
+3)  Limit amount of exchanged data.  The protocol design should be
 such that the amount of exchanged data, such as public-keys, is
 kept as limited as possible even if initiator and responder need to 
 agree on a hybrid group or multiple public-keys are needed
 to be exchanged.
 
 .ti 6
-5)  Future proof.  Any cryptographic algorithm could be potentially 
+4)  Future proof.  Any cryptographic algorithm could be potentially 
 broken in the future by currently unknown or impractical
 attacks: quantum computers are merely the most concrete example of
 this.  The design does not categorize algorithms as "quantum-safe"
@@ -296,7 +292,7 @@ different properties become necessary in future, this framework can
 be used unchanged to facilitate migration to those algorithms.
 
 .ti 6
-6)  Identification of hybrid algorithms.  The usage of a hybrid
+5)  Identification of hybrid algorithms.  The usage of a hybrid
 approach in which each hybrid combination of several classical and
 quantum-safe algorithms leads to a different group identifier can
 mean an exponential number of combinations. Thus, the design should seek an
@@ -304,20 +300,24 @@ approach in which a hybrid group -- comprising multiple quantum safe
 algorithms -- can be efficiently negotiated.
 
 .ti 6
-7)  Limited amount of changes.  A key goal is to limit
+6)  Limited amount of changes.  A key goal is to limit
 the number of changes in when enabling a quantum-safe
-handshake.  This ensures easier and faster adoption.
+handshake.  This ensures easier and faster adoption in existing implementations.
 
 .ti 6
-8)  Localized changes.  Another key requirement is that changes to
+7)  Localized changes.  Another key requirement is that changes to
 the protocol are limited in scope, in particular, limiting changes
 in the exchanged messages and in the state machine, so that they
 can be easily implemented.
 
 .ti 6
-9)  Deterministic operation.  This requirement means that the hybrid
+8)  Deterministic operation.  This requirement means that the hybrid
 quantum-safe exchange, and thus, the computed key, will be based on
 algorithms that both client and server wish to support.
+
+.ti 6
+9) Fragmentation support. Some quantum-safe algorithms could be relatively bulky and they might require fragmentation. Thus, a design goal is the adaptation and adoption of an existing fragmentation method or the design of a new one that allows for the fragmentation of the key shares.
+
 
 .ti 6
 10) Backwards compatibility and interoperability.  This is a
