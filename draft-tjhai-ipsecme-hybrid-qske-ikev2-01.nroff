@@ -485,19 +485,19 @@ are generated as defined in IKEv2 [RFC7296].
 2.4.  Quantum-Safe Group Transform Type and Group Identifiers
 
 .fi
-In generating keying materials within IKEv2, both initiator and responder
+In generating keying material within IKEv2, both initiator and responder
 negotiate up to four cryptographic algorithms in the SA payload of an
 IKE_SA_INIT or a CREATE_CHILD_SA exchange.  One of the negotiated
-algorithms is an ephemeral Diffie-Hellman algorithm,
-which is used for key-exchange.  This negotiation is facilitated by the
+algorithms is a Diffie-Hellman algorithm,
+which is used for key-exchange.  This negotiation is done using the
 Transform Type 4 (Diffie-Hellman Group) where each Diffie-Hellman group
-is assigned a unique Transform ID.
+is assigned a unique value.
 
 In order to enable a quantum-safe key exchange in IKEv2, the various
 quantum-safe algorithms MUST be negotiated between two IKEv2
-peers.  
-To this end, this draft assigns new meanings to various transforms of transform type 4 ("Diffie-Hellman group").  
-It assigns identifiers to each of the various quantum safe algorithms (even though they are not actually Diffie-Hellman groups, they are methods of performing key exchange).  
+peers.
+To this end, this draft assigns new meanings to various transforms of transform type 4 ("Diffie-Hellman group").
+It assigns identifiers to each of the various quantum safe algorithms (even though they are not actually Diffie-Hellman groups, they are methods of performing key exchange).
 In addition, it assigns two artificial values that are not actually key exchange mechanisms, but are used as a part of the negotiation.
 
 We expect that, in the future, IANA will assign permanent values to these transforms. Until it does, we will use the following mappings in the 'reserved for private use space':
@@ -521,28 +521,36 @@ NTRU-Prime 216       0x9103        KEM
 
 .in 3
 
-Because we are using transforms in the private use space, both the initiator and responder must include a vendor id with the payload
+Because we are using transforms in the private use space, both the initiator and responder must include a vendor id with this payload:
+
+.in 6
+.nf
 d4 48 11 94 c0 c3 4c 9d d1 22 76 aa 9a 4e 80 d5
-(MD5 for "IKEv2 Quantum Safe Key Exchange v1").  If the other side does not include this vendor id, you MUST NOT process these private use transorms as listed in this draft.
+.fi
+.in 3
+ 
+This payload is the MD5 hash of "IKEv2 Quantum Safe Key Exchange v1").  If the other side does not include this vendor id, you MUST NOT process these private use transforms as listed in this draft.
 
 
 .ti 0
 2.5. Hybrid group negotiation
-
+h
 .fi 
-Most quantum-safe key agreement algorithms are relatively new, and thus, they are not fully trusted.
-There are also many proposed algorithms, with different trade-offs and relying on different hard problems.
-One of the main challenges consists in defining the algorithms that comprise the hybrid group.
-This is a challenge due to the potentially high number of alternatives and their different properties. 
+Most quantum-safe key agreement algorithms are relatively new, and thus, are not fully trusted.There are also many proposed algorithms, with different trade-offs and relying on different hard problems.
+The concern is that some of these hard problems may turn out to be easier to solve than anticipated
+a(and thus the key agreement algorithm not as secure as expected).
 
-Our hybrid group negotiation protocol allows initiator and responder to agree on a common hybrid group based on their respective policies.
-The protocol categorizes each type of key exchange into a type T, which is the type of hard problem it is based on.  
-Given this categorization of the key agreement protocols, initiator and responder have security policies that define the minimum number of quantum-safe algorithms that they require in a hybrid group and also the types of key agreement protocols that they support (and therefore, trust).
-The initiator and responder can then engage in a simple protocol that allows them to 
+Our hybrid group negotiation protocol allows the initiator and responder to agree on a common hybrid group based on their respective policies.The protocol categorizes each type of key exchange into a type T, which is based on the type of hard problem it relies on.Given this categorization of the key agreement protocols, initiator and responder have security policies that define the minimum number of quantum-safe algorithms that they require in a hybrid group and also the types of key agreement protocols that they support (and therefore, trust).
+The initiator and responder can then engage in a simple protocol that allows them to
 compute a common hybrid group fulfilling their policies.
 The protocol for the initiator and responder is described below.
 
-Note that it would be possible for the responder to search for a mutually acceptable combination without specifying the key exchange types, however the algorithm would be considerably more complex.
+Note that it would be possible for the responder to search for a mutually
+acceptable combination without specifying the key exchange types, however the
+algorithm to search for such a combination would be considerably more complex.
+tThis design assumes that the security policies of the initiator and the
+responder will rely on key exchanges with distinct types of hard problems, and
+hence the additional complexity of the more general algorithm is not warranted.
 
 .ti 0 
 2.5.1. Protocol for the initiator 
@@ -557,26 +565,30 @@ To define the protocol, we first define a "DH_Group_List", this is a list of gro
 |                T              |                 N             |
 +---------------------------------------------------------------+
 |               DH_1            |               DH_2            |
-...
+\&...
 |               DH_N            |               0               |
 +---------------------------------------------------------------+
 .fi
 
 where:
 .ti 6
-* T is the type of the groups in this list, example encoding:
+* T is the type of the groups that are in this list, with this proposed encoding:
 .ti 6
            0x0001 is classical (DH or ECDH)
 .ti 6
            0x0002 is Lattice (RLWE, LWE, NTRU)
 .ti 6
            0x0003 is Code-based (McEliece, QC-MDPC)
+jj.ti 6           0x0004 is Isogeny-based (SIDH)
 .ti 6
-           0x0004 is Isogeny-based (SIDH).ti 6
-.ti 6
-           0x0005 is preshared key 
+           0x0005 is symmetric (preshared key)
 .ti 6
 * N is the number of groups that make up the list
+.in 3
+
+The semantics of this proposal is that the initiator is proposing M different
+types of groups; any selection of one group from K different types will be
+acceptable.
 .ti 6 
 * DH_1, DH_2, ..., DH_N are the groups that make up the list, in order of preference.
 .ti 6 
@@ -596,9 +608,9 @@ We can now given the format that the initiator sends to the responder, in the KE
 |                K              |                 M             |
 +---------------------------------------------------------------+
 |                       DH Group List 1                         |
-+---------------------------------------------------------------+
+\+---------------------------------------------------------------+
 |                       DH Group List 2                         |
-...
+\&...
 |                       DH Group List M                         |
 +---------------------------------------------------------------+
 .fi
@@ -610,10 +622,20 @@ where:
 * M is the number of group lists
 .ti 6
 * DH_Group_LIST_1, ..., DH_Group_List_N are the lists of different types of DH groups, in order of preference.
+.in 3
 
+The semantics of this proposal is that the initiator is proposing M different
+types of groups; any selection of one group from K different types will be
+acceptable.
 
 Example: suppose our policy is "we must agree on at least 2 groups from the list (P256, P384), (NewHope, Frodo), (SIDH)  (and NewHope is group 40, Frodo is group 41, SIDH is group 60)"; we have the list
-     0002 0003 0001 0002 0019 0020 0002 0002 0040 0041 0004 0001 0060 0000
+.in 10
+.nf
+0002 0003 0001 0002 0019 0020 0002 0002
+0040 0041 0004 0001 0060 0000
+.fi
+.in 3
+
 Parsed as:
 .ti 9
 0002 K = 2
@@ -649,7 +671,7 @@ If the responder finds a combination of groups that are mutually acceptable, the
 |                0              |                 N             |
 +---------------------------------------------------------------+
 |               DH_1            |               DH_2            |
-...
+\&...
 |               DH_N            |               0               |
 +---------------------------------------------------------------+
 .fi
@@ -662,22 +684,18 @@ where:
 .ti 6
 * DH_1, DH_2, ..., DH_N are the selected groups
 
-
-If the responder does not find an acceptable combination, then [the responder sends its own policy to the initiator that can then decide to update its choices.].
-
 We assume that the responder has a similar local policy governing what it is willing to negotiate.  To search the initiator's vector to find such a mutually acceptable combination, the responder can run the following algorithm.
 
-.ti 9
+.in 9
 1. Set list of accepted DH groups to empty
-.ti 9
-2. Set K to the maximum of (minimum number of group lists specified by the initiator, minimum number of group lists acceptable according to the responder's policy)
-.ti 9
-3. For every DH_Group_list in the initiator's proposal
+2. Set K to the maximum of (minimum number of group lists specified by the initiator, minimum number of group lists acceptable according to the responder policy)
+
+3. For every DH_Group_list in the initiator proposal
 
 .ti 12
 Set T to the DH_Group_list type
 .ti 12
-Search for the responder's DH_Group_list of type T
+Find for the responder DH_Group_list of type T
 .ti 12
 If the responder has such a group list
 .ti 15
@@ -685,20 +703,21 @@ Scan for a DH element that the two lists have in common
 .ti 18
 If there is such a group
 .ti 21
-Append that to the 'list of accepted DH groups'
-.ti 21
+Append that to the "list of accepted DH groups"
+.in 21
 (Optional) if the list is at least K elements long, stop searching (and accept)
+.in 9
 
 .ti 9
-4. If the list of accepted DH groups is not at least K elements long, 
+4. If the list of accepted DH groups is at least K elements long,
+.ti 12
+accept..ti 9
+Otherwise,
 .ti 12
 fail.
-.ti 9
-Otherwise, 
-.ti 12
-accept.
 
 .ti 0
+.in 3
 2.6. Fragmentation support
 
 .ti 3
