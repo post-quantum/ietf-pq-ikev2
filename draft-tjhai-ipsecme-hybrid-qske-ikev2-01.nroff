@@ -117,28 +117,28 @@ Table of Contents
      2.4.  Quantum-Safe Group Transform Type and Group Identifiers  .  9
      2.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . . 10
        2.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 11
-       2.5.2. Protocol from the responder . . . . . . . . . . . . . . 12
-     2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 13
-     2.7. Protection against roll-back attacks  . . . . . . . . . . . 15
-   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 16
-     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 16
-     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 16
-     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 17
-       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 18
-       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 18
-       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 19
-     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 20
-   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 21
-     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 21
-     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 22
-     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 23
-   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 23
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 24
-   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 25
-   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 27
-   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 27
-   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 32
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 33
+       2.5.2. Protocol from the responder . . . . . . . . . . . . . . 13
+     2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 14
+     2.7. Protection against roll-back attacks  . . . . . . . . . . . 16
+   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 17
+     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 17
+     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 18
+     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 19
+       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 19
+       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 20
+       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 21
+     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 21
+   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 22
+     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 22
+     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 23
+     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 24
+   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 25
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 26
+   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 28
+   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 28
+   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 33
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 35
 .fi
 .in 3
 
@@ -761,7 +761,31 @@ insert text from Graham on fragmentation support.
 2.7. Protection against roll-back attacks
 
 .fi
-fill in with text, e.g., stating that the responder sends back a cookie containing the hash of the contents in the first message from the initiator and the first message of the responder. The initiator MUST send this cookie when sending its message in the second round and the responder MUST verify again the policy.
+In RFC7296, man-in-the-middle (MitM) downgrade attack is prevented by always resending the full set of group proposal in subsequent IKE_SA_INIT messages if the responder chooses a different Diffie-Hellman group from the one in the initial IKE_SA_INIT message.  The two-round nature of the protocol in this document presents some challenges in terms of downgrade attack protection.  However, the general idea is the same as the one in RFC7296, in that the responder must have sufficient information to verify that the downgrade is a genuine one, rather than one instigated by a malicious attacker.  Consider the following example: an initiator proposes to use a hybrid group through N(HYBRID_PROPOSAL) payload, and for backward compatibility also purposes a Diffie-Hellman group 15 (3072-bit MODP Group) through SAi payload, in the first round of the exchange.  The initiator may receive an INVALID_KE_PAYLOAD notification response.  This could be a genuine response from a responder that does not understand or support the selected hybrid group, or it could also be a malicious downgrade response from an MitM attacker.  The initiator then, on the second round of the exchange, proposes to use Diffie-Hellman group 15, but also it MUST include the full set of supported groups in SAi and N(HYBRID_PROPOSAL) to indicate that the initiator would have preferred to use a hybrid group.  The responder MUST check that the chosen group is indeed not caused by a downgrade attack.  If the check fails, it indicates a potential downgrade attack and the connection SHALL be dropped immediately.  Note that by ensuring that the initiator always sends the full set of supported groups, the responder does not need to maintain any states between IKE_SA_INIT rounds, and therefore it minimizes the risk of state exhaustion attack.  Of course, in the case of an active MitM attack, the malicious attacker may be able to modify the content of N(HYBRID_PROPOSAL) and SAi payloads, however, such a modification will be caught in the IKE_AUTH stage.
+
+It is also possible to encode some information into a cookie (Section 2.6. RFC7296) as another way to prevent against downgrade attacks.  Whilst this document does not mandate how the information should be encoded, it could be efficiently done as follows. 
+
+Cookie = <VersionIDofSecret> | Hash(Ni | IPi | SPIi | 
+.in 42
+SAi PROPOSAL | 
+N(HYBRID_PROPOSAL) | 
+<secret>)
+
+.in 6
+where SAi PROPOSAL is the content of the SAi payload excluding the generic IKE header, N(HYBRID_PROPOSAL) is the content of the hybrid proposal notification payload as described in Section X.Y, and the rest of the parameters are the same as in RFC7296.  In the scenario of using a cookie, the responder calculates a cookie value from the first round of IKE_SA_INIT message.  The initiator echoes back the cookie and retries the first round of the exchange.  When the responder receives the second round of the IKE_SA_INIT message, it recalculates the cookie value and checks whether or not this value is the same as the one in the previous round of the exchange.  If they mismatch, it indicates a potential downgrade attack and therefore the connection SHALL be terminated.  [[A mismatch can also occur in the event of <secret> being out-of-sync. Shall we terminate the connection this early here?]].  As before, any attempts of the attacker to modify the packets to instigate a downgrade attack will be
+detectable in IKE_AUTH stage.
+ 
+
+Questions?
+
+1. We don't want to mandate the use of COOKIE for this, do we?
+
+2. I don't see the need to describe a checking method whereby a state is required, please correct me if I'm wrong.
+
+3. In my naive opinion, it looks like the only useful checking is in IKE_AUTH. As long as we provide IKE_AUTH with sufficient information for checking (i.e. mandating that the initiator always proposes the full set of supported groups), we should resistant against downgrade-attack (of course assuming that there is no quantum computer). Is this correct? If not, what have I missed?
+
+[[Add some text on the following in the security consideration section:
+SLOTH-ATTACK: COOKIE must be of 64-octet long to minimize this attack surface.]]
 
 
 .ti 0
