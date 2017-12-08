@@ -110,36 +110,39 @@ Table of Contents
      1.3.  Changes  . . . . . . . . . . . . . . . . . . . . . . . . .  4
      1.4. Document organization . . . . . . . . . . . . . . . . . . .  4
    2. Design criteria:  . . . . . . . . . . . . . . . . . . . . . . .  5
-   2.  Hybrid Quantum-Safe Key Exchange . . . . . . . . . . . . . . .  6
-     2.1. Overall design  . . . . . . . . . . . . . . . . . . . . . .  6
-     2.2. Overall Protocol  . . . . . . . . . . . . . . . . . . . . .  7
-     2.3.  Computation of a quantum-safe shared secret  . . . . . . .  9
-     2.4.  Quantum-Safe Group Transform Type and Group Identifiers  .  9
-     2.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . . 10
-       2.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 11
-       2.5.2. Protocol from the responder . . . . . . . . . . . . . . 13
-     2.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 14
+   3.  Hybrid Quantum-Safe Key Exchange . . . . . . . . . . . . . . .  6
+     3.1. Overall design  . . . . . . . . . . . . . . . . . . . . . .  6
+     3.2. Overall Protocol  . . . . . . . . . . . . . . . . . . . . .  7
+     3.3.  Computation of a quantum-safe shared secret  . . . . . . .  9
+     3.4.  Quantum-Safe Group Transform Type and Group Identifiers  .  9
+     3.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . . 10
+       3.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 11
+       3.5.2. Protocol from the responder . . . . . . . . . . . . . . 13
+     3.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 14
      3.7.  Protection against roll-back attacks . . . . . . . . . . . 16
+   4.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 17
    5.  Alternative Designs  . . . . . . . . . . . . . . . . . . . . . 17
-   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 21
-     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 21
-     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 21
-     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 22
-       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 23
-       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 24
-       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 24
-     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 25
-   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 26
-     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 26
-     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 27
-     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 28
-   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 28
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 29
-   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 30
-   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 32
-   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 32
-   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 37
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 38
+   6. Security considerations . . . . . . . . . . . . . . . . . . . . 21
+   7. Appendix with flow of messages for corner cases . . . . . . . . 22
+   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 22
+     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 22
+     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 23
+     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 24
+       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 25
+       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 25
+       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 26
+     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 26
+   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 27
+     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 28
+     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 29
+     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 29
+   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 30
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 31
+   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 33
+   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 34
+   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 39
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 40
 .fi
 .in 3
 
@@ -326,7 +329,7 @@ fundamental requirement to ensure that hybrid quantum-safe IKEv2
 and a non-quantum-safe IKEv2 implementations are interoperable. 
 
 .ti 6
-11) FIPS compliancy.  TLS is widely used in Federal Information
+11) FIPS compliancy.  IPSec is widely used in Federal Information
 Systems and FIPS certification is an important feature.  However,
 algorithms that are believed to be quantum-safe are not FIPS
 complaint yet. Still, the goal is that the overall hybrid quantum-
@@ -334,12 +337,12 @@ safe IKEv2 design can be FIPS compliant.
 
 
 .ti 0
-2.  Hybrid Quantum-Safe Key Exchange
+3.  Hybrid Quantum-Safe Key Exchange
 
 
 
 .ti 0
-2.1. Overall design
+3.1. Overall design
 
 .fi
 The proposed hybrid quantum-safe IKEv2 protocol extends RFC7296 [RFC7296] by duplicating 
@@ -374,12 +377,12 @@ referred to as quantum-safe algorithms in this document.
 
 
 .ti 0
-2.2. Overall Protocol 
+3.2. Overall Protocol 
 
 In the following we overview the two protocol rounds involved in the hybrid quantum-safe protocol.
 
 .ti 3
-2.2.1 First protocol round
+3.2.1 First protocol round
 
 In the first round, the IKE_SA_INIT request and response messages are used to negotiate the hybrid group.
 
@@ -424,7 +427,7 @@ HDR, SAi1, KEi, Ni    -->
 This means that the peer does not support KE value 0x9001 and advertises correct classic DH group to use.
 
 .ti 3
-2.2.2. Second protocol round
+3.2.2. Second protocol round
 
 In the second protocol round, the initiator sends again the IKE_SA_INIT request.
 The main difference is that this message includes the key shares associated to each of the quantum-safe
@@ -453,7 +456,7 @@ HDR, SAi1, KEi1,KEi2,
 .in 3
 
 .ti 0
-2.3.  Computation of a quantum-safe shared secret
+3.3.  Computation of a quantum-safe shared secret
 
 After the second protocol round detailed in Section 2.2., both initiator and responder can compute:
 
@@ -483,7 +486,7 @@ The seven secrets derived from SKEYSEED, namely SK_d, SK_ai, SK_ar, SK_ei, SK_er
 are generated as defined in IKEv2 [RFC7296].
 
 .ti 0
-2.4.  Quantum-Safe Group Transform Type and Group Identifiers
+3.4.  Quantum-Safe Group Transform Type and Group Identifiers
 
 .fi
 In generating keying material within IKEv2, both initiator and responder
@@ -534,7 +537,7 @@ This payload is the MD5 hash of "IKEv2 Quantum Safe Key Exchange v1").  If the o
 
 
 .ti 0
-2.5. Hybrid group negotiation
+3.5. Hybrid group negotiation
 h
 .fi 
 Most quantum-safe key agreement algorithms are relatively new, and thus, are not fully trusted.There are also many proposed algorithms, with different trade-offs and relying on different hard problems.
@@ -554,7 +557,7 @@ responder will rely on key exchanges with distinct types of hard problems, and
 hence the additional complexity of the more general algorithm is not warranted.
 
 .ti 0 
-2.5.1. Protocol for the initiator 
+3.5.1. Protocol for the initiator 
 
 To define the protocol, we first define a "DH_Group_List", this is a list of groups of a specific type; it has the format:
 
@@ -659,7 +662,7 @@ Parsed as:
 
 
 .ti 0
-2.5.2. Protocol from the responder
+3.5.2. Protocol from the responder
 
 If the responder finds a combination of groups that are mutually acceptable, then it responds with the KEr payload with the format:
 
@@ -719,17 +722,17 @@ fail.
 
 .ti 0
 .in 3
-2.6. Fragmentation support
+3.6. Fragmentation support
 
 .ti 3
-2.6.1. Fragmentation Problem Description
+3.6.1. Fragmentation Problem Description
 
 When the IKE message size exceeds the path MTU, the IKE messages are fragmented at the IP level.  IP fragments can be blocked or dropped by network devices such as NAT/PAT gateways, firewalls, proxies and load balancers. If IKE messages are dropped, the IKE and subsequent IPsec Security Association (SA) will fail to be established. In many instances the quantum safe key exchange data could be too large to send in a single IKE payload as the path MTU between hosts is set below the total size of the IKE payload. As this draft defines multiple key exchanges, there is a high chance that fragmentation will occur.
 
 The maximum length of an IKE payload is 65535 octets, it is anticipated that many post quantum algorithms will require a payload size that is greater than 65535 octets. To overcome this limitation we present a method to split the quantum secure payload into multiple fragments and send these fragments individually, therefore providing a method to overcome the maximum length limitation.
 
 .ti 3
-2.6.2. Fragmentation Proposed Solution 
+3.6.2. Fragmentation Proposed Solution 
 
 To overcome issues with fragmentation the IKE_SA_INIT message can be broken into smaller messages and rather that sending a single IKE_SA_INIT message that is fragmented at the IP layer, multiple IKE_SA_INIT messages can be sent, each IKE_SA_INIT message containing one or more IKE payloads which will overcome any issues with path MTU fragmentation causing the IKE SA to fail. If an IKE payload is too large to be sent in a single IKE_SA_INIT message it can split across multiple IKE_SA_INIT messages. All IKE_SA_INIT messages will have a message ID of 0, as per RFC7296. To notify the peer that an IKE payload is fragmented the Fragment bit, denoted F (below), specifies if the payload is fragmented. If this is set to '1', meaning the payload is fragmented the Fragment Number and Total Fragments fields will be populated. If the Fragment bit is not set (set to '0'), then the Fragment Number and Total Fragments fields will not exist. The Payload N, denoting the Payload Number is set to '1' for the first IKE payload that is fragmented and incremented by one for every subsequent payload that requires fragmentation. The Payload Number is used to re-assemble any fragments that arrive out of order and will have as many fragments as the Total Fragment field denotes. The Fragment Number is the first fragment, increasing by one for every other fragment that is sent. The Total Fragments field denotes the maximum number of fragments that are to be sent for this payload.
 
@@ -786,6 +789,11 @@ Questions?
 
 [[Add some text on the following in the security consideration section:
 SLOTH-ATTACK: COOKIE must be of 64-octet long to minimize this attack surface.]]
+
+
+.in 3
+.ti 0
+4.  Design Rationale
 
 
 .in 3
@@ -854,6 +862,80 @@ As discussed in Section 3.4, each group identifier is used to distinguish a post
 o  State Keeping in Downgrade Attack Protection
 
 Another way of checking whether or not a downgrade attack is in effect is to have a responder to commit the state of the first-pass of the IKE_SA_INIT message onto memory or a temporary database.  When the responder receives the second-pass of the exchange, it can verify it against the saved state to determine whether or not a downgrade attack is in effect.  While this simple verification does offer protection against downgrade attack, it is susceptible to state exhaustion attack.  While we do not discard this idea, it is RECOMMENDED to use the other two downgrade protection mechanisms described in Section 3.7.    
+
+
+.ti 0
+6. Security considerations 
+
+
+   The key length of the Encryption Algorithm (Transform Type 1), the
+   Pseudorandom Function (Transform Type 2) and the Integrity Algorithm
+   (Transform Type 3), all have to be of sufficient length to prevent
+   attacks using Grover's algorithm [GROVER].  In order to use the
+   extension proposed in this document, the key lengths of these
+   transforms SHALL be at least 256 bits long in order to prevent any
+   quantum attacks from succeeding.  Accordingly the post-quantum
+   security level achieved is at least 128 bits.
+
+   SKEYSEED  is calculated from shared, KEx, using an algorithm defined 
+   in Transform Type 2.  
+   While a quantum attacker may learn the value of KEx', if this value is 
+   obtained by means of a classical key exchange, other KEx values generated 
+   by means of a quantum-resistant algorithm ensure that SKEYSEED is not compromised.  
+   This assumes that the algorithm defined in the Transform Type 2 is quantum-safe.
+
+   Because some quantum-safe public values are in the order of several
+   KB, a IKEv2 message that contains such a QSKE payload will exceed the
+   path Maximum Transmission Unit (MTU) and the message may be
+   fragmented at the IP level.  This presents the possibility of an
+   attack vector that relies on IP fragmentation.  One such attack
+   vector is to mount a denial of service by swamping a receiver with IP
+   fragments [DOSUDPPROT].  This issue could be mitigated by employing
+   TCP encapsulation [RFC8229].
+
+   The main focus of this document is to prevent a passive attacker performing a "harvest and decrypt" attack.
+   In other words, an attacker that records messages exchanges today and proceeds to decrypt them once he owns a quantum    computer.
+   This attack is prevented due to the hybrid nature of the key exchange.
+   Other attacks involving an active attacker owning a quantum-computer are not solved by this document since
+   the authentication step remains classical. 
+   In particular, the authenticity of the SAs established under IKEv2 is protected
+   using a pre-shared key, RSA, DSS, or ECDSA algorithms.  Whilst the
+   pre-shared key option, provided the key is long enough, is quantum-
+   safe, the other algorithms are not.   Moreover, in implementations
+   where scalability is a requirement, the pre-shared key method may not
+   be suitable.  Quantum-safe authenticity may be provided by using a
+   quantum-safe digital signature and several quantum-safe digital
+   signature methods are being explored by IETF.  For example the hash
+   based method, XMSS has the status of an Internet Draft, see [XMSS]. 
+   Currently, quantum-safe authentication methods are not specified in
+   this document, but are planned to be incorporated in due course.
+
+   It should be noted that the purpose of quantum-safe algorithms is to
+   prevent attacks, mounted in the future, from succeeding.  The current
+   threat is that encrypted sessions may be subject to eavesdropping and
+   archived with decryption by quantum computers taking place at some
+   point in the future.  Until quantum computers become available there
+   is no point in attacking the authenticity of a connection because
+   there are no possibilities for exploitation.  These only occur at the
+   time of the connection, for example by mounting a MitM attack. 
+   Consequently there is not such a pressing need for quantum-safe
+   authenticity.
+
+   The use of the QSKE provides an method for malicious parties to send
+   IKE_SA_INIT initiator messages containing QSKE of type KEM and with
+   random values.  As the standard behavior is for the responder to
+   generate a random entity, encrypt it using the received public key
+   (which would be a random value), and sends the encrypted quantity to
+   the initiator in QSKEr payload.  This allows for a simply method for
+   malicious parties to cause a VPN gateway to perform excessive
+   processing.  To mitigate against this threat, implementations can
+   make use of the COOKIE notification as defined in [RFC7296], to
+   mitigate spoofed traffic and [RFC8019] to minimize the impact from
+   hosts who use their own IP address.
+
+.ti 0
+7. Appendix with flow of messages for corner cases
+
 
 
 
