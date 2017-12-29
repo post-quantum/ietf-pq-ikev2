@@ -540,11 +540,14 @@ This payload is the MD5 hash of "IKEv2 Quantum Safe Key Exchange v1").  If the o
 3.5. Hybrid group negotiation
 h
 .fi 
-Most quantum-safe key agreement algorithms are relatively new, and thus, are not fully trusted.There are also many proposed algorithms, with different trade-offs and relying on different hard problems.
+Most quantum-safe key agreement algorithms are relatively new, and thus are not fully trusted.
+There are also many proposed algorithms, with different trade-offs and relying on different hard problems.
 The concern is that some of these hard problems may turn out to be easier to solve than anticipated
-a(and thus the key agreement algorithm not as secure as expected).
+(and thus the key agreement algorithm not as secure as expected).
 
-Our hybrid group negotiation protocol allows the initiator and responder to agree on a common hybrid group based on their respective policies.The protocol categorizes each type of key exchange into a type T, which is based on the type of hard problem it relies on.Given this categorization of the key agreement protocols, initiator and responder have security policies that define the minimum number of quantum-safe algorithms that they require in a hybrid group and also the types of key agreement protocols that they support (and therefore, trust).
+Our hybrid group negotiation protocol allows the initiator and responder to agree on a common hybrid group based on their respective policies.
+The protocol categorizes each type of key exchange into a type T, which is based on the type of hard problem it relies on.
+Given this categorization of the key agreement protocols, initiator and responder have security policies that define the minimum number of quantum-safe algorithms that they require in a hybrid group and also the types of key agreement protocols that they support (and therefore, trust).
 The initiator and responder can then engage in a simple protocol that allows them to
 compute a common hybrid group fulfilling their policies.
 The protocol for the initiator and responder is described below.
@@ -552,7 +555,7 @@ The protocol for the initiator and responder is described below.
 Note that it would be possible for the responder to search for a mutually
 acceptable combination without specifying the key exchange types, however the
 algorithm to search for such a combination would be considerably more complex.
-tThis design assumes that the security policies of the initiator and the
+This design assumes that the security policies of the initiator and the
 responder will rely on key exchanges with distinct types of hard problems, and
 hence the additional complexity of the more general algorithm is not warranted.
 
@@ -583,7 +586,8 @@ where:
            0x0002 is Lattice (RLWE, LWE, NTRU)
 .ti 6
            0x0003 is Code-based (McEliece, QC-MDPC)
-jj.ti 6           0x0004 is Isogeny-based (SIDH)
+.ti 6
+           0x0004 is Isogeny-based (SIDH)
 .ti 6
            0x0005 is symmetric (preshared key)
 .ti 6
@@ -601,8 +605,8 @@ acceptable.
 
 The semantics of this list is that these are the groups of type T that are acceptable to the initiator.
 
-We can now given the format that the initiator sends to the responder, in the KEi payload, the initiator sends its group policy in the format:
-
+We now define a "DH_Group_Policy"; this is a list of group types that are negotiated together.
+It has the format:
 
 .in 6
 .nf
@@ -660,11 +664,41 @@ Parsed as:
 .ti 12
 0000       Zero-pad
 
+We can now give the format that the initiator sends to the responder in the KEi payload.
+The initiator sends its group policy in one of the following two formats:
+
+.in 6
+.nf
+                    1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-------------------------------------------------------------+
+|                       DH_Group_Policy                       |
++-------------------------------------------------------------+
+.fi
+
+.in 6
+.nf
+                    1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-------------------------------------------------------------+
+|            DH_Group_Policy for initial IKE exchange         |
++-------------------------------------------------------------+
+|                 DH_Group_Policy for child SAs               |
++-------------------------------------------------------------+
+.fi
+
+If the initiator uses the first format, then the same DH policy will be
+negotiated for both the initial IKE exchange, as well as any child SA
+exchanges.
+If the initiator uses the second format, then the first policy listed
+will be used for the initial IKE exchange; the second policy listed will
+be used for any child SA negotiations.
 
 .ti 0
 3.5.2. Protocol from the responder
 
-If the responder finds a combination of groups that are mutually acceptable, then it responds with the KEr payload with the format:
+If the responder finds a combination of groups that are mutually acceptable,
+then it responds with the KEr payload in one of the following two formats:
 
 
 .in 6
@@ -678,15 +712,33 @@ If the responder finds a combination of groups that are mutually acceptable, the
 \&...
 |               DH_N            |               0               |
 +---------------------------------------------------------------+
+
+                     1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++---------------------------------------------------------------+
+|                 0             |              N_Initial        |
++---------------------------------------------------------------+
+|               DH_1            |                DH_2           |
+\&...
+|           DH_N_Initial        |                 0             |
++---------------------------------------------------------------+
+|                0              |               N_Child         |
++---------------------------------------------------------------+
+|               DH_1            |                DH_2           |
+\&...
+|            DH_N_Child         |                 0             |
++---------------------------------------------------------------+
 .fi
 
 where:
 .ti 6
 * 0 is a fixed 0000 pattern
 .ti 6
-* N is the number of groups that are selected
+* N, N_Initial, N_Child is the number of groups that are selected
 .ti 6
 * DH_1, DH_2, ..., DH_N are the selected groups
+
+If the second format is selected, then the groups used for the initial IKE SA and the groups used for child SAs are listed separately.
 
 We assume that the responder has a similar local policy governing what it is willing to negotiate.  To search the initiator's vector to find such a mutually acceptable combination, the responder can run the following algorithm.
 
