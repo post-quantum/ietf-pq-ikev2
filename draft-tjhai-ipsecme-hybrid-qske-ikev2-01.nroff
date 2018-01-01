@@ -113,36 +113,36 @@ Table of Contents
    3.  Hybrid Quantum-Safe Key Exchange . . . . . . . . . . . . . . .  6
      3.1. Overall design  . . . . . . . . . . . . . . . . . . . . . .  6
      3.2. Overall Protocol  . . . . . . . . . . . . . . . . . . . . .  7
-     3.3.  Computation of a quantum-safe shared secret  . . . . . . .  9
-     3.4.  Quantum-Safe Group Transform Type and Group Identifiers  .  9
-     3.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . . 10
-       3.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 11
-       3.5.2. Protocol from the responder . . . . . . . . . . . . . . 13
-     3.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 14
-     3.7.  Protection against roll-back attacks . . . . . . . . . . . 16
-   4.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 17
-   5.  Alternative Designs  . . . . . . . . . . . . . . . . . . . . . 17
-   6. Security considerations . . . . . . . . . . . . . . . . . . . . 21
-   7. Appendix with flow of messages for corner cases . . . . . . . . 22
-   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 22
-     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 22
-     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 23
-     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 24
-       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 25
-       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 25
-       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 26
-     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 26
-   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 27
-     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 28
-     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 29
-     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 29
-   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 30
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 31
-   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 32
-   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 33
-   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 34
-   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 39
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 40
+     3.3.  Computation of a quantum-safe shared secret  . . . . . . . 11
+     3.4.  Quantum-Safe Group Transform Type and Group Identifiers  . 11
+     3.5. Hybrid group negotiation  . . . . . . . . . . . . . . . . . 12
+       3.5.1. Protocol for the initiator  . . . . . . . . . . . . . . 13
+       3.5.2. Protocol from the responder . . . . . . . . . . . . . . 15
+     3.6. Fragmentation support . . . . . . . . . . . . . . . . . . . 16
+     3.7.  Protection against downgrade attacks . . . . . . . . . . . 18
+   4.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 21
+   5.  Alternative Designs  . . . . . . . . . . . . . . . . . . . . . 21
+   6. Security considerations . . . . . . . . . . . . . . . . . . . . 24
+   7. Appendix with flow of messages for corner cases . . . . . . . . 26
+   2. Text from the old design  . . . . . . . . . . . . . . . . . . . 26
+     2.1.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . 26
+     2.2.  IKE_SA_INIT Exchange . . . . . . . . . . . . . . . . . . . 27
+     2.3.  CREATE_CHILD_SA Exchange . . . . . . . . . . . . . . . . . 28
+       2.3.1.  New Child SAs from the CREATE_CHILD_SA Exchange  . . . 28
+       2.3.2.  Rekeying IKE SAs with the CREATE_CHILD_SA Exchange . . 29
+       2.3.3.  Rekeying Child SAs with the CREATE_CHILD_SA Exchange . 30
+     2.4.  QSKE Payload Format  . . . . . . . . . . . . . . . . . . . 30
+   3.  Design Rationale . . . . . . . . . . . . . . . . . . . . . . . 31
+     3.1.  Threat Categories  . . . . . . . . . . . . . . . . . . . . 31
+     3.2.  Dealing with Fragmentation . . . . . . . . . . . . . . . . 32
+     3.3.  Removal of the Diffie-Hellman exchange . . . . . . . . . . 33
+   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 34
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 35
+   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+   Appendix A.  Quantum-safe Ciphers  . . . . . . . . . . . . . . . . 37
+   Appendix A.1.  Ring Learning With Errors . . . . . . . . . . . . . 38
+   Appendix A.2.  NTRU Lattices . . . . . . . . . . . . . . . . . . . 42
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 44
 .fi
 .in 3
 
@@ -339,18 +339,11 @@ safe IKEv2 design can be FIPS compliant.
 .ti 0
 3.  Hybrid Quantum-Safe Key Exchange
 
-
-
 .ti 0
 3.1. Overall design
 
 .fi
-The proposed hybrid quantum-safe IKEv2 protocol extends RFC7296 [RFC7296] by duplicating 
-the initial exchange in [RFC7296]. The first round is then used for backwards compatibility,
-and if the responder supports this document, to negotiate the algorithms in the hybrid group.
-The second round is used to exchanged the key shares involved in the hybrid group and derive
-a common secret that relies on both a traditional Diffie-Hellman shared secret key and shared secrets 
-derived from quantum-resistant algorithms.
+The proposed hybrid quantum-safe IKEv2 protocol extends RFC7296 [RFC7296] by duplicating the initial exchange in [RFC7296].  Due to size of post-quantum key shares, it is important that these key shares are only sent if the peer indicates support of this hybrid exchange.  In order to achieve this, the IKE_SA_INIT exchange now consists of two message exchange pairs.  The first pair of IKE_SA_INIT messages negotiates which classical cryptographic algorithms are to be used, along with the post-quantum algorithms and policy.  The second IKE_SA_INIT message pair, on the other hand, consists of each peer sending the Diffie-Hellman public value along with the post-quantum key-shares.  Note that no Diffie-Hellman exchange or exchange of post-quantum key-shares is performed in the first round of IKE_SA_INIT exchange.  Messages are described as message 1 for the initiator's first message, message 2 for the responder's first message, message 3 for the initiator's second message and message 4 for the responder's second message.
 
 
 .in 6
@@ -359,21 +352,11 @@ Initiator                                    Responder
 --------------------------------------------------------------
         <-- First round (hybrid group negotiation)-->
 
-
     <--Second round (hybrid quantum-safe key exchange)-->
-
-
 .fi
 
 
-This hybrid quantum-safe IKEv2 key exchange can occur in IKE_SA_INIT or CREATE_CHILD_SA.
-message pair which contains various payloads for negotiating cryptographic
-algorithms, exchanging nonces, and performing a Diffie-Hellman shared
-secret exchange for an IKE SA or a Child SA.  
-These payloads are chained together forming a linked-list and this flexible structure allows an additional key exchange payload, denoted QSKE, to be introduced.  The
-additional key exchange uses algorithms that are currently considered to be
-resistant to quantum computer attacks.  These algorithms are collectively
-referred to as quantum-safe algorithms in this document.
+This hybrid quantum-safe IKEv2 key exchange can occur in IKE_SA_INIT or CREATE_CHILD_SA message pair which contains various payloads for negotiating cryptographic algorithms, exchanging nonces, and performing a Diffie-Hellman shared-secret exchange for an IKE SA or a Child SA.  These payloads are chained together forming a linked-list and this flexible structure allows an additional key exchange payload, denoted QSKE, to be introduced.  The additional key exchange uses algorithms that are currently considered to be resistant to quantum computer attacks.  These algorithms are collectively referred to as post-quantum algorithms in this document.
 
 
 .ti 0
@@ -384,106 +367,103 @@ In the following we overview the two protocol rounds involved in the hybrid quan
 .ti 3
 3.2.1 First protocol round
 
-In the first round, the IKE_SA_INIT request and response messages are used to negotiate the hybrid group.
+In the first round, the IKE_SA_INIT request and response messages are used to negotiate the hybrid group.  One of the main goals of this draft is to make as many minimal changes from RFC7269 as possible, the method to negotiate and exchange post-quantum policies uses the key exchange payload (with a Diffie-Hellman Group Num of #TBA).  The KE payload with group number #TBA does not contain Diffie-Hellman or post-quantum public values, but proposed post-quantum algorithms and the policy for the post-quantum ciphers. 
 
+The initiator negotiates cryptographic suites as per RFC7296, the only exception is, the Diffie-Hellman KE payload is not populated, rather the KE payload contains the proposed post-quantum algorithms and policies.  The Diffie-Hellman groups are negotiated in the security association payload as per RFC7296 and the public values sent in the next round of exchange.
 
-.in 6
-.nf
-Initiator                         Responder
---------------------------------------------------------------
-HDR, SAi1, KEi, Ni    -->
+When a responder that supports the hybrid exchange, receives an IKE_SA_INIT message with a KE payload with group number #TBA, it performs a lookup of the policies and algorithms contained within the KE payload.  Assuming that it supports one or more proposed post-quantum algorithms, it then indicates these in the KE payload response with group number #TBA.  The responder also selects the cryptographic suites, including the chosen Diffie-Hellman Group Num in the security association payload as per RFC7296.  In this exchange the Diffie-Hellman public value is not sent in the KE payload.
 
-                             <--  HDR, SAr1, KEr, Nr     
-.fi
-.in 3
+The initiator can signal support of IKE_SA_INIT message fragmentation by including a payload fragmentation Notify payload.  The responder can also include this Notify payload to indicate support of IKE_SA_INIT message fragmentation.
 
-In order to keep backwards compatibility, the initiator signals the support of hybrid groups by sending
-vendor specific group identifier 0x9000 in SAi1 (see Section 2.4 for more details). 
-In order to negotiate the quantum-safe algorithms included in the hybrid group, the initiator sends its policy
-for negotiation in KEi (see Section 2.5 for more details).
-If the initiator includes quantum-safe algorithms whose key shares require fragmentation, the initiator must include
-flag 0x9001 in SAi1 stating that it supports fragmentation (See Sections 2.4 and 2.6 for details).
-
-Upon reception of the IKE_SA_INIT request message from the initiator, the responder replies
-with IKE_SA_INIT response in which it can acknowledge the support of a hybrid group by sending
-the same group identifier 0x9000 in SAr1.
-In this case, the responder will also include in KEr the identifiers of the quantum-safe algorithms
-that comprise the hybrid group shared between initiator and responder and fulfilling their policies (see Section 2.5 for more details).
-If the responder agrees on a hybrid group containing quantum-safe algorithms whose key shares require fragmentation, the initiator must include
-flag 0x9001 in SAi1 stating that it supports fragmentation (See Sections 2.4 and 2.6 for details).
-
-If the responder does not support this document, the responder will then reply as follows:
+The responder may choose to allocate state to the session, as the initial message is used in authenticating the IKE SA messages.  Optionally, the responder may prefer not to allocate any state and reply with a cookie instead.  One benefit of using the cookie is to provide fast detection of a downgrade attack, in this instance the responder detects the post-quantum cryptographic algorithms and policies do not match and can then abort the session prior to calculating the shared secrets.  See Section 3.7 for more information on cookie and downgrade attack prevention.
 
 .in 6
 .nf
 Initiator                         Responder
 --------------------------------------------------------------
-HDR, SAi1, KEi, Ni    -->
+HDR, SAi1, KEi(#TBA), 
+     Ni, [N(Pay Frag)]  -->
 
-                            <--  N(INVALID_KE_PAYLOAD),                    
+                            <--   HDR, SAr1, KE(#TBA), 
+                                       Nr, [N(Pay Frag),]
+                                       [N(COOKIE)]     
 .fi
 .in 3
 
-This means that the peer does not support KE value 0x9001 and advertises correct classic DH group to use.
+As per RFC7296, should the responder not accept any of the cryptographic suites that were sent in the security association payload, a NO_PROPOSAL_CHOSEN message is responded, as depicted below.
+
+.in 6
+.nf
+Initiator                         Responder
+--------------------------------------------------------------
+HDR, SAi1, KEi(#TBA), 
+     Ni, [N(Pay Frag)]  -->
+
+                            <--   HDR, N(NO_PROPOSAL_CHOSEN)     
+.fi
+.in 3
+
+On receipt of this, the initiator SHOULD retry the initial IKE_SA_INIT exchange, as per RFC7296, but include a N(PQ_ALGO_POLICIES) notify payload which contains the post-quantum algorithms and policies were sent in the initial exchange.  On receipt of the N(PQ_ALGO_POLICIES) payload, the responder MUST validate these post-quantum algorithms and policies against its own policies.  This validation is required to ensure that the post-quantum algorithms were not amended in the initial exchange, resulting in a downgrade attack.
+
+By using the KE payload, peers that do not support the hybrid exchange will reject the initial negotiation and assuming that a Diffie-Hellman Group Num contained in the Diffie-Hellman Group Transform IDs was acceptable, the peer will send an INVALID_KE_PAYLOAD message to indicate its preferred Diffie-Hellman group.  Note that using the KE payload enables backward compatibility with existing RFC7296 implementations.  If this scenario occurs, the initiator SHOULD retry the hybrid exchange.  Dependant on policies, the initiator may retry the exchange as per RFC7296, and if this occurs then the N(PQ_ALGO_POLICIES) notify payload MUST be included to prevent downgrade attacks.
+
+Should the proposed post-quantum algorithms not be acceptable to the responder, the responder SHOULD indicate this within the KE payload with group #TBA.  If the classical cryptographic suite is acceptable, but the post-quantum algorithms are not, the responder SHOULD indicate this by specifying the classical cryptographic suites in the security association payload, as per RFC7296.  The initiator should then revert to the classical IKEv2 exchange and include the N(PQ_ALGO_POLICIES) payload to prevent downgrade attacks.  Below is an example that shows the proposed hybrid group is not supported by the responder and that the responder prefers a Diffie-Hellman Group 19 (P-256), assuming that this group is in the list proposed--although not preferred, in the previous message.
+
+.in 6
+.nf
+Initiator                         Responder
+--------------------------------------------------------------
+HDR, SAi1, KEi(#TBA), 
+     Ni, [N(Pay Frag)]      -->
+
+                            <--   HDR, N(INVALID_KE_PAYLOAD)     
+HDR, SAi1, KEi(19), 
+     N(PQ_ALGO_POLICIES),   -->
+     Ni                  
+.fi 
+.in 3
+
+For implementations that mandate only the use of hybrid exchange, they MUST not revert to using the classical IKEv2 exchange.  This should be a configurable parameter in implementations.
+
 
 .ti 3
 3.2.2. Second protocol round
 
-In the second protocol round, the initiator sends again the IKE_SA_INIT request.
-The main difference is that this message includes the key shares associated to each of the quantum-safe
-algorithms agreed in the previous round.
-If the fragmentation flag was agreed during the first round and the exchange of key shares requires fragmentation, then fragmentation is handled as in Section 2.6.
-Furthermore, this message includes information about the policy exchanged in the first round
-and that has as a goal to prevent roll-back attacks (see Section 2.7 for more details).
+In the second protocol round, the initiator sends again the IKE_SA_INIT request.  The main difference is that this message includes the key-shares associated to each of the post-quantum algorithms agreed in the previous round.  Each key-share is transported in a KE payload, and therefore there may exist multiple KE payloads in the second round of IKE_SA_INIT message.  Furthermore, these KE payloads may be fragmented if the key-shares are large and both peers indicate the support of fragmentation.
 
-Upon reception of the the IKE_SA_INIT request message, the responder first checks whether the
-received key shares fit its policy, i.e., it repeats the process of negotiating a hybrid group.
-If it does, then the responder can proceed to compute a shared secret as detailed in Section 2.3.
-The responder sends also the IKE_SA-INIT response message including its key shares.
-As before, if agreed and if required, fragmentation is handled as described in Section 2.6.
-Once the initiator has received key shares from the responder, the initiator can compute the same shared secret following the description in Section 2.3.
+In a general hybrid arrangement, the RFC7296 Diffie-Hellman public value is sent in the first KE payload (denoted KEi1), with one or more post-quantum key-share being sent in additional KE payloads (denoted KEi2, KEi3, etc).  However, this ordering is not mandatory.  
+
+If the responder had sent a cookie in the first round of exchange, the initiator MUST return this cookie.  In addition to that, the initiator MUST send the same post-quantum algorithms and policies that was included in the KE payload of type #TBA sent in the first round of the exchange, in a notify payload N(PQ_ALGO_POLICIES).  The responder MUST examine the post-quantum algorithms and policies, and confirms that the presented KE payloads match those represented by the cookie, see Section 3.7 for more information.  Should an anomaly or a mismatch is detected, the responder SHOULD abort the session.  On the other hand, if the validation passes, then the responder can proceed to compute a shared secret as detailed in Section 3.3.
+
+The responder also sends the IKE_SA-INIT response message including its key-shares.  As before, if agreed and if required, fragmentation is handled as described in Section 3.6.  Once the initiator has received all key-shares from the responder, the initiator can compute the same shared secret following the description in Section 3.3.
+
+Below is an example message exchanged in the second round of IKE_SA_INIT message.
 
 .in 6
 .nf
-Initiator                         Responder
+Initiator                          Responder
 --------------------------------------------------------------
-HDR, SAi1, KEi1,KEi2,
-   KEi3, Ni    -->
+HDR, [N(COOKIE),] SAi1, 
+    KEi1[, KEi2,][..., KEiX,] 
+    Ni[, N(PQ_ALGO_POLICIES)] -->
 
-                             <--  HDR, SAr1, KEr1, KEr2,
-					KEr3, Nr     
+                              <--  HDR, SAr1, KEr1[, KEr2,]
+                                   [..., KErX,] Nr
 .fi
 .in 3
 
 .ti 0
 3.3.  Computation of a quantum-safe shared secret
 
-After the second protocol round detailed in Section 2.2., both initiator and responder can compute:
-
-.in 12
-.ti 6
-a shared Diffie-Hellman secret from KEi and KEr pair, and
-
-.ti 6
-a quantum-safe shared secret from QSKEi and QSKEr pair.
-.fi
-
-.in 3
-Using these shared secrets, each peer generates SKEYSEED, from which
-all keying materials for protection of the IKE SA are derived.  The
-quantity SKEYSEED is computed as follows:
+After the second protocol round detailed in Section 2.2., both initiator and responder can compute the common shared-secrets to generate an SKEYSEED, from which all keying materials for protection of the IKE SA are derived.  The quantity SKEYSEED is computed as follows:
 
 .in 6
 .df
-SKEYSEED = prf(Ni | Nr, HQSK_1 | ...| HQSK_i |... |HQSKK)
+SKEYSEED = prf(Ni | Nr, SS1 | SS2 | ...| SSX)
 .fi
 
 .in 3
-where prf, Ni and Nr are defined as in IKEv2 [RFC7296].  
-HQSK_i represents shared key number i derived from the ith key exchange algorithm 
-contained in the hybrid group that was negotiated in the protocol.
-The seven secrets derived from SKEYSEED, namely SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, and SK_pr,
-are generated as defined in IKEv2 [RFC7296].
+where prf, Ni and Nr are defined as in IKEv2 [RFC7296], SSi represents the i-th shared-secret computed from the i-th key-exchange algorithm contained in the hybrid group that was negotiated in the protocol.  The seven secrets derived from SKEYSEED, namely SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, and SK_pr, are generated as defined in IKEv2 [RFC7296].
 
 .ti 0
 3.4.  Quantum-Safe Group Transform Type and Group Identifiers
@@ -814,34 +794,74 @@ The length field within the IKE header could be used to indicate the total lengt
 insert text from Graham on fragmentation support.
 
 .ti 0
-3.7.  Protection against roll-back attacks
+3.7.  Protection against downgrade attacks
 
 .fi
-In RFC7296, man-in-the-middle (MitM) downgrade attack is prevented by always resending the full set of group proposal in subsequent IKE_SA_INIT messages if the responder chooses a different Diffie-Hellman group from the one in the initial IKE_SA_INIT message.  The two-round nature of the protocol in this document presents some challenges in terms of downgrade attack protection.  However, the general idea is the same as the one in RFC7296, in that the responder must have sufficient information to verify that the downgrade is a genuine one, rather than one instigated by a malicious attacker.  Consider the following example: an initiator proposes to use a hybrid group through N(HYBRID_PROPOSAL) payload, and for backward compatibility also purposes a Diffie-Hellman group 15 (3072-bit MODP Group) through SAi payload, in the first round of the exchange.  The initiator may receive an INVALID_KE_PAYLOAD notification response.  This could be a genuine response from a responder that does not understand or support the selected hybrid group, or it could also be a malicious downgrade response from an MitM attacker.  The initiator then, on the second round of the exchange, proposes to use Diffie-Hellman group 15, but also it MUST include the full set of supported groups in SAi and N(HYBRID_PROPOSAL) to indicate that the initiator would have preferred to use a hybrid group.  The responder MUST check that the chosen group is indeed not caused by a downgrade attack.  If the check fails, it indicates a potential downgrade attack and the connection SHALL be dropped immediately.  Note that by ensuring that the initiator always sends the full set of supported groups, the responder does not need to maintain any states between IKE_SA_INIT rounds, and therefore it minimizes the risk of state exhaustion attack.  Of course, in the case of an active MitM attack, the malicious attacker may be able to modify the content of N(HYBRID_PROPOSAL) and SAi payloads, however, such a modification will be caught in the IKE_AUTH stage.
+In RFC7296, man-in-the-middle (MitM) downgrade attack is prevented by always resending the full set of group proposal in subsequent IKE_SA_INIT messages if the responder chooses a different Diffie-Hellman group from the one in the initial IKE_SA_INIT message.  The two-round nature of the protocol in this document presents some challenges in terms of downgrade attack protection.  However, the general idea is the same as the one in RFC7296, in that the responder must have sufficient information to verify that the downgrade is a genuine one, rather than one instigated by a malicious attacker.  Consider the following example: an initiator proposes to use a hybrid key-exchange, and for backward compatibility also purposes a Diffie-Hellman group 19 (P-256 elliptic curve) through SAi payload, in the first round of the exchange.  The initiator may receive an INVALID_KE_PAYLOAD notification response.  This could be a genuine response from a responder that does not understand or support the selected hybrid key-exchange, or it could also be a malicious downgrade response from an MitM attacker.  The initiator, on the second round of the exchange, MUST send the same cipher proposals and policies as in the first exchange round to indicate that the initiator would have preferred to use the hybrid key-exchange.  The responder MUST check that the chosen proposal is indeed not caused by a downgrade attack.  If the check fails, it indicates a potential downgrade attack and the connection SHALL be dropped immediately.  
 
-It is also possible to encode some information into a cookie (Section 2.6. RFC7296) as another way to prevent against downgrade attacks.  Whilst this document does not mandate how the information should be encoded, it could be efficiently done as follows. 
+In order to check the proposals and policies, the responder may choose to maintain states between IKE_SA_INIT rounds.  However, this increases the risk of state exhaustion attack.  Of course, the responder may decide not to allocate any states and rely on the authentication in IKE_AUTH for any tampering of the exchange.  Unfortunately, this option does not offer the benefit of an early downgrade attack detection; the responder will have to spend resources computing entities such as shared-secrets and authentication code before knowing whether or not there is a downgrade attack.  Such a benefit may be obtained by encoding some information into a cookie (Section 2.6. RFC7296).
 
-Cookie = <VersionIDofSecret> | Hash(Ni | IPi | SPIi | 
-.in 42
-SAi PROPOSAL | 
-N(HYBRID_PROPOSAL) | 
-<secret>)
+Whilst this document does not mandate how the information should be encoded, it could be efficiently done as follows
 
 .in 6
-where SAi PROPOSAL is the content of the SAi payload excluding the generic IKE header, N(HYBRID_PROPOSAL) is the content of the hybrid proposal notification payload as described in Section X.Y, and the rest of the parameters are the same as in RFC7296.  In the scenario of using a cookie, the responder calculates a cookie value from the first round of IKE_SA_INIT message.  The initiator echoes back the cookie and retries the first round of the exchange.  When the responder receives the second round of the IKE_SA_INIT message, it recalculates the cookie value and checks whether or not this value is the same as the one in the previous round of the exchange.  If they mismatch, it indicates a potential downgrade attack and therefore the connection SHALL be terminated.  [[A mismatch can also occur in the event of <secret> being out-of-sync. Shall we terminate the connection this early here?]].  As before, any attempts of the attacker to modify the packets to instigate a downgrade attack will be detectable in IKE_AUTH stage.
+.nf
+Cookie = <VersionIDofSecret> | Hash(KEi(#TBA) | <secret>)
+.fi
+.in 6
+
+where KEi(#TBA) is the KE payload in the first round of IKE_SA_INIT exchange.  In this scenario, the responder calculates a cookie value from the first round of the IKE_SA_INIT request message and sends it to the initiator as part of the first round IKE_SA_INIT response message.  The initiator echoes back the cookie and a N(PQ_ALGO_POLICIES) notify payload along with other IKE_SA_INIT attributes.  The N(PQ_ALGO_POLICIES) notify payload contains the same post-quantum algorithms and policies that was sent in the KE(#TBA) payload in the first round of IKE_SA_INIT request.  When the responder receives the second round of the IKE_SA_INIT message, it recalculates the cookie value and checks whether or not this value is the same as the one in the previous round of the exchange, which is available from N(PQ_ALGO_POLICIES).  If they mismatch, it indicates an attempt to force a downgrade attack and therefore the connection SHALL be terminated.  [[A mismatch can also occur in the event of <secret> being out-of-sync. Shall we terminate the connection this early here?]].  As before, any attempts of the attacker to modify the packets so that cookie validation passes will be detectable in IKE_AUTH stage.
+
+
+The complete two-round IKE_SA_INIT message exchange flow with cookie is shown below.  In this particular example, the responder understands and accepts the hybrid key-exchange proposed in the first IKE_SA_INIT round.
+
+.in 6
+.nf
+Initiator                          Responder
+--------------------------------------------------------------
+HDR, SAi1, KEi(#TBA), 
+     Ni, [N(Pay Frag)]      -->
+
+                            <--   HDR, SAr1, KE(#TBA), 
+                                       Nr, N(COOKIE),
+                                       [N(Pay Frag),]
+                                            
+HDR, N(COOKIE), SAi1, 
+    KEi1[, KEi2,][..., KEiX,] 
+    Ni, N(PQ_ALGO_POLICIES) -->
+
+                            <--  HDR, SAr1, KEr1[, KEr2,]
+                                      [..., KErX,] Nr
+.fi
+.in 6
+
+The following flow shows the flow whereby the the responder does not support the proposed hybrid key-exchange and proposes to switch to classical Diffie-Hellman key-exchange of type P-256.  Because the responder does not keep any states, it relies on the cookie and N(PQ_ALGO_POLICIES) to detect that it is a genuine downgrade.
+
+.in 6
+.nf
+Initiator                          Responder
+--------------------------------------------------------------
+HDR, SAi1, KEi(#TBA), 
+     Ni, [N(Pay Frag)]      -->
+
+                            <--   HDR, N(INVALID_KE_PAYLOAD),
+                                       N(COOKIE)
+                                            
+HDR, N(COOKIE), SAi1, 
+    KEi(19), Ni, 
+    N(PQ_ALGO_POLICIES)     -->
+
+                            <--  HDR, SAr1, KEr(19), Nr
+.fi
+.in 6
+
+What the cookie does not protect against is an adversary that amends the KE(#TBA) payload in the first IKE_SA_INIT request round and also then amends the N(PQ_ALGO_POLICIES) payload in the second IKE_SA_INIT request round to create a match.  In this instance, IKE_AUTH authentication SHALL fail due to the InitiatorSignedOctets being inconsistent between both peers.
+
+The decision to use a cookie or allocate state SHOULD be a decision taken by the responder.  This should be a configurable value, and/or activated when a certain threshold of half open connections are reached.  The cookie is sent in addition to the other attributes contained in first round of IKE_SA_INIT response.
+
+The cookie does not mitigate an attack whereby an adversary cause the responder to perform many lookups for the post-quantum algorithms and policies, resulting in a denial-of-service (DoS) condition.  In order to mitigate this type of attack, the RFC7296 cookie mechanism or that in RFC8019 SHOULD be used.  
+
+[[Is it possible to combine the encoding of DoS prevention cookie with downgrade attack prevention cookie?]]
  
-
-Questions?
-
-1. We don't want to mandate the use of COOKIE for this, do we?
-
-2. I don't see the need to describe a checking method whereby a state is required, please correct me if I'm wrong.
-
-3. In my naive opinion, it looks like the only useful checking is in IKE_AUTH. As long as we provide IKE_AUTH with sufficient information for checking (i.e. mandating that the initiator always proposes the full set of supported groups), we should resistant against downgrade-attack (of course assuming that there is no quantum computer). Is this correct? If not, what have I missed? OK. After reading our previous email chains, I think I know what the answer is: we consider MitM attacker that doesn't modify the content of the IKEv2 traffic.
-
-[[Add some text on the following in the security consideration section:
-SLOTH-ATTACK: COOKIE must be of 64-octet long to minimize this attack surface.]]
-
 
 .in 3
 .ti 0
@@ -857,21 +877,21 @@ This section gives an overview on a number of alternative approaches that we hav
 
 .in 6
 .ti 3
-o  Sending post-quantum proposal in KE payload
+o  Sending post-quantum proposals and policies in KE payload only
 
-With the objective of not introducing unnecessary notify payloads, we consider communicating hybrid post-quantum proposal in KE payload during the first pass of the protocol exchange.   Unfortunately, this design may be susceptible to a downgrade attack as described as follows.  Consider the scenario where there is a MitM attacker sitting between an initiator and a responder.  The initiator proposes, through SAi payload, to use a hybrid post-quantum group and as a backup a Diffie-Hellman group, and through KEi payload, the initiator proposes a list of hybrid post-quantum proposal.  The MitM attacker intercepts this traffic and replies with N(INVALID_KE_PAYLOAD) suggesting to downgrade to the backup Diffie-Hellman group instead.  The initiator then resends the same SAi payload and the KEi payload containing the public value of the backup Diffie-Hellman group.  Note that the attacker may forwards the second IKE_SA_INIT message only to the responder, and therefore at this point in time, the responder will not have any information that the initiator prefers the hybrid group.  Of course, it is possible for the responder to have a policy to reject an IKE_SA_INIT message that (a) offers a hybrid group but not offering the corresponding public value in the KEi payload; and (b) the responder has not specifically acknowledged that it does not supported the requested hybrid group.  We believe that while this approach saves us from sending a notify payload, it introduces unnecessary protocol complexity in mitigating downgrade attack.  The downgrade issue can be easily mitigated by enforcing the initiator to always send a notify payload containing the full set of supported groups in each IKE_SA_INIT message.
+With the objective of not introducing unnecessary notify payloads, we consider communicating hybrid post-quantum proposal in KE payload during the first pass of the protocol exchange.   Unfortunately, this design may be susceptible to a downgrade attack as described as follows.  Consider the scenario where there is a MitM attacker sitting between an initiator and a responder.  The initiator proposes, through SAi payload, to use a hybrid post-quantum group and as a backup a Diffie-Hellman group, and through KEi payload, the initiator proposes a list of hybrid post-quantum proposals and policies.  The MitM attacker intercepts this traffic and replies with N(INVALID_KE_PAYLOAD) suggesting to downgrade to the backup Diffie-Hellman group instead.  The initiator then resends the same SAi payload and the KEi payload containing the public value of the backup Diffie-Hellman group.  Note that the attacker may forwards the second IKE_SA_INIT message only to the responder, and therefore at this point in time, the responder will not have any information that the initiator prefers the hybrid group.  Of course, it is possible for the responder to have a policy to reject an IKE_SA_INIT message that (a) offers a hybrid group but not offering the corresponding public value in the KEi payload; and (b) the responder has not specifically acknowledged that it does not supported the requested hybrid group.  However, the checking of this policy introduces unnecessary protocol complexity.  Therefore, in order to fully prevent any downgrade attacks, using KE payload only is not sufficient and that the initiator MUST always indicate its preferred post-quantum proposals and policies in a notify payload in the subsequent IKE_SA_INIT messages following a N(INVALID_KE_PAYLOAD) response.
 
 .in 6
 .ti 3
 o  New payload types to negotiate hybrid proposal and to carry post-quantum public value
 
-Semantically, it makes sense to use a new payload type, which mimics the SA payload, to carry a hybrid proposal.  Likewise, another new payload type that mimics the KE payload, could be used to transport hybrid public value.  Although, in theory new payload type could be made backward compatible by not setting its critical flag as per Section 2.5 of RFC7296, we believe that it may not be that simple in practice.  Since the original release of IKEv2 in RFC4306, no new payload type has ever been proposed and therefore, this creates a potential risk of having a backward compatibility issue from non-conforming RFC IKEv2 implementations.  Since we could not see any other compelling advantages apart from a semantic one, we use notify payloads instead.  In fact, as described above, we use notify payload to carry the hybrid proposal and reuse the existing KE payload to carry the hybrid public value.
+Semantically, it makes sense to use a new payload type, which mimics the SA payload, to carry a hybrid proposal.  Likewise, another new payload type that mimics the KE payload, could be used to transport hybrid public value.  Although, in theory new payload type could be made backward compatible by not setting its critical flag as per Section 2.5 of RFC7296, we believe that it may not be that simple in practice.  Since the original release of IKEv2 in RFC4306, no new payload type has ever been proposed and therefore, this creates a potential risk of having a backward compatibility issue from non-conforming RFC IKEv2 implementations.  Since we could not see any other compelling advantages apart from a semantic one, we use the existing KE payload and notify payload instead.  In fact, as described above, we use the KE payload in the first IKE_SA_INIT request round and notify payload to carry the post-quantum proposals and policies and use one or more of the existing KE payload to carry the hybrid public value.
 
 .in 6
 .ti 3
 o  Hybrid public value payload
 
-One way to transport the negotiated hybrid public value, which contains one classical Diffie-Hellman public value and one or more post-quantum public value, is to bundle them into a single KE payload.  Alternatively, it could also be transported on a single new hybrid public value payload, but following the same reasoning as the point above, this may be a good idea from backward compatibility perspective.  Using a single KE payload would require an encoding or formating to be defined so that both peers are able to compose and extract the individual public values.  However, we believe that it is cleaner to send the hybrid public value int multiple KE payloads--one for each group or algorithm.  Furthermore, at this point the protocol exchange, both peers should have indicated support of handling multiple KE payloads.
+One way to transport the negotiated hybrid public value, which contains one classical Diffie-Hellman public value and one or more post-quantum public value, is to bundle them into a single KE payload.  Alternatively, it could also be transported on a single new hybrid public value payload, but following the same reasoning as the point above, this may be a good idea from backward compatibility perspective.  Using a single KE payload would require an encoding or formatting to be defined so that both peers are able to compose and extract the individual public values.  However, we believe that it is cleaner to send the hybrid public value in multiple KE payloads--one for each group or algorithm.  Furthermore, at this point the protocol exchange, both peers should have indicated support of handling multiple KE payloads.
 
 .in 6
 .ti 3
@@ -901,7 +921,7 @@ Another idea that has been discarded is on fragmenting an individual payload wit
 .fi
 
 .in 6
-When the flag F is set, it means the current KE payload is fragment of a larger KE payload.  The Payload Length field denotes the size of this payload fragment in octets--including the size of the generic payload header.  The two-octet RESERVED field following Diffie-Hellman Group Number is used as a fragment identifier to help assembly and disassembly of fragments.  The Fragment Index and Total Fragments fields are self-explanatory.  The Total KE Payload Data Length indicates the size of the assembled KE payload data in octets.  Finally, the actual fragment is carried in Fragment KE Payload field.  We believe that the working group may not be happy using the RESERVED field to change the format of a packet and that implementors may not like the complexity added from checking the fragmentation flag in each received payload.
+When the flag F is set, it means the current KE payload is fragment of a larger KE payload.  The Payload Length field denotes the size of this payload fragment in octets--including the size of the generic payload header.  The two-octet RESERVED field following Diffie-Hellman Group Number is used as a fragment identifier to help assembly and disassembly of fragments.  The Fragment Index and Total Fragments fields are self-explanatory.  The Total KE Payload Data Length indicates the size of the assembled KE payload data in octets.  Finally, the actual fragment is carried in Fragment KE Payload field.  We believe that the working group may not be happy using the RESERVED field to change the format of a packet and that implementers may not like the complexity added from checking the fragmentation flag in each received payload.
 
 .in 6
 .ti 3
@@ -919,71 +939,22 @@ Another way of checking whether or not a downgrade attack is in effect is to hav
 .ti 0
 6. Security considerations 
 
+.in 6
+.ti 3
+The key length of the Encryption Algorithm (Transform Type 1), the Pseudorandom Function (Transform Type 2) and the Integrity Algorithm (Transform Type 3), all have to be of sufficient length to prevent attacks using Grover's algorithm [GROVER].  In order to use the extension proposed in this document, the key lengths of these transforms SHALL be at least 256 bits long in order to prevent any quantum attacks from succeeding.  Accordingly the post-quantum security level achieved is at least 128 bits.
 
-   The key length of the Encryption Algorithm (Transform Type 1), the
-   Pseudorandom Function (Transform Type 2) and the Integrity Algorithm
-   (Transform Type 3), all have to be of sufficient length to prevent
-   attacks using Grover's algorithm [GROVER].  In order to use the
-   extension proposed in this document, the key lengths of these
-   transforms SHALL be at least 256 bits long in order to prevent any
-   quantum attacks from succeeding.  Accordingly the post-quantum
-   security level achieved is at least 128 bits.
+SKEYSEED  is calculated from shared, KEx, using an algorithm defined 
+in Transform Type 2.  While a quantum attacker may learn the value of KEx', if this value is obtained by means of a classical key exchange, other KEx values generated by means of a quantum-resistant algorithm ensure that SKEYSEED is not compromised.  This assumes that the algorithm defined in the Transform Type 2 is quantum-safe.
 
-   SKEYSEED  is calculated from shared, KEx, using an algorithm defined 
-   in Transform Type 2.  
-   While a quantum attacker may learn the value of KEx', if this value is 
-   obtained by means of a classical key exchange, other KEx values generated 
-   by means of a quantum-resistant algorithm ensure that SKEYSEED is not compromised.  
-   This assumes that the algorithm defined in the Transform Type 2 is quantum-safe.
+Because some quantum-safe public values are in the order of several KB, a IKEv2 message that contains such a QSKE payload will exceed the path Maximum Transmission Unit (MTU) and the message may be fragmented at the IP level.  This presents the possibility of an attack vector that relies on IP fragmentation.  One such attack vector is to mount a denial of service by swamping a receiver with IP fragments [DOSUDPPROT].  This issue could be mitigated by employing TCP encapsulation [RFC8229].
 
-   Because some quantum-safe public values are in the order of several
-   KB, a IKEv2 message that contains such a QSKE payload will exceed the
-   path Maximum Transmission Unit (MTU) and the message may be
-   fragmented at the IP level.  This presents the possibility of an
-   attack vector that relies on IP fragmentation.  One such attack
-   vector is to mount a denial of service by swamping a receiver with IP
-   fragments [DOSUDPPROT].  This issue could be mitigated by employing
-   TCP encapsulation [RFC8229].
+The main focus of this document is to prevent a passive attacker performing a "harvest and decrypt" attack.  In other words, an attacker that records messages exchanges today and proceeds to decrypt them once he owns a quantum computer.  This attack is prevented due to the hybrid nature of the key exchange.  Other attacks involving an active attacker owning a quantum-computer are not solved by this document since the authentication step remains classical.  In particular, the authenticity of the SAs established under IKEv2 is protected using a pre-shared key, RSA, DSS, or ECDSA algorithms.  Whilst the pre-shared key option, provided the key is long enough, is quantum-safe, the other algorithms are not.   Moreover, in implementations where scalability is a requirement, the pre-shared key method may not be suitable.  Quantum-safe authenticity may be provided by using a quantum-safe digital signature and several quantum-safe digital signature methods are being explored by IETF.  For example the hash based method, XMSS has the status of an Internet Draft, see [XMSS].  Currently, quantum-safe authentication methods are not specified in this document, but are planned to be incorporated in due course.
 
-   The main focus of this document is to prevent a passive attacker performing a "harvest and decrypt" attack.
-   In other words, an attacker that records messages exchanges today and proceeds to decrypt them once he owns a quantum    computer.
-   This attack is prevented due to the hybrid nature of the key exchange.
-   Other attacks involving an active attacker owning a quantum-computer are not solved by this document since
-   the authentication step remains classical. 
-   In particular, the authenticity of the SAs established under IKEv2 is protected
-   using a pre-shared key, RSA, DSS, or ECDSA algorithms.  Whilst the
-   pre-shared key option, provided the key is long enough, is quantum-
-   safe, the other algorithms are not.   Moreover, in implementations
-   where scalability is a requirement, the pre-shared key method may not
-   be suitable.  Quantum-safe authenticity may be provided by using a
-   quantum-safe digital signature and several quantum-safe digital
-   signature methods are being explored by IETF.  For example the hash
-   based method, XMSS has the status of an Internet Draft, see [XMSS]. 
-   Currently, quantum-safe authentication methods are not specified in
-   this document, but are planned to be incorporated in due course.
+It should be noted that the purpose of quantum-safe algorithms is to prevent attacks, mounted in the future, from succeeding.  The current threat is that encrypted sessions may be subject to eavesdropping and archived with decryption by quantum computers taking place at some point in the future.  Until quantum computers become available there is no point in attacking the authenticity of a connection because there are no possibilities for exploitation.  These only occur at the time of the connection, for example by mounting a MitM attack.  Consequently there is not such a pressing need for quantum-safe authenticity.
 
-   It should be noted that the purpose of quantum-safe algorithms is to
-   prevent attacks, mounted in the future, from succeeding.  The current
-   threat is that encrypted sessions may be subject to eavesdropping and
-   archived with decryption by quantum computers taking place at some
-   point in the future.  Until quantum computers become available there
-   is no point in attacking the authenticity of a connection because
-   there are no possibilities for exploitation.  These only occur at the
-   time of the connection, for example by mounting a MitM attack. 
-   Consequently there is not such a pressing need for quantum-safe
-   authenticity.
+The use of the QSKE provides an method for malicious parties to send IKE_SA_INIT initiator messages containing QSKE of type KEM and with random values.  As the standard behavior is for the responder to generate a random entity, encrypt it using the received public key (which would be a random value), and sends the encrypted quantity to the initiator in QSKEr payload.  This allows for a simply method for malicious parties to cause a VPN gateway to perform excessive processing.  To mitigate against this threat, implementations can make use of the COOKIE notification as defined in [RFC7296], to mitigate spoofed traffic and [RFC8019] to minimize the impact from hosts who use their own IP address.
 
-   The use of the QSKE provides an method for malicious parties to send
-   IKE_SA_INIT initiator messages containing QSKE of type KEM and with
-   random values.  As the standard behavior is for the responder to
-   generate a random entity, encrypt it using the received public key
-   (which would be a random value), and sends the encrypted quantity to
-   the initiator in QSKEr payload.  This allows for a simply method for
-   malicious parties to cause a VPN gateway to perform excessive
-   processing.  To mitigate against this threat, implementations can
-   make use of the COOKIE notification as defined in [RFC7296], to
-   mitigate spoofed traffic and [RFC8019] to minimize the impact from
-   hosts who use their own IP address.
+Cookie notification is used to prevent downgrade attacks. The cookie SHALL NOT be of arbitrary length, otherwise it will be susceptible to SLOTH attack as described in [BL].  It is RECOMMENDED that the length of the cookie be no longer than 64 octets.
 
 .ti 0
 7. Appendix with flow of messages for corner cases
@@ -1553,6 +1524,9 @@ Key Exchange - a New Hope", 25th USENIX Security Symposium, pp. 327-343, 2016.
 [BCNS15]   Bos, J., Costello, C., Naehrig, M., and Stebila, D., "Post-quantum
 Key Exchange for the TLS Protocol from the Ring Learning with Errors Problem",
 IEEE Symposium on Security and Privacy, pp. 553-570, 2015.
+
+.ti 3
+[BL]       Bhargavan, K. and Leurent, G., "Transcript Collision Attacks: Breaking Authentication in TLS, IKE, and SSH", Network and Distributed System Security Symposium, 2016.
 
 .ti 3
 [DOSUDPPROT]
