@@ -21,8 +21,8 @@
 .tl 'Expires: July 19, 2018''G. Bartlett'
 .tl '''S. Fluhrer'
 .tl '''Cisco Systems'
-.tl '''D. Geest'
-.tl '''Isara'
+.tl '''D. Van Geest'
+.tl '''ISARA Corporation'
 .tl '''Z. Zhang'
 .tl '''Onboard Security'
 .tl '''O. Garcia-Morchon'
@@ -195,7 +195,7 @@ The design of the proposed post-quantum IKEv2 is driven by the following criteri
 2)   Hybrid.  Currently, there does not exist a post-quantum key exchange that is trusted at the level that ECDH is trusted against conventional (non-quantum) adversaries.  A hybrid approach allows introducing promising post-quantum candidates next to well-established primitives, since the overall security is at least as strong as each individual primitive.
 
 .ti 3
-3)   Focus on quantum-resistant confidentiality. A passive attacker can eavesdrop IPSec communication today and decrypt it once a quantum computer is available in the future. This is a very serious attack for which we do not have a solution. An attacker can only perform active attacks such as impersonation of the communicating peers once a quantum computer is available, sometime in the future. Thus, our design focuses on quantum-resistant confidentiality due to the urgency of this problem. This document does not address quantum-resistant authentication since it is less urgent at this stage.
+3)   Focus on quantum-resistant confidentiality. A passive attacker can eavesdrop IPsec communication today and decrypt it once a quantum computer is available in the future. This is a very serious attack for which we do not have a solution. An attacker can only perform active attacks such as impersonation of the communicating peers once a quantum computer is available, sometime in the future. Thus, our design focuses on quantum-resistant confidentiality due to the urgency of this problem. This document does not address quantum-resistant authentication since it is less urgent at this stage.
 
 .ti 3
 4)   Limit amount of exchanged data.  The protocol design should be such that the amount of exchanged data, such as public-keys, is kept as small as possible even if initiator and responder need to agree on a hybrid group or multiple public-keys need to be exchanged.
@@ -222,7 +222,7 @@ The design of the proposed post-quantum IKEv2 is driven by the following criteri
 11)  Backwards compatibility and interoperability.  This is a fundamental requirement to ensure that hybrid post-quantum IKEv2 and a non-post-quantum IKEv2 implementations are interoperable. 
 
 .ti 3
-12)  FIPS compliance.  IPSec is widely used in Federal Information Systems and FIPS certification is an important requirement.  However, algorithms that are believed to be post-quantum are not FIPS compliant yet.  Still, the goal is that the overall hybrid post-quantum IKEv2 design can be FIPS compliant.
+12)  FIPS compliance.  IPsec is widely used in Federal Information Systems and FIPS certification is an important requirement.  However, algorithms that are believed to be post-quantum are not FIPS compliant yet.  Still, the goal is that the overall hybrid post-quantum IKEv2 design can be FIPS compliant.
 
 
 .ti 0
@@ -283,7 +283,7 @@ By using the KE payload, peers that do not support the hybrid exchange will reje
 
 On receipt of the N(PQ_ALGO_POLICIES) payload, the responder MUST validate these post-quantum algorithms and policies against its own policies.  This validation is required to ensure that the post-quantum algorithms were not amended in the initial exchange, resulting in a downgrade attack.
 
-Should the proposed post-quantum algorithms not be acceptable to the responder, the responder SHOULD indicate this by sending the INVALID_KE_PAYLOAD Notify message to indicate its preferred Diffie-Hellman group or the NO_PROPOSAL_CHOSEN Notify message if no Diffie-Hellman group were acceptable..  If the classical cryptographic suite is acceptable, but the post-quantum algorithms are not, the responder SHOULD indicate this by specifying the preferred Diffie-Hellman group in the INVALID_KE_PAYLOAD notification.  The initiator should then revert to the classical IKEv2 exchange and include the N(PQ_ALGO_POLICIES) payload to prevent downgrade attacks.  Below is an example that shows the proposed hybrid group is not supported by the responder and that the responder prefers a Diffie-Hellman Group 19 (P-256), assuming that this group is in the list proposed (although it is not preferred), in the previous message.
+Should the proposed post-quantum algorithms not be acceptable to the responder, the responder SHOULD indicate this by sending the INVALID_KE_PAYLOAD Notify message to indicate its preferred Diffie-Hellman group or the NO_PROPOSAL_CHOSEN Notify message if no Diffie-Hellman group were acceptable.  If the classical cryptographic suite is acceptable, but the post-quantum algorithms are not, the responder SHOULD indicate this by specifying the preferred Diffie-Hellman group in the INVALID_KE_PAYLOAD notification.  The initiator should then revert to the classical IKEv2 exchange and include the N(PQ_ALGO_POLICIES) payload to prevent downgrade attacks.  Below is an example that shows the proposed hybrid group is not supported by the responder and that the responder prefers a Diffie-Hellman Group 19 (P-256), assuming that this group is in the list proposed (although it is not preferred), in the previous message.
 
 .in 6
 .nf
@@ -354,7 +354,7 @@ Specifically, the key exchange for creating a child SA using a hybrid group is:
 .nf
 Initiator                        Responder
 --------------------------------------------------------------
-HDR, SK{SA, NI, KEi1, KEi2, 
+HDR, SK{SA, Ni, KEi1, KEi2, 
      ..., KEiN, TSi, TSr}   -->
                             <--  HDR, SK{SA, Nr, KEr1, KEr2, 
                                        ..., KErN, TSi, TSr}
@@ -413,7 +413,7 @@ We expect that in the future, IANA will assign permanent values to these transfo
 .fi
 .in 3
 
-The following values are reserved for the below key exchanges (which will need to be specified in more detail elsewhere): 0x9100 - 0xXXXX.  The following abstract identifiers are used to illustrate their usage in our framework.  Actual identifiers will be maintained by IANA (?) and updated during the NIST standardization process. 
+The following values are reserved for the below key exchanges: 0x9100 - 0xXXXX.  The following abstract identifiers are used to illustrate their usage in our framework.  Actual identifiers will be maintained by IANA and updated during the NIST standardization process. 
 
 .in 6
 .nf
@@ -1059,8 +1059,6 @@ The key length of the Encryption Algorithm (Transform Type 1), the Pseudorandom 
 
 SKEYSEED  is calculated from shared, KEx, using an algorithm defined in Transform Type 2.  While a quantum attacker may learn the value of KEx', if this value is obtained by means of a classical key exchange, other KEx values generated by means of a quantum-resistant algorithm ensure that SKEYSEED is not compromised.  This assumes that the algorithm defined in the Transform Type 2 is post-quantum.
 
-Because the size of some post-quantum public values are in the order of several KB, a IKEv2 message that contains such a QSKE payload will exceed the path Maximum Transmission Unit (MTU) and the message may be fragmented at the IP level.  This presents the possibility of an attack vector that relies on IP fragmentation.  One such attack vector is to mount a denial of service by swamping a receiver with IP fragments [KPS].  This issue could be mitigated by employing TCP encapsulation [RFC8229].
-
 The main focus of this document is to prevent a passive attacker performing a "harvest and decrypt" attack.  In other words, an attacker that records messages exchanges today and proceeds to decrypt them once he owns a quantum computer.  This attack is prevented due to the hybrid nature of the key exchange.  Other attacks involving an active attacker using a quantum-computer are not completely solved by this document since the authentication step remains classical.  In particular, the authenticity of the SAs established under IKEv2 is protected using a pre-shared key, RSA, DSA, or ECDSA algorithms.  Whilst the pre-shared key option, provided the key is long enough, is post-quantum, the other algorithms are not.   Moreover, in implementations where scalability is a requirement, the pre-shared key method may not be suitable.  Quantum-safe authenticity may be provided by using a quantum-safe digital signature and several quantum-safe digital signature methods are being explored by IETF.  For example the hash based method, XMSS has the status of an Internet Draft, see [XMSS].  Currently, quantum-safe authentication methods are not specified in this document, but are planned to be incorporated in due course.
 
 It should be noted that the purpose of post-quantum algorithms is to provide resistance to attacks mounted in the future.  The current threat is that encrypted sessions are subject to eavesdropping and archived with decryption by quantum computers taking place at some point in the future.  Until quantum computers become available there is no point in attacking the authenticity of a connection because there are no possibilities for exploitation.  These only occur at the time of the connection, for example by mounting a MitM attack.  Consequently there is not such a pressing need for quantum-safe authenticity.
@@ -1082,9 +1080,6 @@ Cookie notification is used to prevent downgrade attacks. The cookie SHALL NOT b
 
 .ti 3
 [BL]       Bhargavan, K. and Leurent, G., "Transcript Collision Attacks: Breaking Authentication in TLS, IKE, and SSH", Network and Distributed System Security Symposium, 2016.
-
-.ti 3
-[KPS]      Kaufman, C., Perlman, R., and Sommerfeld, B., "DoS protection for UDP-based protocols", ACM Conference on Computer and Communications Security, October 2003.
 
 .ti 3
 [ESP]      Kent, S., "IP Encapsulating Security Payload (ESP)", RFC 4303, December 2005, <http://www.rfc-editor.org/info/rfc4303>.
