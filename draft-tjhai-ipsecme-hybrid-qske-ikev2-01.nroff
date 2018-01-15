@@ -6,9 +6,9 @@
 .ds LF Tjhai et al.
 .ds RF FORMFEED[Page %]
 .ds LH Internet-Draft
-.ds RH October 21, 2017
+.ds RH January 15, 2018
 .ds CH Hybrid PQKE for IKEv2
-.ds CF Expires April 24, 2018
+.ds CF Expires July 19, 2018
 .hy 0
 .nh
 .ad l
@@ -18,7 +18,7 @@
 .tl 'Internet Engineering Task Force''C. Tjhai'
 .tl 'Internet-Draft''M. Tomlinson'
 .tl 'Intended Status: Informational''Post-Quantum'
-.tl 'Expires: April 24, 2018''G. Bartlett'
+.tl 'Expires: July 19, 2018''G. Bartlett'
 .tl '''S. Fluhrer'
 .tl '''Cisco Systems'
 .tl '''D. Geest'
@@ -27,7 +27,7 @@
 .tl '''Onboard Security'
 .tl '''O. Garcia-Morchon'
 .tl '''Philips'
-.tl '''October 21, 2017'
+.tl '''January 15, 2018'
 .fi
 
 .\" Note. The ".tl" directive is used to generate the leading header
@@ -71,12 +71,12 @@ and may be updated, replaced, or obsoleted by other documents at any
 time.  It is inappropriate to use Internet-Drafts as reference
 material or to cite them other than as "work in progress."
 
-This Internet-Draft will expire on MMMM DD, YYYY.
+This Internet-Draft will expire on July 19, 2018.
 
 .ti 0
 Copyright Notice
 
-Copyright (c) 2017 IETF Trust and the persons identified as the document
+Copyright (c) 2018 IETF Trust and the persons identified as the document
 authors.  All rights reserved.
 
 This document is subject to BCP 78 and the IETF Trust's Legal Provisions
