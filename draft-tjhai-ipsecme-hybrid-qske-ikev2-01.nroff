@@ -125,6 +125,7 @@ Table of Contents
    4.  Alternative Design . . . . . . . . . . . . . . . . . . . . . . 28
    5.  Security considerations  . . . . . . . . . . . . . . . . . . . 31
    6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+   Acknowledgements . . . . . . . . . . . . . . . . . . . . . . . . . 34
    Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 35
 .fi
 .in 3
@@ -327,7 +328,6 @@ The responder also sends the IKE_SA-INIT response message including its key-shar
 
 Below is an example message exchanged in the second round of IKE_SA_INIT message.
 
-.bp
 .in 6
 .nf
 Initiator                          Responder
@@ -1117,6 +1117,14 @@ in practice", Proc. 22rd ACM SIGSAC Conference on Computer and Communications Se
 
 .ti 3
 [XMSS]     Huelsing, A., Butin, D., Gazdag, S., and Mohaisen, A., "XMSS: Extended Hash-Based Signatures", Crypto Forum Research Group Internet Draft, 2017
+
+
+.in 0
+.ti 0
+Acknowledgements
+
+.in 3
+The authors would like to thanks Frederic Detienne and Olivier Pelerin for their comments and suggestions, including the idea to negotiate the post-quantum algorithms using the existing KE payload.
 
 
 .bp
