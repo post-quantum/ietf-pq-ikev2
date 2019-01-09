@@ -416,7 +416,7 @@
 		listed below.</t>
 
     <section title="IKE_SA_INIT Round: Negotiation" >
-        <t> Using multiple key exchanges is negotiated by means of standard IKEv2 mechanism - via SA payload.
+        <t> Multiple key exchanges are negotiated using the standard IKEv2 mechanism, via SA payload.
         For this purpose several new transform types, namely Additional Key Exchange 1, Additional Key Exchange 2,
         Additional Key Exchange 3 etc. are defined. They are collectively called Additional Key Exchanges 
         and have slightly different semantics than existing IKEv2 transform types.
