@@ -628,7 +628,7 @@
         (along with Transform Type 4) and the responder agrees to perform additional
         key exchanges, then the additional key exchanges are performed in a series 
         of the INFORMATIONAL exchanges that follows the CREATE_CHILD_SA exchange
-        in an order of the values of corresponding transform types, so that 
+        in an order of the values of their transform types, so that 
         key exchange negotiated using transform type N always precedes key exchange negotiated using
         transform type N + 1. Each INFORMATIONAL exchange MUST bear exactly one key exchange method. 
         Key exchange negotiated via Transform Type 4 always takes place
