@@ -626,7 +626,7 @@
         may want continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
         If the initiator includes any Additional Key Exchanges transform in the SA payload
         (along with Transform Type 4) and the responder agrees to perform additional
-        key exchanges then the additional key exchanges are performed in a series 
+        key exchanges, then the additional key exchanges are performed in a series 
         of the INFORMATIONAL exchanges that follows the CREATE_CHILD_SA exchange
         in an order of the values of corresponding transform types, so that 
         key exchange negotiated using transform type N always precedes key exchange negotiated using
