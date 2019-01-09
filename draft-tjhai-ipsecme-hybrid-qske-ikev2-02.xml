@@ -616,7 +616,7 @@
 	</section>
 
     <section title="CREATE_CHILD_SA Exchange">
-        <t> The CREATE_CHILD_SA exchange is used in the IKEv2 for the purposes 
+        <t> The CREATE_CHILD_SA exchange is used in IKEv2 for the purpose 
         of creating additional Child SAs, rekeying them and rekeying IKE SA itself.
         When creating or rekeying Child SAs the peers may optionally 
         perform Diffie-Hellmann key exchange to add a fresh entropy into the session keys, 
