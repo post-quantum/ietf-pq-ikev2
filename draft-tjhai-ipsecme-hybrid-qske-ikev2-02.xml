@@ -426,7 +426,7 @@
         a single IANA registry for transform IDs.
         </t>
         <t> Key exchange method negotiated via transform type 4 MUST always take place
-        in the IKE_SA_INIT exchange. Additional key exchange methods negotiated via newly
+        in the IKE_SA_INIT exchange. Additional Key Exchanges negotiated via newly
         defined transforms MUST take place in series of INTERMEDIATE exchanges, in an order of the values of their transform types, 
         so that key exchange negotiated using transform type N always precedes key exchange negotiated using
         transform type N + 1. Each INTERMEDIATE exchange MUST bear exactly one key exchange method. 
