@@ -620,7 +620,7 @@
         of creating additional Child SAs, rekeying them and rekeying IKE SA itself.
         When creating or rekeying Child SAs, the peers may optionally 
         perform a Diffie-Hellmann key exchange to add a fresh entropy into the session keys, 
-        in case of IKE SA rekeying the key exchange is mandatory.
+        in case of IKE SA rekeying, the key exchange is mandatory.
         </t>
         <t> If the IKE SA was created using multiple key exchange methods the peers 
         may want continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
