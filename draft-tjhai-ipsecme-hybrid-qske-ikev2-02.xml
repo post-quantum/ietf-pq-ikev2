@@ -622,7 +622,7 @@
         perform a Diffie-Hellmann key exchange to add a fresh entropy into the session keys, 
         in case of IKE SA rekeying, the key exchange is mandatory.
         </t>
-        <t> If the IKE SA was created using multiple key exchange methods the peers 
+        <t> If the IKE SA was created using multiple key exchange methods, the peers 
         may want continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
         If the initiator includes any Additional Key Exchanges transform in the SA payload
         (along with Transform Type 4) and the responder agrees to perform additional
