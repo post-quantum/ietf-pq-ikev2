@@ -3,14 +3,15 @@
 <!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
 <!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
 <!ENTITY I-D.ietf-ipsecme-qr-ikev2 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-qr-ikev2.xml">
-<!ENTITY I-D.smyslov-ipsecme-ikev2-aux SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-smyslov-ipsecme-ikev2-aux-00.xml">
+<!ENTITY I-D.smyslov-ipsecme-ikev2-aux SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-smyslov-ipsecme-ikev2-aux-02.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC7296 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml">
 <!ENTITY RFC7383 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7383.xml">
+<!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8229 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8229.xml">
 <!ENTITY RFC8391 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8391.xml">
 ]>
-<rfc submissionType="IETF" docName="draft-tjhai-ipsecme-hybrid-qske-ikev2-02" category="info"><?rfc compact="yes"?>
+<rfc submissionType="IETF" docName="draft-tjhai-ipsecme-hybrid-qske-ikev2-03" category="info"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -75,7 +76,15 @@
 	</address>
 	</author>
 
-	<date day="1" month="July" year="2018"/>
+    <author fullname="Valery Smyslov" initials="V." surname="Smyslov">
+    <organization>ELVIS-PLUS</organization>
+    <address><postal><street></street>
+    </postal>
+    <email>svan@elvis.ru</email>
+    </address>
+    </author>
+
+    <date/>
 	<workgroup>Internet Engineering Task Force</workgroup>
 	<abstract><t>
 		This document describes how to extend Internet Key Exchange Protocol
@@ -102,7 +111,7 @@
 			There are, however, a number of cryptosystems that are conjectured to
 			be resistant against quantum computer attack.  This family of
 			cryptosystems are known as post-quantum cryptography (PQC).  It is
-			ometime also referred to as quantum-safe cryptography (QSC) or
+			sometimes also referred to as quantum-safe cryptography (QSC) or
 			quantum-resistant cryptography (QRC).
 		</t></section>
 
@@ -125,8 +134,8 @@
 			other hand, a post-quantum shared secret is obtained if both classical
 			and post-quantum key exchange data are present.  This framework also
 			applies to key exchanges in IKE Security Associations (SAs) for
-			Encapsulating Security Payload (ESP) <xref target="ESP"/> or
-			Authentication Header (AH) <xref target="AH"/>, i.e. Child SAs,
+			Encapsulating Security Payload (ESP) <xref target="RFC4303"/> <!-- <xref target="ESP"/> --> or
+			Authentication Header (AH) <xref target="RFC4302"/> <!-- <xref target="AH"/> -->, i.e. Child SAs,
 			in order to provide a stronger guarantee of forward security.</t>
 
 		<t>
@@ -138,12 +147,12 @@
 			too.  IKE does have a mechanism to handle fragmentation within
 			UDP <xref target="RFC7383"/>, however that is only applicable to
 			messages exchanged after the IKE_SA_INIT.  To use this mechanism,
-			we use the IKE_AUX exchange as outlined in
+			we use the INTERMEDIATE exchange as outlined in
 			<xref target="I-D.smyslov-ipsecme-ikev2-aux"/>.  With this
 			mechanism, we do an initial key exchange, using a smaller, possibly
 			non-quantum resistant primitive, such as ECDH.  Then, before we do
-			the IKE_AUTH exchange, we perform one or more IKE_AUX exchanges,
-			each of which includes a secondary key exchange.  As the IKE_AUX
+			the IKE_AUTH exchange, we perform one or more INTERMEDIATE exchanges,
+			each of which includes a secondary key exchange.  As the INTERMEDIATE
 			exchange is encrypted, the IKE fragmentation protocol RFC7383
 			can be used.  The IKE SK values will be updated after each exchange,
 			and so the final IKE SK values will depend on all the key exchanges,
@@ -163,7 +172,7 @@
 	 <t>draft-tjhai-ipsecme-hybrid-qske-ikev2-01</t>
 
 	 <t><list style="symbols">
- 		<t>Use IKE_AUX to perform multiple key exchanges in succession.</t>
+ 		<t>Use INTERMEDIATE to perform multiple key exchanges in succession.</t>
 
  		<t>Handle fragmentation by keeping the first key exchange (a standard
  			IKE_SA_INIT with a few extra notifies) small, and encrypting the rest
@@ -186,7 +195,7 @@
 
 </section>
 
-	<section title="Document organization" anchor="section-1.4"><t>
+	<section title="Document Organization" anchor="section-1.4"><t>
    The remainder of this document is organized as follows.  <xref target="section-2"/>
    summarizes design criteria.  <xref target="section-3"/> describes how
 	 post-quantum key exchange is performed between two IKE peers and how
@@ -196,14 +205,18 @@
    discusses IANA considerations for the name spaces introduced in this
 	 document.</t>
 
-	 <t>
-    The keywords MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD,
+    <t> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", 
+    "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted 
+    as described in BCP 14 <xref target="RFC2119" /> <xref target="RFC8174" /> when, and only when, 
+    they appear in all capitals, as shown here.
+    </t>
+<!--	 <t> The keywords MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD,
     SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL, when they appear in this
-    document, are to be interpreted as described in RFC 2119 <xref target="RFC2119"/>.</t>
+    document, are to be interpreted as described in RFC 2119 <xref target="RFC2119"/>.</t> -->
  	</section>
 	</section>
 
-	<section title="Design criteria" anchor="section-2"><t>
+	<section title="Design Criteria" anchor="section-2"><t>
    The design of the proposed post-quantum IKEv2 is driven by the
    following criteria:</t>
 
@@ -319,7 +332,7 @@
 
 	</section>
 
-	<section title="The Framework of Hybrid Post-quantum Key Exchange" anchor="section-3">
+	<section title="The Framework of Hybrid Post-Quantum Key Exchange" anchor="section-3">
 		<section title="Overall design" anchor="section-3.1"><t>
 			This design assigns new group identifiers (Transform Type 4) to the
 			various post-quantum key exchanges (which will be defined later).  We
@@ -330,7 +343,7 @@
 			protocol.  In order to support both hybrid key exchanges (that is,
 			relying on distinct key exchanges) and fragmentation, the proposed
 			hybrid post-quantum IKEv2 protocol extends IKE <xref target="RFC7296"/>
-			by adding additional key exchange messages (IKE_AUX) between the
+			by adding additional key exchange messages (INTERMEDIATE) between the
 			IKE_SA_INIT and the IKE_AUTH exchanges.  In order to minimize
 			communication overhead, only the key shares that are agreed to be used
 			are actually exchanged.  In order to achieve this, the IKE_SA_INIT
@@ -339,7 +352,7 @@
 			notify that lists the extra key exchange policy required by the
 			initiator; the responder selects one of the listed policies, and
 			includes that as a notify in the response IKE_SA_INIT message.  Then,
-			the initiator and the responder perform one (or possibly more) IKE_AUX
+			the initiator and the responder perform one (or possibly more) INTERMEDIATE
 			exchange; each such exchange includes a KE payload for the key exchange
 			that was negotiated.</t>
 
@@ -348,11 +361,11 @@
   <figure><artwork><![CDATA[
      Initiator                                Responder
   --------------------------------------------------------
-  <-- IKE_SA_INIT (and extra key exchange negotiation) -->
+  <-- IKE_SA_INIT  (and extra key exchange negotiation) -->
 
-    <-- {IKE_AUX (hybrid post-quantum key exchange)} -->
+  <-- {INTERMEDIATE (hybrid post-quantum key exchange)} -->
                              ...
-    <-- {IKE_AUX (hybrid post-quantum key exchange)} -->
+  <-- {INTERMEDIATE (hybrid post-quantum key exchange)} -->
 
                      <-- {IKE_AUTH} -->
 ]]></artwork></figure>
@@ -362,6 +375,25 @@
 		algorithms are collectively referred to as post-quantum algorithms in
 		this document.</t>
 
+<!--    <section title="Hybrid Group Negotiation" anchor="section-3.4"> -->
+    <t> Most post-quantum key agreement algorithms are relatively new, and
+        thus are not fully trusted.  There are also many proposed algorithms,
+        with different trade-offs and relying on different hard problems.  The
+        concern is that some of these hard problems may turn out to be easier
+        to solve than anticipated (and thus the key agreement algorithm not be
+        as secure as expected).  A hybrid solution allows us to deal with this
+        uncertainty by combining a classical key exchanges with a post-quantum
+        one, as well as leaving open the possibility of multiple post-quantum
+        key exchanges.</t>
+
+    <t>The method that we use to perform hybrid key exchange also addresses
+        the fragmentation issue.  The initial IKE_INIT messages do not have any
+        inherent fragmentation support within IKE; however that can include a
+        relatively short KE payload (e.g. one for group 14, 19 or 31).  The
+        rest of the KE payloads are encrypted within INTERMEDIATE messages; because
+        they are encrypted, the standard IKE fragmentation solution
+        <xref target="RFC7383"/> is available.</t>
+<!--    </section> -->
 	</section>
 
 	<section title="Overall Protocol" anchor="section-3.2"><t>
@@ -374,7 +406,7 @@
 		rounds involved in the hybrid post-quantum protocol.</t>
 
 	<t>In this case, the initiator performs the IKE_SA_INIT as standard,
-		inserting this prefered key exchange (which is possibly a post-quantum
+		inserting this preferred key exchange (which is possibly a post-quantum
 		algorithm) as the listed Transform Type 4, and including the initiator
 		KE payload.  If the responder accepts the policy, he responds with an
 		IKE_SA_INIT response, and IKE continues as usual.</t>
@@ -383,10 +415,51 @@
 		needs IKE to handle any possible fragmentation, then he uses the protocol
 		listed below.</t>
 
+    <section title="IKE_SA_INIT Round: Negotiation" >
+        <t> Multiple key exchanges are negotiated using the standard IKEv2 mechanism, via SA payload.
+        For this purpose several new transform types, namely Additional Key Exchange 1, Additional Key Exchange 2,
+        Additional Key Exchange 3, etc., are defined. They are collectively called Additional Key Exchanges 
+        and have slightly different semantics than existing IKEv2 transform types.
+        They are interpreted as additional key exchanges that peers agreed to perform
+        in a series of INTERMEDIATE exchanges. The possible transform IDs for these transform types 
+        are the same as IDs for the transform type 4 (Diffie-Hellman Group), so they all share
+        a single IANA registry for transform IDs.
+        </t>
+        <t> Key exchange method negotiated via transform type 4 MUST always take place
+        in the IKE_SA_INIT exchange. Additional Key Exchanges negotiated via newly
+        defined transforms MUST take place in series of INTERMEDIATE exchanges, in an order of the values of their transform types, 
+        so that key exchange negotiated using transform type N always precedes that of
+        transform type N + 1. Each INTERMEDIATE exchange MUST bear exactly one key exchange method. 
+        Note that with this semantics, Additional Key Exchanges transforms are not associated
+        with any particular type of key exchange and don't have any specific per transform type transform ID IANA registry. 
+        Instead they all share a single registry for transform IDs - "Diffie-Hellman Group Transform IDs", as well as Transform Type 4. 
+        All new key exchange algorithms (both classical or quantum safe) should be added to this registry.
+        This approach gives peers flexibility in defining the ways they want 
+        to combine different key exchange methods. 
+        </t>
+        <t> When forming a proposal the initiator adds transforms for the IKE_SA_INIT exchange
+        using transform type 4. In most cases they will contain classical key exchange methods, however
+        it is not a requirement. Additional key exchange methods are proposed using Additional Key Exchanges 
+        transform types. All these transform types are optional, the initiator is free 
+        to select any of them for proposing additional key exchange methods. Consequently, 
+        if none of Additional Key Exchanges are included in the proposal, then this proposal
+        indicates performing standard IKEv2, as defined in <xref target="RFC7296"/>.
+        If the initiator includes any transform of type N (where N is among Additional Key Exchanges) in the proposal, 
+        the responder MUST select one of the algorithms proposed using this type. A transform ID NONE 
+        may be added to those transform types which contain key exchange methods that the initiator believes are optional.
+        </t>
+        <t> The responder performs negotiation using standard IKEv2 procedure described in Section 3.3 of <xref target="RFC7296"/>.
+        However, for the Additional Key Exchange types the responder's choice MUST NOT contain equal transform IDs (apart from NONE), 
+        and the ID selected for Transform Type 4 MUST NOT appear in any of Additional Key Exchange transforms.
+        In other words, all selected key exchange methods must be different.
+        </t>
+    </section>
+
+ <!--
 	<section title="First Protocol Round" anchor="section-3.2.1"><t>
 		In the first round, the IKE_SA_INIT request and response messages
 		negotiate the initial IKE SAs (as currently), as well as the key
-		exchanges that will be used within the IKE_AUX phase below.</t>
+		exchanges that will be used within the INTERMEDIATE phase below.</t>
 
 	<t>
 		The initiator negotiates cryptographic suites as per RFC7296, with the
@@ -397,7 +470,7 @@
 		include the following two Notify payloads:</t>
 
 		<t><list style="symbols">
-  		<t>The N(AUX_EXCHANGE_SUPPORTED) notify, as specified in
+  		<t>The N(INTERMEDIATE_EXCHANGE_SUPPORTED) notify, as specified in
 				<xref target="I-D.smyslov-ipsecme-ikev2-aux"/>.  This draft makes
 				no requirements about the included data.</t>
 
@@ -407,7 +480,7 @@
 
 	<t>
 		This data will be the list of groups that the initiator is willing to
-		negotiate during the IKE_AUX phase below.  The initiator signifies this
+		negotiate during the INTERMEDIATE phase below.  The initiator signifies this
 		by specifying the specific list of the sets of key exchanges that he will
 		allow.  The list MUST be ordered from most prefered to least
 		prefered.  This is encoded as a series of 2 byte values; a specified list
@@ -419,10 +492,10 @@
          0042 0047 0000
          0042 0000
     ]]></artwork></figure>
-   <t>will signify that the initiator is willing to perform IKE_AUX with
+   <t>will signify that the initiator is willing to perform INTERMEDIATE with
 			either NewHope, Round2 followed by SIKE, or only Round2.</t>
 
-	 <t>If the initiator is willing to skip the IKE_AUX phase, he can signify
+	 <t>If the initiator is willing to skip the INTERMEDIATE phase, he can signify
 		that by including a 0000 value as a list; for example:</t>
     <figure><artwork><![CDATA[
          0040 0000
@@ -431,15 +504,15 @@
          0000
     ]]></artwork></figure>
 		<t>would signify either (NewHope), (Round2, SIKE), (Round2) or skipping
-			the IKE_AUX entirely.</t>
+			the INTERMEDIATE entirely.</t>
 
 	 <t>When the responder that supports the hybrid exchange receives an
-		 IKE_SA_INIT message with the AUX_EXHANGE_SUPPORTED and
+		 IKE_SA_INIT message with the INTERMEDIATE_EXHANGE_SUPPORTED and
 		 EXTRA_KEY_EXCHANGE_POLICY notifies, then (after processing the IKE
 		 message as normal), it scans through the policy listed within the
 		 EXTRA_KEY_EXCHANGE_POLICY Notify payload.  If the responder finds a list
 		 of key exchanges that is consistent with its own policy, it includes
-		 N(AUX_EXCHANGE_SUPPORTED) and N(EXTRA_KEY_EXCHANGE_LIST) notifies,
+		 N(INTERMEDIATE_EXCHANGE_SUPPORTED) and N(EXTRA_KEY_EXCHANGE_LIST) notifies,
 		 which both have 0 Protocol IDs and SPI sizes.  The data for the
 		 EXTRA_KEY_EXCHANGE_LIST notify would have data specifying the list of
 		 acceptable Transform IDs as a series of 2 byte values.  If the
@@ -457,7 +530,7 @@
 		<figure><artwork><![CDATA[
         0042 0047
     ]]></artwork></figure>
-  <t>If no IKE_AUX transforms is desired, then the data payload will be
+  <t>If no INTERMEDIATE transforms is desired, then the data payload will be
 		empty (or alternatively no such notification is included, which
 		implies the same thing).</t>
 
@@ -465,7 +538,7 @@
 		on SAi1, SAr1 and KE payloads as normal.</t>
 
   <t>When the initiator receives the reply IKE_SA_INIT message, it checks
-		for the existence of the AUX_EXCHANGE_SUPPORTED and
+		for the existence of the INTERMEDIATE_EXCHANGE_SUPPORTED and
 		EXTRA_KEY_EXCHANGE_LIST notifies.  If those notifies are not present,
 		then the initiator treats it as if no extra key exchanges were chosen
 		(and then can proceed by either rejecting the exchange, or proceed using
@@ -474,23 +547,24 @@
   <t>If those notifies are present, then the responder verifies that the
 		key exchanges listed within the EXTRA_KEY_EXCHANGE_LIST are one of the
 		options within its local policy; if so, it processes the IKE_SA_INIT
-		message as normal, and then proceeds to the IKE_AUX round.</t>
+		message as normal, and then proceeds to the INTERMEDIATE round.</t>
 
 	<section title="Note on responder policy check" anchor="section-3.2.1.1"><t>
 		One reason that the initiator may select the initial key exchange
 		(the type 4 transform within the SAi1 payload) is not for security,
 		but instead to simply establish keys to allow fragmentation of the
-		IKE_AUX message.  Because of this possibility, if the receiver sees
+		INTERMEDIATE message.  Because of this possibility, if the receiver sees
 		a list of key exchanges listed within the EXTRA_KEY_EXCHANGE_LIST
 		that satisfies its policies, it SHOULD accept it (assuming that the
 		SAi1 payload is otherwise acceptable), even if the key payload within
 		the SAi1 is not necessary according to its policy.</t>
 	</section>
   </section>
+-->
 
-	<section title="IKE_AUX round" anchor="section-3.2.2"><t>
+	<section title="INTERMEDIATE Round: Additional Key Exchanges" anchor="section-3.2.2"><t>
 		For each extra key exchange agreed to in the IKE_SA_INIT exchange,
-		the initiator and the responder perform an IKE_SA_AUX exchange, as
+		the initiator and the responder perform an INTERMEDIATE exchange, as
 		described in <xref target="I-D.smyslov-ipsecme-ikev2-aux"/>.</t>
 
    <t>This exchange is as follows:</t>
@@ -528,21 +602,83 @@
    <t>Both the initiator and the responder will use this updated key
 		 values for the next message.</t>
 
-   <t>If the EXTRA_KEY_EXCHANGE_LIST has negotiated more than one key
+<!--   <t>If the EXTRA_KEY_EXCHANGE_LIST has negotiated more than one key
 		 exchange, then this exchange is performed once for every key
-		 exchange on the list.</t>
+		 exchange on the list.</t> -->
 	</section>
 
-	<section title="IKE_AUX exchange" anchor="section-3.2.3"><t>
-		After the IKE_AUX exchanges have completed, then the initiator and
+	<section title="IKE_AUTH Exchange" anchor="section-3.2.3"><t>
+		After the INTERMEDIATE exchanges have completed, then the initiator and
 		the responder will perform an IKE_AUTH exchange.  This exchange is
 		the standard IKE exchange, except that the initiator and responder
 		signed octets are modified as described in
 		<xref target="I-D.smyslov-ipsecme-ikev2-aux"/>.</t>
 	</section>
+
+    <section title="CREATE_CHILD_SA Exchange">
+        <t> The CREATE_CHILD_SA exchange is used in IKEv2 for the purpose 
+        of creating additional Child SAs, rekeying them and rekeying IKE SA itself.
+        When creating or rekeying Child SAs, the peers may optionally 
+        perform a Diffie-Hellmann key exchange to add a fresh entropy into the session keys, 
+        in case of IKE SA rekeying, the key exchange is mandatory.
+        </t>
+        <t> If the IKE SA was created using multiple key exchange methods, the peers 
+        may want continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
+        If the initiator includes any Additional Key Exchanges transform in the SA payload
+        (along with Transform Type 4) and the responder agrees to perform additional
+        key exchanges, then the additional key exchanges are performed in a series 
+        of the INFORMATIONAL exchanges that follows the CREATE_CHILD_SA exchange
+        in an order of the values of their transform types, so that 
+        key exchange negotiated using transform type N always precedes key exchange negotiated using
+        transform type N + 1. Each INFORMATIONAL exchange MUST bear exactly one key exchange method. 
+        Key exchange negotiated via Transform Type 4 always takes place
+        in the CREATE_CHILD_SA exchange, as per IKEv2 specification. 
+        </t>
+        <t> Since after IKE SA is created the window size may be greater than one, and multiple
+        concurrent exchanges may be active, it is essential to link the INFORMATIONAL exchanges together and 
+        with the CREATE_CHILD_SA exchange. A new status type notification ADDITIONAL_KEY_EXCHANGE
+        is used for this purpose. Its Notify Message Type is &lt;TBA by IANA&gt;, Protocol ID and SPI Size 
+        are both set to 0. The data associated with this notification is a blob meaningful 
+        only to the responder, so that the responder can correctly link successive
+        exchanges. For the initiator the content of this notification is an opaque blob.
+        </t>
+        <t> The responder MUST include this notification in a CREATE_CHILD_SA or 
+        INFORMATIONAL response message in case next exchange is expected, filling it with
+        some data that would allow linking this exchange to the next one. The initiator 
+        MUST copy the received notification with its content intact into the request 
+        message of the next exchange. 
+        </t>
+
+        <t> Below is an example of three additional key exchanges.
+        </t>
+
+        <figure><artwork><![CDATA[
+Initiator                             Responder
+-----------------------------------------------------------------------
+HDR(CREATE_CHILD_SA), SK {SA, Ni, KEi} -->
+                             <--  HDR(CREATE_CHILD_SA), SK {SA, Nr, KEr,
+                                      N(ADDITIONAL_KEY_EXCHANGE)(link1)}
+
+HDR(INFORMATIONAL), SK {Ni2, KEi2,
+ N(ADDITIONAL_KEY_EXCHANGE)(link1)} -->
+                                 <--  HDR(INFORMATIONAL), SK {Nr2, KEr2,
+                                      N(ADDITIONAL_KEY_EXCHANGE)(link2)}
+
+HDR(INFORMATIONAL), SK {Ni3, KEi3,
+ N(ADDITIONAL_KEY_EXCHANGE)(link2)} -->
+                                 <--  HDR(INFORMATIONAL), SK {Nr3, KEr3,
+                                      N(ADDITIONAL_KEY_EXCHANGE)(link3)}
+
+HDR(INFORMATIONAL), SK {Ni4, KEi4,
+ N(ADDITIONAL_KEY_EXCHANGE)(link3)} -->
+                                 <--  HDR(INFORMATIONAL), SK {Nr4, KEr4}
+        ]]></artwork></figure>
+
+
+    </section>
   </section>
 
-	<section title="Post-quantum Group Transform Type and Group Identifiers"
+<!--	<section title="Post-quantum Group Transform Type and Group Identifiers"
 		anchor="section-3.3"><t>In generating keying material within IKEv2,
 		both initiator and responder negotiate up to four cryptographic
 		algorithms in the SA payload of an IKE_SA_INIT or a CREATE_CHILD_SA
@@ -559,7 +695,7 @@
 
     <figure><artwork><![CDATA[
       Name               Number    Key exchange
-      --------------------------------------------------
+      ==================================================
       NIST_CANDIDATE_1   0x9100    The 1st candidate of
                                    NIST PQC submission
       NIST_CANDIDATE_2   0x9101    The 2nd candidate of
@@ -579,28 +715,9 @@
    implementation MUST NOT process these private use transforms as
    listed in this draft.</t>
 
-	</section>
+	</section> -->
 
-	<section title="Hybrid Group Negotiation" anchor="section-3.4"><t>
-		Most post-quantum key agreement algorithms are relatively new, and
-		thus are not fully trusted.  There are also many proposed algorithms,
-		with different trade-offs and relying on different hard problems.  The
-		concern is that some of these hard problems may turn out to be easier
-		to solve than anticipated (and thus the key agreement algorithm not be
-		as secure as expected).  A hybrid solution allows us to deal with this
-		uncertainty by combining a classical key exchanges with a post-quantum
-		one, as well as leaving open the possibility of multiple post-quantum
-		key exchanges.</t>
-
-	<t>The method that we use to perform hybrid key exchange also addresses
-		the fragmentation issue.  The initial IKE_INIT messages do not have any
-		inherent fragmentation support within IKE; however that can include a
-		relatively short KE payload (e.g. one for group 14, 19 or 31).  The
-		rest of the KE payloads are encrypted within IKE_AUX messages; because
-		they are encrypted, the standard IKE fragmentation solution
-		<xref target="RFC7383"/> is available.</t>
-	</section>
-
+<!--
 	<section title="Child SAs" anchor="section-3.5"><t>This method of
 		performing hybrid key exchanges, by performing multiple exchanges in
 		series, solves the issue by making the IKE SK values be a function of
@@ -623,7 +740,9 @@
 		key exchange (which has the KE payloads exchanged during IKE_SA_INIT)
 		is small enough not to cause fragmentation.</t>
 
-  </section></section>
+  </section>
+-->
+  </section>
 
 	<section title="Alternative Design" anchor="section-4"><t>
    This section gives an overview on a number of alternative approaches
@@ -636,7 +755,7 @@
 		KE payload; this effort is documented in a previous version of this
 		draft (draft-tjhai-ipsecme-hybrid-qske-ikev2-01).  This does allow us
 		to cleanly apply hybrid key exchanges during the child SA; however it
-		does add considerable complexity, and requires an independant
+		does add considerable complexity, and requires an independent
 		fragmentation solution.
 	</t>
 
@@ -780,14 +899,14 @@
       complexity added from checking the fragmentation flag in each
       received payload.  More importantly, fragmenting the messages
 			in this way may leave the system to be more prone to denial of
-			service (DoS) attacks.  By using IKE_AUX to transport the large
+			service (DoS) attacks.  By using INTERMEDIATE to transport the large
 			post-quantum key exchange payloads, there is no longer any issue
 			with fragmentation.</t>
 	</list>
 	</t>
 
 	<t><list style="symbols"><t>Group sub-identifier<vspace blankLines="1"/>
-	As discussed in <xref target="section-3.3"/>, each group identifier
+	As discussed before<!-- in <xref target="section-3.3"/> -->, each group identifier
 	is used to
       distinguish a post-quantum algorithm.  Further classification
       could be made on a particular post-quantum algorithm by assigning
@@ -805,7 +924,31 @@
 
 	</section>
 
-	<section title="Security considerations" anchor="section-5"><t>
+    <section title="IANA Considerations" anchor="IANA">
+        <t>This document also adds the following Transform Types to the "Transform Type Values" registry:</t>
+        <figure align="left">
+            <artwork align="left"><![CDATA[
+Type Description                Used In                        Reference
+------------------------------------------------------------------------
+6    Additional Key Exchange 1  (optional in IKE, AH and ESP)  [RFCXXXX]
+7    Additional Key Exchange 2  (optional in IKE, AH and ESP)  [RFCXXXX]
+8    Additional Key Exchange 3  (optional in IKE, AH and ESP)  [RFCXXXX]
+9    Additional Key Exchange 4  (optional in IKE, AH and ESP)  [RFCXXXX]
+10   Additional Key Exchange 5  (optional in IKE, AH and ESP)  [RFCXXXX]
+11   Additional Key Exchange 6  (optional in IKE, AH and ESP)  [RFCXXXX]
+12   Additional Key Exchange 7  (optional in IKE, AH and ESP)  [RFCXXXX]
+            ]]></artwork>
+        </figure>
+        <t>This document also defines a new Notify Message Types in the "Notify Message Types - Status Types" registry:</t>
+        <figure align="center">
+            <artwork align="left"><![CDATA[
+<TBA>       ADDITIONAL_KEY_EXCHANGE
+            ]]></artwork>
+        </figure>
+    </section>
+
+
+	<section title="Security Considerations" anchor="section-5"><t>
 	The key length of the Encryption Algorithm (Transform Type 1), the
 	Pseudorandom Function (Transform Type 2) and the Integrity Algorithm
 	(Transform Type 3), all have to be of sufficient length to prevent
@@ -872,50 +1015,59 @@
 	</middle>
 
 	<back>
-	<references title="References">
+        <references title='Normative References'>
 
-	<reference anchor="AH" target="http://www.rfc-editor.org/info/rfc4302"><front>
-	<title>IP Authentication Header</title>
-	<author fullname="S. Kent" initials="S." surname="Kent">
-	</author>
-	<date month="December" year="2005"/>
-	</front>
-	<seriesInfo name="RFC" value="4302"/>
-	</reference>
-
-	<reference anchor="ESP" target="http://www.rfc-editor.org/info/rfc4303"><front>
-	<title>IP Encapsulating Security Payload (ESP)</title>
-	<author fullname="S. Kent" initials="S." surname="Kent">
-	</author>
-	<date month="December" year="2005"/>
-	</front>
-	<seriesInfo name="RFC" value="4303"/>
-	</reference>
-
-	&I-D.ietf-ipsecme-qr-ikev2;
-
-	&I-D.smyslov-ipsecme-ikev2-aux;
-
-	<reference anchor="GROVER"><front>
-	<title>A Fast Quantum Mechanical Algorithm for Database Search</title>
-	<author fullname="L. Grover" initials="L." surname="Grover">
-	</author>
-	<date year="1996"/>
-	</front>
-	<seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
-	</reference>
-
-	&RFC2119;
-
-	&RFC7296;
-
-	&RFC7383;
-
-	&RFC8229;
-
-	&RFC8391;
+    	&RFC2119;
+    
+    	&RFC8174;
+    
+    	&RFC7296;
+    
+	    &I-D.smyslov-ipsecme-ikev2-aux;
 
 	</references>
+    <references title='Informative References'>
+
+<!--        <reference anchor="AH" target="http://www.rfc-editor.org/info/rfc4302"><front>
+        <title>IP Authentication Header</title>
+        <author fullname="S. Kent" initials="S." surname="Kent">
+        </author>
+        <date month="December" year="2005"/>
+        </front>
+        <seriesInfo name="RFC" value="4302"/>
+        </reference> -->
+
+        &RFC4302;
+
+<!--        <reference anchor="ESP" target="http://www.rfc-editor.org/info/rfc4303"><front>
+        <title>IP Encapsulating Security Payload (ESP)</title>
+        <author fullname="S. Kent" initials="S." surname="Kent">
+        </author>
+        <date month="December" year="2005"/>
+        </front>
+        <seriesInfo name="RFC" value="4303"/>
+        </reference> -->
+
+        &RFC4303;
+
+        &RFC7383;
+    
+    	&RFC8229;
+    
+        <reference anchor="GROVER"><front>
+        <title>A Fast Quantum Mechanical Algorithm for Database Search</title>
+        <author fullname="L. Grover" initials="L." surname="Grover">
+        </author>
+        <date year="1996"/>
+        </front>
+        <seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
+        </reference>
+
+	    &I-D.ietf-ipsecme-qr-ikev2;
+
+    	&RFC8391;
+    
+    </references>
 
 	<section title="Acknowledgements" numbered="no" anchor="acknowledgements"><t>
    The authors would like to thanks Frederic Detienne and Olivier
