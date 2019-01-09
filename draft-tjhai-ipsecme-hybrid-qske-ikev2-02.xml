@@ -430,7 +430,7 @@
         defined transforms MUST take place in series of INTERMEDIATE exchanges, in an order of the values of their transform types, 
         so that key exchange negotiated using transform type N always precedes that of
         transform type N + 1. Each INTERMEDIATE exchange MUST bear exactly one key exchange method. 
-        Note, that with this semantics Additional Key Exchanges transforms are not associated
+        Note that with this semantics, Additional Key Exchanges transforms are not associated
         with any particular type of key exchange and don't have any specific per transform type transform ID IANA registry. 
         Instead they all share a single registry for transform IDs - "Diffie-Hellman Group Transform IDs", as well as transform type 4 does. 
         All new key exchange algorithms (both classical or quantum safe) should be added to this registry.
