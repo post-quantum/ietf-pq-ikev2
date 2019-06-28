@@ -147,8 +147,8 @@
 			the IKE_AUTH exchange, we perform one or more IKE_INTERMEDIATE exchanges,
 			each of which includes a secondary key exchange.  As the IKE_INTERMEDIATE
 			exchange is encrypted, the IKE fragmentation protocol RFC7383
-			can be used.  The IKE SK values are updated after each exchange,
-			and so the final IKE SK values depends on all the key exchanges,
+			can be used. The IKE SK_* values are updated after each exchange,
+			and so the final IKE SK_* values depend on all the key exchanges,
 			hence they are secure if any of the key exchanges are secure.</t>
 
             <t>
@@ -484,8 +484,7 @@ HDR, SK {Ni(n), KEi(n)}     -->
                 ]]></artwork></figure>
 
                 <t> The initiator sends a nonce in the Ni(n) payload, and the key exchange
-        		payload in the KEin. This packet is encrypted with the
-        		current IKE SK keys.</t>
+        		payload in the KEi(n). This packet is encrypted with the current IKE SK_* keys.</t>
         
                 <t> On receiving this, the responder sends a nonce in the Nr(n) payload,
         		and the key exchange payload KEr(n); again, this packet is encrypted
@@ -668,187 +667,6 @@ KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) | Ni(1) | Nr(1) ...
         </section>
     </section>
 
-	<section title="Alternative Design" anchor="altdesign">
-        <t>
-        This section gives an overview on a number of alternative approaches
-        that we have considered, but later discarded.  These approaches are:</t>
-
-    	<t><list style="symbols">
-        <t>Sending the classical and post-quantum key
-        exchanges as a single transform<vspace blankLines="1"/>
-        We considered combining the various key exchanges into a single large
-        KE payload; this effort is documented in a previous version of this
-        draft (draft-tjhai-ipsecme-hybrid-qske-ikev2-01).  This does allow us
-        to cleanly apply hybrid key exchanges during the child SA; however it
-        does add considerable complexity, and requires an independent
-        fragmentation solution.
-    	</t>
-    
-        <t>Sending post-quantum proposals and policies in KE payload
-        only<vspace blankLines="1"/>
-        With the objective of not introducing unnecessary notify
-        payloads, we considered communicating the hybrid post-quantum proposal
-        in the KE payload during the first pass of the protocol
-        exchange.   Unfortunately, this design is susceptible to the following
-        downgrade attack.  Consider the scenario where there is an MitM attacker
-        sitting between an initiator and a responder.  The initiator proposes,
-        through SAi payload, to use a hybrid post-quantum group and as a backup
-        a Diffie-Hellman group, and through KEi payload, the initiator proposes
-        a list of hybrid post-quantum proposals and policies.  The MitM attacker
-        intercepts this traffic and replies with N(INVALID_KE_PAYLOAD) suggesting
-        to downgrade to the backup Diffie-Hellman group instead.  The initiator
-        then resends the same SAi payload and the KEi payload containing the
-        public value of the backup Diffie-Hellman group.  Note that the attacker
-        may forward the second IKE_SA_INIT message only to the responder, and
-        therefore at this point in time, the responder will not have the
-        information that the initiator prefers the hybrid group.  Of course,
-        it is possible for the responder to have a policy to reject an
-        IKE_SA_INIT message that (a) offers a hybrid group but not offering
-        the corresponding public value in the KEi payload; and (b) the
-        responder has not specifically acknowledged that it does not
-        supported the requested hybrid group.  However, the checking of this
-        policy introduces unnecessary protocol complexity.  Therefore, in
-        order to fully prevent any downgrade attacks, using KE payload alone
-        is not sufficient and that the initiator MUST always indicate its
-        preferred post-quantum proposals and policies in a notify payload
-        in the subsequent IKE_SA_INIT messages following a
-        N(INVALID_KE_PAYLOAD) response.</t>
-    
-    	<t>New payload types to negotiate hybrid proposal and to carry post-
-        quantum public values<vspace blankLines="1"/>
-        Semantically, it makes sense to use a new payload type, which
-        mimics the SA payload, to carry a hybrid proposal.  Likewise, another new
-        payload type that mimics the KE payload, could be used to transport hybrid
-        public value.  Although, in theory a new payload type could be made
-        backwards compatible by not setting its critical flag as per Section 2.5
-        of RFC7296, we believe that it may not be that simple in practice.  Since
-        the original release of IKEv2 in RFC4306, no new payload type has ever
-        been proposed and therefore, this creates a potential risk of having a
-        backward compatibility issue from non-conforming RFC IKEv2
-        implementations.  Since we could not see any other compelling advantages
-        apart from a semantic one, we use the existing transform type and
-        notify payloads instead.  In fact, as described above, we use the KE
-        payload in the first IKE_SA_INIT request round and the notify payload
-        to carry the post-quantum proposals and policies. We use one or more
-        of the existing KE payloads to carry the hybrid public values.
-        </t>
-    
-    	<t>Hybrid public value payload<vspace blankLines="1"/>
-    	One way to transport the negotiated hybrid public payload, which contains
-    	one classical Diffie-Hellman public value and one or more post-quantum
-    	public values, is to bundle these into a single KE payload.  Alternatively,
-    	these could also be transported in a single new hybrid public value
-    	payload, but following the same reasoning as above, this may not be
-    	a good idea from a backward compatibility perspective.  Using a single
-    	KE payload would require an encoding or formatting to be defined so
-    	that both peers are able to compose and extract the individual public
-    	values.  However, we believe that it is cleaner to send the hybrid
-    	public values in multiple KE payloads--one for each group or
-    	algorithm.  Furthermore, at this point in the protocol exchange, both
-    	peers should have indicated support of handling multiple KE payloads.
-    	</t>
-    
-    	<t>Fragmentation<vspace blankLines="1"/>
-    	Handling of large IKE_SA_INIT messages has been one of the most
-        challenging tasks.  A number of approaches have been considered
-        and the two prominent ones that we have discarded are outlined as
-        follows.
-    	<vspace blankLines="1"/>
-    	The first approach was to treat the entire IKE_SA_INIT message as
-        a stream of bytes, which we then split it into a number of
-        fragments, each of which is wrapped onto a payload that would fit
-        into the size of the network MTU.  The payload that wraps each
-        fragment is a new payload type and it was envisaged that this new
-        payload type will not cause a backward compatibility issue because
-        at this stage of the protocol, both peers should have indicated
-        support of fragmentation in the first pass of the IKE_SA_INIT
-        exchange.  The negotiation of fragmentation is performed using  a
-        notify payload, which also defines supporting parameters such as
-        the size of fragment in octets and the fragment identifier.  The
-        new payload that wraps each fragment of the messages in this
-        exchange is assigned the same fragment identifier. Furthermore, it
-        also has other parameters such as a fragment index and total
-        number of fragments.  We decided to discard this approach due to
-        its blanket approach to fragmentation.  In cases where only a few
-        payloads need to be fragmented, we felt that this approach is
-        overly complicated.
-    	<vspace blankLines="1"/>
-    	Another idea that was discarded was fragmenting an individual
-        payload without introducing a new payload type.  The idea was to
-        use the 9-th bit (the bit after the critical flag in the RESERVED
-        field) in the generic payload header as a flag to mark that this
-        payload is fragmented.  As an example, if a KE payload is to be
-        fragmented, it may look as follows.
-    	</t>
-    
-    	</list>
-    	</t>
-    
-    	<figure><artwork align="center" ><![CDATA[
-                 1                   2                   3
-0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Next Payload  |C|F| RESERVED  |         Payload Length        |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|  Diffie-Hellman Group Number  |     Fragment Identifier       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|         Fragment Index        |        Total Fragments        |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                  Total KE Payload Data Length                 |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-~                       Fragmented KE Payload                   ~
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-        ]]></artwork></figure>
-
-    	<t><list hangIndent="3" style="hanging"><t>
-        When the flag F is set, this means the current KE payload is a
-        fragment of a larger KE payload.  The Payload Length field denotes
-        the size of this payload fragment in octets--including the size of
-        the generic payload header.  The two-octet RESERVED field
-        following Diffie-Hellman Group Number was to be used as a fragment
-        identifier to help assembly and disassembly of fragments.  The
-        Fragment Index and Total Fragments fields are self-explanatory.
-        The Total KE Payload Data Length indicates the size of the
-        assembled KE payload data in octets.  Finally, the actual fragment
-        is carried in Fragment KE Payload field.</t>
-    
-    	</list>
-    	</t>
-    
-    	<t><list hangIndent="3" style="hanging"><t>
-        We discarded this approach because we believe that the working
-        group may not be happy using the RESERVED field to change the
-        format of a packet and that implementers may not like the
-        complexity added from checking the fragmentation flag in each
-        received payload.  More importantly, fragmenting the messages
-    	in this way may leave the system to be more prone to denial of
-    	service (DoS) attacks.  By using IKE_INTERMEDIATE to transport the large
-    	post-quantum key exchange payloads, there is no longer any issue
-    	with fragmentation.</t>
-    	</list>
-    	</t>
-    
-    	<t><list style="symbols"><t>Group sub-identifier<vspace blankLines="1"/>
-    	As discussed before, each group identifier
-    	is used to
-        distinguish a post-quantum algorithm.  Further classification
-        could be made on a particular post-quantum algorithm by assigning
-        additional value alongside the group identifier.  This sub-
-        identifier value may be used to assign different security
-        parameter sets to a given post-quantum algorithm.  However, this
-        level of details does not fit the principles of the document where
-        it should deal with generic hybrid key exchange protocol, not a
-        specific ciphersuite.  Furthermore, there are enough Diffie-
-        Hellman group identifiers should this be required in the future.
-    	</t>
-    
-    	</list>
-    	</t>
-
-	</section>
-
     <section title="IANA Considerations" anchor="IANA">
         <t>This document renames "Transform Type 4 - Diffie-Hellman Group Transform IDs" to "Transform Type 4 - Key Exchange Method Transform IDs"</t>
 
@@ -943,6 +761,13 @@ Type Description                Used In                        Reference
         a workaround.</t>
 	</section>
 
+    <section title="Acknowledgements" anchor="acknowledgements">
+        <t> The authors would like to thanks Frederic Detienne and Olivier
+        Pelerin for their comments and suggestions, including the idea to
+        negotiate the post-quantum algorithms using the existing KE payload.
+        The authors are also grateful to Tobias Heider and Tobias Guggemos for valuable comments.</t>
+    </section>
+
 	</middle>
 
 	<back>
@@ -982,14 +807,188 @@ Type Description                Used In                        Reference
     
     </references>
 
-	<section title="Acknowledgements" numbered="no" anchor="acknowledgements">
-        <t> The authors would like to thanks Frederic Detienne and Olivier
-        Pelerin for their comments and suggestions, including the idea to
-        negotiate the post-quantum algorithms using the existing KE payload.
-        The authors are also grateful to Tobias Heider and Tobias Guggemos for valuable comments.</t>
-	</section>
+    <section title="Alternative Design" anchor="altdesign">
+        <t>
+        This section gives an overview on a number of alternative approaches
+        that we have considered, but later discarded.  These approaches are:</t>
 
-	</back>
+        <t><list style="symbols">
+        <t>Sending the classical and post-quantum key
+        exchanges as a single transform<vspace blankLines="1"/>
+        We considered combining the various key exchanges into a single large
+        KE payload; this effort is documented in a previous version of this
+        draft (draft-tjhai-ipsecme-hybrid-qske-ikev2-01).  This does allow us
+        to cleanly apply hybrid key exchanges during the child SA; however it
+        does add considerable complexity, and requires an independent
+        fragmentation solution.
+        </t>
+
+        <t>Sending post-quantum proposals and policies in KE payload
+        only<vspace blankLines="1"/>
+        With the objective of not introducing unnecessary notify
+        payloads, we considered communicating the hybrid post-quantum proposal
+        in the KE payload during the first pass of the protocol
+        exchange.   Unfortunately, this design is susceptible to the following
+        downgrade attack.  Consider the scenario where there is an MitM attacker
+        sitting between an initiator and a responder.  The initiator proposes,
+        through SAi payload, to use a hybrid post-quantum group and as a backup
+        a Diffie-Hellman group, and through KEi payload, the initiator proposes
+        a list of hybrid post-quantum proposals and policies.  The MitM attacker
+        intercepts this traffic and replies with N(INVALID_KE_PAYLOAD) suggesting
+        to downgrade to the backup Diffie-Hellman group instead.  The initiator
+        then resends the same SAi payload and the KEi payload containing the
+        public value of the backup Diffie-Hellman group.  Note that the attacker
+        may forward the second IKE_SA_INIT message only to the responder, and
+        therefore at this point in time, the responder will not have the
+        information that the initiator prefers the hybrid group.  Of course,
+        it is possible for the responder to have a policy to reject an
+        IKE_SA_INIT message that (a) offers a hybrid group but not offering
+        the corresponding public value in the KEi payload; and (b) the
+        responder has not specifically acknowledged that it does not
+        supported the requested hybrid group.  However, the checking of this
+        policy introduces unnecessary protocol complexity.  Therefore, in
+        order to fully prevent any downgrade attacks, using KE payload alone
+        is not sufficient and that the initiator MUST always indicate its
+        preferred post-quantum proposals and policies in a notify payload
+        in the subsequent IKE_SA_INIT messages following a
+        N(INVALID_KE_PAYLOAD) response.</t>
+
+        <t>New payload types to negotiate hybrid proposal and to carry post-
+        quantum public values<vspace blankLines="1"/>
+        Semantically, it makes sense to use a new payload type, which
+        mimics the SA payload, to carry a hybrid proposal.  Likewise, another new
+        payload type that mimics the KE payload, could be used to transport hybrid
+        public value.  Although, in theory a new payload type could be made
+        backwards compatible by not setting its critical flag as per Section 2.5
+        of RFC7296, we believe that it may not be that simple in practice.  Since
+        the original release of IKEv2 in RFC4306, no new payload type has ever
+        been proposed and therefore, this creates a potential risk of having a
+        backward compatibility issue from non-conforming RFC IKEv2
+        implementations.  Since we could not see any other compelling advantages
+        apart from a semantic one, we use the existing transform type and
+        notify payloads instead.  In fact, as described above, we use the KE
+        payload in the first IKE_SA_INIT request round and the notify payload
+        to carry the post-quantum proposals and policies. We use one or more
+        of the existing KE payloads to carry the hybrid public values.
+        </t>
+
+        <t>Hybrid public value payload<vspace blankLines="1"/>
+        One way to transport the negotiated hybrid public payload, which contains
+        one classical Diffie-Hellman public value and one or more post-quantum
+        public values, is to bundle these into a single KE payload.  Alternatively,
+        these could also be transported in a single new hybrid public value
+        payload, but following the same reasoning as above, this may not be
+        a good idea from a backward compatibility perspective.  Using a single
+        KE payload would require an encoding or formatting to be defined so
+        that both peers are able to compose and extract the individual public
+        values.  However, we believe that it is cleaner to send the hybrid
+        public values in multiple KE payloads--one for each group or
+        algorithm.  Furthermore, at this point in the protocol exchange, both
+        peers should have indicated support of handling multiple KE payloads.
+        </t>
+
+        <t>Fragmentation<vspace blankLines="1"/>
+        Handling of large IKE_SA_INIT messages has been one of the most
+        challenging tasks.  A number of approaches have been considered
+        and the two prominent ones that we have discarded are outlined as
+        follows.
+        <vspace blankLines="1"/>
+        The first approach was to treat the entire IKE_SA_INIT message as
+        a stream of bytes, which we then split it into a number of
+        fragments, each of which is wrapped onto a payload that would fit
+        into the size of the network MTU.  The payload that wraps each
+        fragment is a new payload type and it was envisaged that this new
+        payload type will not cause a backward compatibility issue because
+        at this stage of the protocol, both peers should have indicated
+        support of fragmentation in the first pass of the IKE_SA_INIT
+        exchange.  The negotiation of fragmentation is performed using  a
+        notify payload, which also defines supporting parameters such as
+        the size of fragment in octets and the fragment identifier.  The
+        new payload that wraps each fragment of the messages in this
+        exchange is assigned the same fragment identifier. Furthermore, it
+        also has other parameters such as a fragment index and total
+        number of fragments.  We decided to discard this approach due to
+        its blanket approach to fragmentation.  In cases where only a few
+        payloads need to be fragmented, we felt that this approach is
+        overly complicated.
+        <vspace blankLines="1"/>
+        Another idea that was discarded was fragmenting an individual
+        payload without introducing a new payload type.  The idea was to
+        use the 9-th bit (the bit after the critical flag in the RESERVED
+        field) in the generic payload header as a flag to mark that this
+        payload is fragmented.  As an example, if a KE payload is to be
+        fragmented, it may look as follows.
+        </t>
+
+        </list>
+        </t>
+
+        <figure><artwork align="center" ><![CDATA[
+                 1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| Next Payload  |C|F| RESERVED  |         Payload Length        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Diffie-Hellman Group Number  |     Fragment Identifier       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|         Fragment Index        |        Total Fragments        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                  Total KE Payload Data Length                 |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                                                               |
+~                       Fragmented KE Payload                   ~
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        ]]></artwork></figure>
+
+        <t><list hangIndent="3" style="hanging"><t>
+        When the flag F is set, this means the current KE payload is a
+        fragment of a larger KE payload.  The Payload Length field denotes
+        the size of this payload fragment in octets--including the size of
+        the generic payload header.  The two-octet RESERVED field
+        following Diffie-Hellman Group Number was to be used as a fragment
+        identifier to help assembly and disassembly of fragments.  The
+        Fragment Index and Total Fragments fields are self-explanatory.
+        The Total KE Payload Data Length indicates the size of the
+        assembled KE payload data in octets.  Finally, the actual fragment
+        is carried in Fragment KE Payload field.</t>
+
+        </list>
+        </t>
+
+        <t><list hangIndent="3" style="hanging"><t>
+        We discarded this approach because we believe that the working
+        group may not be happy using the RESERVED field to change the
+        format of a packet and that implementers may not like the
+        complexity added from checking the fragmentation flag in each
+        received payload.  More importantly, fragmenting the messages
+        in this way may leave the system to be more prone to denial of
+        service (DoS) attacks.  By using IKE_INTERMEDIATE to transport the large
+        post-quantum key exchange payloads, there is no longer any issue
+        with fragmentation.</t>
+        </list>
+        </t>
+
+        <t><list style="symbols"><t>Group sub-identifier<vspace blankLines="1"/>
+        As discussed before, each group identifier
+        is used to
+        distinguish a post-quantum algorithm.  Further classification
+        could be made on a particular post-quantum algorithm by assigning
+        additional value alongside the group identifier.  This sub-
+        identifier value may be used to assign different security
+        parameter sets to a given post-quantum algorithm.  However, this
+        level of details does not fit the principles of the document where
+        it should deal with generic hybrid key exchange protocol, not a
+        specific ciphersuite.  Furthermore, there are enough Diffie-
+        Hellman group identifiers should this be required in the future.
+        </t>
+
+        </list>
+        </t>
+
+    </section>
+
+    </back>
 
 	</rfc>
 
