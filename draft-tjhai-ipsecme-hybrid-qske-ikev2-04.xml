@@ -594,7 +594,7 @@ HDR(INFORMATIONAL), SK {Ni4, KEi4,
                 the Initiator could forget that he/she is in the process of performing
                 additional key exchanges and never starts next INFORMATIONAL exchanges.
                 The Responder MUST handle this situation gracefully and delete
-                the associated state if he/she doesn't receive next expected 
+                the associated state if he/she doesn't receive the next expected 
                 INFORMATIONAL request during some reasonable period of time.
                 </t>
 
