@@ -611,7 +611,7 @@ HDR(INFORMATIONAL), SK {Ni4, KEi4,
                 INFORMATIONAL exchanges appeared too long from Responder's point of view, e.g.
                 due to a temporary network failure). After receiving this notification the Initiator MAY 
                 start a new CREATE_CHILD_SA exchange (eventually followed by the INFORMATIONAL exchanges)
-                to fulfill the task of the failed one. If the Initiator continues to receive
+                to retry the failed attempt. If the Initiator continues to receive
                 STATE_NOT_FOUND notifications after several retries, he/she MUST treat it
                 as fatal error and delete IKE SA (sending DELETE payload).
                 </t>
