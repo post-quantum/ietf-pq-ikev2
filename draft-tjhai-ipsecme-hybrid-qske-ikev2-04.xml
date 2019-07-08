@@ -605,7 +605,7 @@ HDR(INFORMATIONAL), SK {Ni4, KEi4,
                 Protocol ID and SPI Size are both set to 0 and the data is empty. If Initiator receives
                 this notification in response to INFORMATIONAL exchange performing additional
                 key exchange, he/she MUST cancel this exchange and MUST treat the whole series 
-                of exchanges started from the CTREATE_CHILD_SA exchange as failed.
+                of exchanges started from the CREATE_CHILD_SA exchange as failed.
                 In most cases receiving of this notification will be caused by premature deleting
                 of the corresponding state on the Responder (the time period between
                 INFORMATIONAL exchanges appeared too long from Responder's point of view, e.g.
