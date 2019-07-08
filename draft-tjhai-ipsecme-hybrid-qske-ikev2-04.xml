@@ -418,7 +418,7 @@ Initiator                             Responder
     		rounds involved in the hybrid post-quantum protocol.</t>
     
             <t> In this case, the initiator performs the IKE_SA_INIT as standard,
-    		inserting this preferred key exchange (which is possibly a post-quantum
+    		inserting a preferred key exchange (which is possibly a post-quantum
     		algorithm) as the listed Transform Type 4, and including the initiator
     		KE payload.  If the responder accepts the policy, he responds with an
     		IKE_SA_INIT response, and IKE continues as usual.</t>
