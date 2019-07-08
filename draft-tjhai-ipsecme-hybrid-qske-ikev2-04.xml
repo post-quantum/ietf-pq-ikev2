@@ -360,7 +360,7 @@
             <t> In order to minimize communication overhead, only the key shares that are agreed to be used
 			are actually exchanged. In order to achieve this several new
             Transform Types are defined, each sharing possible Transform IDs 
-            with Transform Type 4. The IKE_SA_INIT message includes a one or more newly defined SA transforms 
+            with Transform Type 4. The IKE_SA_INIT message includes one or more newly defined SA transforms 
 			that lists the extra key exchange policy required by the
 			initiator; the responder selects single transform of each type, and
 			returns them back in the response IKE_SA_INIT message. 
