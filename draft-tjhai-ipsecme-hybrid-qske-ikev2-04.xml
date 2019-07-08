@@ -133,7 +133,7 @@
 
             <t>
 			Some post-quantum key exchange payloads may have size larger than
-			the standard MTU size, and therefore there could be issues with
+			the standard maximum transmission unit (MTU) size, and therefore there could be issues with
 			fragmentation at IP layer.  IKE does allow transmission over TCP
 			where fragmentation is not an issue <xref target="RFC8229"/>;
 			however, we believe that a UDP-based solution will be required
