@@ -595,7 +595,7 @@ HDR(INFORMATIONAL), SK {Ni4, KEi4,
                 additional key exchanges and never starts next INFORMATIONAL exchanges.
                 The Responder MUST handle this situation gracefully and delete
                 the associated state if he/she doesn't receive the next expected 
-                INFORMATIONAL request during some reasonable period of time.
+                INFORMATIONAL request after some reasonable period of time.
                 </t>
 
                 <t> If Responder receives INFORMATIONAL request containing ADDITIONAL_KEY_EXCHANGE
