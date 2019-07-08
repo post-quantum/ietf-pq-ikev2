@@ -606,7 +606,7 @@ HDR(INFORMATIONAL), SK {Ni4, KEi4,
                 this notification in response to INFORMATIONAL exchange performing additional
                 key exchange, he/she MUST cancel this exchange and MUST treat the whole series 
                 of exchanges started from the CREATE_CHILD_SA exchange as failed.
-                In most cases receiving of this notification will be caused by premature deleting
+                In most cases, the receipt of this notification is caused by premature deletion
                 of the corresponding state on the Responder (the time period between
                 INFORMATIONAL exchanges appeared too long from Responder's point of view, e.g.
                 due to a temporary network failure). After receiving this notification the Initiator MAY 
