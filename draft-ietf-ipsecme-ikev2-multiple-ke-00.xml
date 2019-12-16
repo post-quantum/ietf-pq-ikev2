@@ -273,7 +273,7 @@
     	Hybrid.  Currently, there does not exist a post-quantum key
     	exchange that is trusted at the level that ECDH is trusted
         against conventional (non-quantum) adversaries.  A hybrid
-        approach allows introducing promising post-quantum candidates
+        post-quantum algorithms to be introduced
         next to well-established primitives, since the overall security
         is at least as strong as each individual primitive.
     	</t>
