@@ -353,7 +353,7 @@
     	</t>
     
         <t hangText="12)">
-        Ability to use this framework with multiple classical (EC)DH key exchanges.
+        Ability to use this method with multiple classical (EC)DH key exchanges.
         In some situations peers have no single mutually trusted key exchange
         algorithm (e.g., due to local policy restrictions).
         The ability to combine two (or more) key exchange methods
