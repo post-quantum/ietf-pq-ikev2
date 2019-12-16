@@ -138,7 +138,7 @@
 			such that should the post-quantum secrets not be present, the derived
 			shared secret is equivalent to that of the standard IKEv2; on the
 			other hand, a post-quantum shared secret is obtained if both classical
-			and post-quantum key exchange data are present.  This framework also
+			and post-quantum key exchange data are present.  This extension also
 			applies to key exchanges in IKE Security Associations (SAs) for
 			Encapsulating Security Payload (ESP) <xref target="RFC4303"/> or
 			Authentication Header (AH) <xref target="RFC4302"/>, i.e. Child SAs,
