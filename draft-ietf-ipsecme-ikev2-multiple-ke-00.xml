@@ -158,7 +158,7 @@
 			mechanism, we do an initial key exchange, using a smaller, possibly
 			non-quantum resistant primitive, such as ECDH.  Then, before we do
 			the IKE_AUTH exchange, we perform one or more IKE_INTERMEDIATE exchanges,
-			each of which includes an additional key exchange.  As the IKE_INTERMEDIATE
+			each of which contains an additional key exchange.  As the IKE_INTERMEDIATE
 			exchange is encrypted, the IKE fragmentation protocol <xref target="RFC7383" />
 			can be used. The IKE SK_* values are updated after each exchange,
 			and so the final IKE SA keys depend on all the key exchanges,
