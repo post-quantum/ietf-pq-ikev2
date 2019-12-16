@@ -705,7 +705,7 @@ KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
                 ]]></artwork></figure>
 
                 <t> In both cases SK_d is from existing IKE SA; KE, Ni, Nr - shared key and nonces
-                from the CREATE_CHILD_SA; KE(1)..KE(n) - shared keys from additional key exchanges.
+                from the CREATE_CHILD_SA respectively; KE(1)...KE(n) are the shared keys from additional key exchanges.
                 </t>
 
             </section>
