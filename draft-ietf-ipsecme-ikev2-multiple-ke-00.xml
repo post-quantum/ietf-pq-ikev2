@@ -173,7 +173,7 @@
 
             <t> Note also, that the proposed approach of performing multiple successive key exchanges
             in such a way that resulting session keys depend on all of them is not limited
-            to achieving quantum resistance only. In can also be used when all 
+            to achieving quantum resistance only. It can also be used when all 
             the performed key exchanges are classical (EC)DH ones, but for some reasons
             (e.g. policy requirements) it is essential to perform multiple of them.
             </t>
