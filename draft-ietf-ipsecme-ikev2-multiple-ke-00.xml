@@ -307,7 +307,7 @@
     	or "non post-quantum" and does not create assumptions
         about the properties of the algorithms, meaning that if
         algorithms with different properties become necessary in the future,
-        this framework can be used unchanged to facilitate migration to
+        this extension can be used unchanged to facilitate migration to
         those algorithms.
     	</t>
     
@@ -326,7 +326,7 @@
     
     	<t hangText="8)">
     	Deterministic operation.  This requirement means that the hybrid
-    	post-quantum exchange, and thus, the computed key, will be based
+    	post-quantum exchange, and thus, the computed keys, will be based
         on algorithms that both client and server wish to support.
     	</t>
     
@@ -345,7 +345,7 @@
     	</t>
     
     	<t hangText="11)">
-    	FIPS compliance.  IPsec is widely used in Federal Information
+    	Federal Information Processing Standards (FIPS) compliance.  IPsec is widely used in Federal Information
     	Systems and FIPS certification is an important requirement.
         However, algorithms that are believed to be post-quantum are not
         FIPS compliant yet.  Still, the goal is that the overall hybrid
@@ -366,7 +366,7 @@
 
 	</section>
 
-	<section title="The Framework of Hybrid Post-Quantum Key Exchange" anchor="framework">
+	<section title="Multiple Key Exchanges" anchor="framework">
 		<section title="Overall design">
             <t> This design assigns new Transform Type 4 identifiers to the
 			various post-quantum key exchanges (which will be defined later).  We
@@ -374,7 +374,7 @@
 			and post-quantum key exchanges, nor post-quantum algorithms which are
 			true key exchanges versus post-quantum algorithms that act as key
 			transport mechanisms; all are treated equivalently by the
-			protocol. To make this more clear for implementers this document
+			protocol. To be more specific, this document
             renames Transform Type 4 from "Diffie-Hellman Group (D-H)"
             to "Key Exchange Method (KE)" and renames a field in the Key Exchange Payload from "Diffie-Hellman Group Num"
             to "Key Exchange Method". The corresponding IANA registry is also renamed
@@ -413,10 +413,10 @@ Initiator                             Responder
 <-- {IKE_AUTH} -->
             ]]></artwork></figure>
 
-            <t> The additional key exchanges can use algorithms that are
+            <t> The additional key exchanges may use algorithms that are
     		currently considered to be resistant to quantum computer attacks.  These
     		algorithms are collectively referred to as post-quantum algorithms in
-    		this document.</t>
+    		this document. However, it is also possible to use classical (EC)DH primitives for non post-quantum requirements.</t>
     
             <t> Most post-quantum key agreement algorithms are relatively new, and
             thus are not fully trusted.  There are also many proposed algorithms,
@@ -577,7 +577,7 @@ SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 </t>
 
                 <t> If the IKE SA was created using multiple key exchange methods, the peers 
-                may want continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
+                may want to continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
                 If the initiator includes any Additional Key Exchanges transform in the SA payload
                 (along with Transform Type 4) and the responder agrees to perform additional
                 key exchanges, then the additional key exchanges are performed in a series 
@@ -619,19 +619,19 @@ HDR(CREATE_CHILD_SA), SK {SA, Ni, KEi} -->
                           <--  HDR(CREATE_CHILD_SA), SK {SA, Nr, KEr,
                                    N(ADDITIONAL_KEY_EXCHANGE)(link1)}
 
-HDR(IKE_FOLLOWUP_KE), SK {KEi1,
+HDR(IKE_FOLLOWUP_KE), SK {KEi(1),
  N(ADDITIONAL_KEY_EXCHANGE)(link1)} -->
-                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr1,
+                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(1),
                                    N(ADDITIONAL_KEY_EXCHANGE)(link2)}
 
-HDR(IKE_FOLLOWUP_KE), SK {KEi2,
+HDR(IKE_FOLLOWUP_KE), SK {KEi(2),
  N(ADDITIONAL_KEY_EXCHANGE)(link2)} -->
-                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr2,
+                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(2),
                                    N(ADDITIONAL_KEY_EXCHANGE)(link3)}
 
-HDR(IKE_FOLLOWUP_KE), SK {KEi3,
+HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
  N(ADDITIONAL_KEY_EXCHANGE)(link3)} -->
-                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr3}
+                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(3)}
                 ]]></artwork></figure>
 
                 <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n) and KEr(n) payloads MUST match the
@@ -650,7 +650,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi3,
                 notification and the content of this notify doesn't correspond to any active key exchange
                 state the responder has, it MUST send back a new error type notification
                 STATE_NOT_FOUND. This is a non-fatal error notification, its Notify Message Type is &lt;TBA by IANA&gt;, 
-                Protocol ID and SPI Size are both set to 0 and the data is empty. If initiator receives
+                Protocol ID and SPI Size are both set to 0 and the data is empty. If the initiator receives
                 this notification in response to IKE_FOLLOWUP_KE exchange performing additional
                 key exchange, it MUST cancel this exchange and MUST treat the whole series 
                 of exchanges started from the CREATE_CHILD_SA exchange as failed.
@@ -661,10 +661,10 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi3,
                 start a new CREATE_CHILD_SA exchange (eventually followed by the IKE_FOLLOWUP_KE exchanges)
                 to retry the failed attempt. If the initiator continues to receive
                 STATE_NOT_FOUND notifications after several retries, it MUST treat this situation 
-                as fatal error and delete IKE SA (sending DELETE payload).
+                as fatal error and delete IKE SA by sending a DELETE payload.
                 </t>
 
-                <t> When rekeying IKE SA or Child SA it is possible that the peers start doing this
+                <t> When rekeying IKE SA or Child SA, it is possible that the peers start doing this
                 at the same time, which is called simultaneous rekeying. Sections 2.8.1 and 2.8.2 of 
                 <xref target="RFC7296" /> describes how IKEv2 handles this situation. In a nutshell
                 IKEv2 follows the rule that if in case of simultaneous rekeying two identical new
@@ -682,11 +682,11 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi3,
                 IKE_FOLLOWUP_KE exchange with next key exchange.
                 </t>
 
-                <t> In most cases rekey collisions are resolved in the CREATE_CHILD_SA exchange.
-                However, a situation may occur when due to packet loss one of the peers receives CREATE_CHILD_SA message
+                <t> In most cases, rekey collisions are resolved in the CREATE_CHILD_SA exchange.
+                However, a situation may occur when due to packet loss, one of the peers receives CREATE_CHILD_SA message
                 requesting rekeying SA that is already being rekeyed by this peer (i.e. the CREATE_CHILD_SA
                 exchange initiated by this peer has been already completed and the series of IKE_FOLLOWUP_KE exchanges is in progress).
-                In this case TEMPORARY_FAILURE notification MUST be sent in response to such request.
+                In this case, a TEMPORARY_FAILURE notification MUST be sent in response to such request.
                 </t>
 
                 <t> If multiple key exchanges were negotiated in the CREATE_CHILD_SA exchange, then the resulting keys are 
@@ -697,14 +697,14 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi3,
 SKEYSEED = prf(SK_d, KE  | Ni | Nr | KE(1) | ... KE(n))
                 ]]></artwork></figure>
 
-                <t> In case of Child SA creating or rekey:
+                <t> In case of Child SA creation or rekey:
                 </t>
 
                 <figure><artwork align="center" ><![CDATA[
 KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
                 ]]></artwork></figure>
 
-                <t> In both cases SK_d is from existing IKE SA; KE, Ni, Nr - shared key and nonces
+                <t> In both cases SK_d is from existing IKE SA; KE, Ni, Nr are the shared key and nonces
                 from the CREATE_CHILD_SA respectively; KE(1)...KE(n) are the shared keys from additional key exchanges.
                 </t>
 
