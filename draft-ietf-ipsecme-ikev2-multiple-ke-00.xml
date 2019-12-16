@@ -86,7 +86,7 @@
         post-quantum key exchanges in conjunction with the classical (Elliptic Curve) Diffie-Hellman key exchange,
         so that the resulting shared key is resistant against quantum computer attacks.
         Another possible application is a possibility to combine several key exchanges 
-        in situations when no single key exchange algorithm is trusted by both parties.
+        in situations when no single key exchange algorithm is trusted by both initiator and responder.
         </t>
 
         <t> This document updates RFC7296 by renaming a tranform type 4 from "Diffie-Hellman Group (D-H)"
