@@ -258,7 +258,7 @@
     
     	<t><list style="hanging" hangIndent="5"><t hangText="1)">
     	Need for post-quantum cryptography in IPsec.  Quantum computers
-    	might become feasible in the next 5-10 years.  If current
+    	might become feasible in the near future.  If current
         Internet communications are monitored and recorded today (D),
         the communications could be decrypted as soon as a quantum-
         computer is available (e.g., year Q) if key negotiation only
