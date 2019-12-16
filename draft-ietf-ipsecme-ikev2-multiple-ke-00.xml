@@ -122,7 +122,7 @@
 		<section title="Proposed Extension" >
             <t>
 			This document describes a framework to perform multiple successive key 
-            excahnges in IKEv2. This framework allows to integrate QSC in IKEv2, while
+            exchanges in IKEv2. It allows integration of QSC in IKEv2, while
 			maintaining backwards compatibility, to derive a set of IKE keys that
 			have resistance to quantum computer attacks.  The framework allows the
 			negotiation of one or more QSC algorithm to exchange data, in addition
