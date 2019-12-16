@@ -81,7 +81,7 @@
 	<abstract>
         <t> This document describes how to extend the Internet Key Exchange Protocol
 		Version 2 (IKEv2) to allow multiple key exchanges to take place 
-        while computation of a shared secret during Security Association (SA) setup.
+        while computing of a shared secret during a Security Association (SA) setup.
         The primary application of this feature in IKEv2 is an ability to perform one or more 
         post-quantum key exchanges in conjunction with the classical (Elliptic Curve) Diffie-Hellman key exchange,
         so that the resulting shared key is resistant against quantum computer attacks.
@@ -1034,4 +1034,3 @@ Type     Description                   Used In
     </back>
 
 	</rfc>
-
