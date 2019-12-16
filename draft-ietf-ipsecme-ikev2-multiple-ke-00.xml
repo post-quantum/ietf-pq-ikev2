@@ -236,7 +236,7 @@
             The remainder of this document is organized as follows.  <xref target="design"/>
             summarizes design criteria.  <xref target="framework"/> describes how
     	    multiple key exchanges are performed between two IKE peers and how
-    	    keying materials are derived for both SAs and child SAs.  A summary of alternative
+    	    keying materials are derived for both SAs and Child SAs.  A summary of alternative
     	    approaches that have been considered, but later discarded, are described
     	    in <xref target="altdesign"/>.  <xref target="IANA"/>
             discusses IANA considerations for the namespaces introduced in this
