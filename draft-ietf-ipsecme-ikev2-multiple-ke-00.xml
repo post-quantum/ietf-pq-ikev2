@@ -804,7 +804,7 @@ Type     Description                   Used In
         point in the future.  Until quantum computers become available there
         is no point in attacking the authenticity of a connection because
         there are no possibilities for exploitation.  These only occur at
-        the time of the connection, for example by mounting a MitM
+        the time of the connection, for example by mounting a man-in-the-middle (MitM)
         attack.  Consequently there is not such a pressing need for
         quantum-safe authenticity.</t>
     
