@@ -85,7 +85,7 @@
         The primary application of this feature in IKEv2 is the ability to perform one or more 
         post-quantum key exchanges in conjunction with the classical (Elliptic Curve) Diffie-Hellman key exchange,
         so that the resulting shared key is resistant against quantum computer attacks.
-        Another possible application is a possibility to combine several key exchanges 
+        Another possible application is the ability to combine several key exchanges 
         in situations when no single key exchange algorithm is trusted by both initiator and responder.
         </t>
 
