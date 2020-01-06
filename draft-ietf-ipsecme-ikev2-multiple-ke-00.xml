@@ -382,7 +382,7 @@
             </t>
 
             <t> In order to support IKE fragmentation for additional key exchanges
-            that may have a long public keys, the proposed framework utilizes the IKE_INTERMEDIATE exchange 
+            that may have long public keys, the proposed framework utilizes the IKE_INTERMEDIATE exchange 
             defined in <xref target="I-D.ietf-ipsecme-ikev2-intermediate"/>.
             </t>
 
