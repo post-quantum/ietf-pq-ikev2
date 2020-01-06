@@ -582,8 +582,8 @@ SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 (along with Transform Type 4) and the responder agrees to perform additional
                 key exchanges, then the additional key exchanges are performed in a series 
                 of new IKE_FOLLOWUP_KE exchanges that follows the CREATE_CHILD_SA exchange.
-                The IKE_FOLLOWUP_KE exchange is introduced as a dedicated exchange type to transfer data of additional key exchanges,
-                that follow the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type is &lt;TBA by IANA&gt;.
+                The IKE_FOLLOWUP_KE exchange is introduced as a dedicated exchange type to transfer data of additional key exchanges 
+		following the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type is &lt;TBA by IANA&gt;.
                 </t>
 
                 <t> These key exchanges are performed in an order of the values of their transform types, so that 
