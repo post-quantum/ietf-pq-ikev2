@@ -153,7 +153,7 @@
 			too.  IKE does have a mechanism to handle fragmentation within
 			UDP <xref target="RFC7383"/>, however that is only applicable to
 			messages exchanged after the IKE_SA_INIT.  To use this mechanism,
-			this specification rely on the IKE_INTERMEDIATE exchange as outlined in
+			this specification relies on the IKE_INTERMEDIATE exchange as outlined in
 			<xref target="I-D.ietf-ipsecme-ikev2-intermediate"/>.  With this
 			mechanism, we do an initial key exchange, using a smaller, possibly
 			non-quantum resistant primitive, such as ECDH.  Then, before we do
