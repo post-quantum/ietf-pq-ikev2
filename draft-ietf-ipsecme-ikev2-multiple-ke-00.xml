@@ -437,7 +437,7 @@ Initiator                             Responder
             <xref target="RFC7383"/> is available.</t>
 
             <t> The fact that all Additional Key Exchange Transform Types share
-            the same registry with Transform Type 4 allows additional key exchnages
+            the same registry with Transform Type 4 allows additional key exchanges
             to be of any type - either post-quantum ones or classical (EC)DH ones.
             This approach allows any combination of defined key exchange methods
             to take place. This also allows to perform a single post-quantum 
