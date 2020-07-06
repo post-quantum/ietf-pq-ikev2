@@ -2,7 +2,6 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
 <!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
-<!ENTITY I-D.ietf-ipsecme-qr-ikev2 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-qr-ikev2.xml">
 <!ENTITY I-D.ietf-ipsecme-ikev2-intermediate SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-ikev2-intermediate.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC7296 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml">
@@ -10,8 +9,9 @@
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8229 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8229.xml">
 <!ENTITY RFC8391 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8391.xml">
+<!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc submissionType="IETF" docName="draft-ietf-ipsecme-ikev2-multiple-ke-00" updates="7296" category="std" ><?rfc compact="yes"?>
+<rfc submissionType="IETF" docName="draft-ietf-ipsecme-ikev2-multiple-ke-01" updates="7296" category="std" ><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -169,7 +169,7 @@
 			providing a long term solution in upgrading the IKEv2 protocol to
 			support post-quantum algorithms.  A short term solution to make IKEv2
 			key exchange quantum secure is to use post-quantum pre-shared keys as
-			discussed in <xref target="I-D.ietf-ipsecme-qr-ikev2"/>.</t>
+			discussed in <xref target="RFC8784"/>.</t>
 
             <t> Note also, that the proposed approach of performing multiple successive key exchanges
             in such a way that resulting session keys depend on all of them is not limited
@@ -184,6 +184,11 @@
 
             <t> Changes in this draft in each version iterations.</t>
     
+            <t>draft-ietf-ipsecme-ikev2-multiple-ke-01</t>
+            <t><list style="symbols">
+            <t>References are updated.</t>
+            </list></t>
+
             <t>draft-ietf-ipsecme-ikev2-multiple-ke-00</t>
             <t><list style="symbols">
             <t>Draft name changed as result of WG adoption and generalization of the approach.</t>
@@ -621,17 +626,17 @@ HDR(CREATE_CHILD_SA), SK {SA, Ni, KEi} -->
 
 HDR(IKE_FOLLOWUP_KE), SK {KEi(1),
  N(ADDITIONAL_KEY_EXCHANGE)(link1)} -->
-                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(1),
+                               <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(1),
                                    N(ADDITIONAL_KEY_EXCHANGE)(link2)}
 
 HDR(IKE_FOLLOWUP_KE), SK {KEi(2),
  N(ADDITIONAL_KEY_EXCHANGE)(link2)} -->
-                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(2),
+                               <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(2),
                                    N(ADDITIONAL_KEY_EXCHANGE)(link3)}
 
 HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
  N(ADDITIONAL_KEY_EXCHANGE)(link3)} -->
-                                 <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(3)}
+                               <--  HDR(IKE_FOLLOWUP_KE), SK {KEr(3)}
                 ]]></artwork></figure>
 
                 <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n) and KEr(n) payloads MUST match the
@@ -846,7 +851,7 @@ Type     Description                   Used In
             </front>
             <seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
         </reference>
-	    &I-D.ietf-ipsecme-qr-ikev2;
+	    &RFC8784;
     	&RFC8391;
     </references>
 
