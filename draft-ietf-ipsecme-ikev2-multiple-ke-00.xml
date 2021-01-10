@@ -3,6 +3,7 @@
 <!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
 <!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
 <!ENTITY I-D.ietf-ipsecme-ikev2-intermediate SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-ikev2-intermediate.xml">
+<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit-00.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC7296 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml">
 <!ENTITY RFC7383 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7383.xml">
@@ -171,19 +172,33 @@
 			key exchange quantum secure is to use post-quantum pre-shared keys as
 			discussed in <xref target="RFC8784"/>.</t>
 
-            <t> Note also, that the proposed approach of performing multiple successive key exchanges
-            in such a way that resulting session keys depend on all of them is not limited
-            to achieving quantum resistance only. It can also be used when all 
-            the performed key exchanges are classical (EC)DH ones, where for some reasons
-            (e.g. policy requirements) it is essential to perform multiple of them.
-            </t>
+      <t> Note also, that the proposed approach of performing multiple successive key exchanges
+      in such a way that resulting session keys depend on all of them is not limited
+      to achieving quantum resistance only. It can also be used when all 
+      the performed key exchanges are classical (EC)DH ones, where for some reasons
+      (e.g. policy requirements) it is essential to perform multiple of them.
+      </t>
+
+    	<t>This draft does not attempt to address key exchanges with KE payloads
+        longer than 64k; the current IKE payload format does not allow that as
+        a possibility.  At the current time, it appears likely that there
+        are a number of key exchanges available that would not require such
+        a requirement.  However, if such a requirement is needed,
+        <xref target="I-D.tjhai-ikev2-beyond-64k-limit"/> discusses approaches
+        that should be taken to exchange huge payloads.</t>
+
 		</section>
 
     	<section title="Changes" >
             <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
 
             <t> Changes in this draft in each version iterations.</t>
-    
+
+            <t>draft-ietf-ipsecme-ikev2-multiple-ke-02</t>
+            <t><list style="symbols">
+            <t>Added a reference on the handling of KE payloads larger than 64KB.</t>
+            </list></t>
+
             <t>draft-ietf-ipsecme-ikev2-multiple-ke-01</t>
             <t><list style="symbols">
             <t>References are updated.</t>
@@ -813,13 +828,6 @@ Type     Description                   Used In
         attack.  Consequently there is not such a pressing need for
         quantum-safe authenticity.</t>
     
-    	<t>This draft does not attempt to address key exchanges with KE payloads
-        longer than 64k; the current IKE payload format does not allow that as
-        a possibility.  If such huge KE payloads are required, a work around
-        (such as making the KE payload a URL and a hash of the real payload)
-        would be needed.  At the current time, it appears likely that there
-        will be plenty of key exchanges available that would not require such
-        a workaround.</t>
 	</section>
 
     <section title="Acknowledgements" anchor="acknowledgements">
@@ -852,6 +860,7 @@ Type     Description                   Used In
             <seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
         </reference>
 	    &RFC8784;
+	    &I-D.tjhai-ikev2-beyond-64k-limit;
     	&RFC8391;
     </references>
 
