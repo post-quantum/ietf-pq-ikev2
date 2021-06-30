@@ -407,7 +407,7 @@
 			returns them in the response IKE_SA_INIT message. 
             Then, provided that additional key exchanges are negotiated, the initiator and the responder 
             perform one or more IKE_INTERMEDIATE exchanges; every such exchange includes a KE payload 
-            for the next method in the negotiated list of them.</t>
+            for the next method from the negotiated list of them.</t>
 
             <t>Here is an overview of the initial exchanges:</t>
 
