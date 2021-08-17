@@ -413,8 +413,9 @@
             defined in <xref target="I-D.ietf-ipsecme-ikev2-intermediate"/>.
             </t>
 
+            <!-- The ordering of the KE payloads as they are transferred in IKE_INTERMEDIATE -->
             <t> In order to minimize communication overhead, only the key shares that are agreed to be used
-			are actually exchanged.  In order to achieve this several new
+			are actually exchanged.  In order to achieve this, several new
             Transform Types are defined, each sharing allowed Transform IDs 
             with Transform Type 4.  The IKE_SA_INIT message includes one or more newly defined SA transforms 
 			that lists the extra key exchange policy required by the
@@ -445,10 +446,10 @@ Initiator                             Responder
     		algorithms are collectively referred to as post-quantum algorithms in
     		this document.  However, it is also possible to use classical (EC)DH primitives for non post-quantum requirements.</t>
     
-            <t> Most post-quantum key agreement algorithms are relatively new, and
-            thus are not fully trusted.  There are also many proposed algorithms,
-            with different trade-offs and relying on different hard problems.  The
-            concern is that some of these hard problems may turn out to be easier
+            <t> Most post-quantum key agreement algorithms are relatively new and
+            thus, there might be some concerns if they replace our trusted classical cryptographic primitives.  These algorithms have different trade-offs and rely on
+            different computational hardness assumptions.  The
+            concern is that some of these hard assumptions may turn out to be easier
             to solve than anticipated and thus the key agreement algorithm may not be
             as secure as expected.  A hybrid solution allows us to deal with this
             uncertainty by combining a classical key exchange with a post-quantum
@@ -507,7 +508,7 @@ Initiator                             Responder
                 Transform Type n + 1.  Each IKE_INTERMEDIATE exchange MUST bear exactly one key exchange method. 
                 Note that with this semantics, Additional Key Exchanges transforms are not associated
                 with any particular type of key exchange and do not have any specific per transform type transform IDs IANA registry. 
-                Instead they all share a single registry for transform IDs - "Key Exchange Method Transform IDs", as well as Transform Type 4. 
+                Instead they all share a single registry for transform IDs - "Key Exchange Method Transform IDs", which are also shared by Transform Type 4. 
                 All new key exchange algorithms (both classical or post-quantum) should be added to this registry.
                 This approach gives peers flexibility in defining the ways they want 
                 to combine different key exchange methods. 
@@ -531,7 +532,7 @@ Initiator                             Responder
                 If the responder agrees to use additional key exchanges, it MUST also return this notification,
                 thus confirming that IKE_INTERMEDIATE exchange is supported and will be used for transferring additional key exchange data.
                 The presence of Additional Key Exchanges transform types in SA payload without negotiation of 
-                using IKE_INTERMEDIATE exchange MUST be treated as protocol error by both initiator and responder.
+                using IKE_INTERMEDIATE exchange MUST be treated as protocol error by both initiator and responder.  An INVALID_SYNTAX Notify payload will be sent by the responder in this case.
                 </t>
 
 
@@ -546,19 +547,21 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)    --->
                 ]]></artwork></figure>
 
                 <t> The responder performs negotiation using standard IKEv2 procedure described in Section 3.3 of <xref target="RFC7296"/>.
-                However, for the Additional Key Exchange types the responder's choice MUST NOT contain equal transform IDs (apart from NONE), 
+                However, for the Additional Key Exchange types chosen by the responder MUST NOT contain equal transform IDs (apart from NONE), 
                 and the ID selected for Transform Type 4 MUST NOT appear in any of Additional Key Exchange transforms.
-                In other words, all selected key exchange methods must be different.
+                In other words, all selected key exchange methods must be different, otherwise the responder MUST abort the exchange by sending an INVALID_SYNTAX Notify payload.
+                </t>
+                <!-- I guess, we have to abort the entire IKE_SA exchange here, rather than just restarting IKE_INTERMEDIATE phase? -->
+
+                <t> If the responder selected is NONE for some Additional Key Exchange types (provided they were proposed by the initiator), 
+                then the corresponding IKE_INTERMEDIATE exchanges is not required. The IKE_INTERMEDIATE exchanges
+                MUST only be performed on Additional Key Exchange types accepted by the responder that are not NONE.
                 </t>
 
-                <t> If the responder selected NONE for some Additional Key Exchange types (provided they were proposed by the initiator), 
-                then the corresponding IKE_INTERMEDIATE exchanges should not take place. The IKE_INTERMEDIATE exchanges
-                MUST only be performed for Additional Key Exchange types containing non-NONE responders choices.
-                </t>
             </section>
         
         	<section title="IKE_INTERMEDIATE Round: Additional Key Exchanges">
-                <t> For each extra key exchange agreed to in the IKE_SA_INIT exchange,
+                <t> For each agreed additional key exchange in the IKE_SA_INIT phase,
         		the initiator and the responder perform one IKE_INTERMEDIATE exchange, 
                 as described in <xref target="I-D.ietf-ipsecme-ikev2-intermediate"/>.</t>
         
@@ -571,14 +574,16 @@ HDR, SK {KEi(n)}    -->
                             <--    HDR, SK {KEr(n)}
                 ]]></artwork></figure>
 
-                <t> The initiator sends key exchange data in the KEi(n) payload. 
+                <t> The initiator sends key exchange data in the KEi(n) payload where n denotes the n-th additional key exchange. 
                 This packet is protected with the current SK_ei/SK_ai keys.</t>
         
                 <t> On receiving this, the responder sends back key exchange payload KEr(n); 
                 again, this packet is protected with the current SK_er/SK_ar keys.</t>
 
-                <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n) and KEr(n) payloads MUST match the
-                n-th negotiated additional key exchange.  Note that the negotiated transform types (the encryption type,
+                <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n)
+                and KEr(n) payloads MUST match the transform ID in the n-th negotiated additional key exchange.  
+                Otherwise, the IKE_SA_INIT exchange MUST be rejected with a Notify payload of type 
+                INVALID_KE_PAYLOAD.  Note that the negotiated transform types (the encryption type,
         		integrity type, prf type) are not modified.</t>
         
                 <t> Once this exchange is done, both sides compute an updated keying material:</t>
@@ -587,7 +592,7 @@ HDR, SK {KEi(n)}    -->
 SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 ]]></artwork></figure>
 
-                <t> where KE(n) is the resulting shared secret of this key exchange,
+                <t> where KE(n) is the resulting shared secret of the n-th additional key exchange,
                 Ni and Nr are nonces from the IKE_SA_INIT exchange and SK_d(n-1) is the 
                 last generated SK_d, (derived from the previous IKE_INTERMEDIATE exchange, 
                 or the IKE_SA_INIT if there have not already been any IKE_INTERMEDIATE exchanges).
@@ -621,11 +626,12 @@ SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 <t> If the IKE SA was created using multiple key exchange methods, the peers 
                 may want to continue using multiple key exchanges in the CREATE_CHILD_SA exchange too.
                 If the initiator includes any Additional Key Exchanges transform in the SA payload
-                (along with Transform Type 4) and the responder agrees to perform additional
-                key exchanges, then the additional key exchanges are performed in a series 
-                of new IKE_FOLLOWUP_KE exchanges that follows the CREATE_CHILD_SA exchange.
-                The IKE_FOLLOWUP_KE exchange is introduced as a dedicated exchange for transferring data of additional key exchanges 
-                following the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type is &lt;TBA by IANA&gt;.
+                (along with Transform Type 4) in the CREATE_CHILD_SA message and the responder agrees
+                to perform additional key exchanges, then the additional key exchanges are performed in a
+                series of new IKE_FOLLOWUP_KE exchanges that follows the CREATE_CHILD_SA exchange.
+                The IKE_FOLLOWUP_KE exchange is introduced as a dedicated exchange for transferring data
+                of additional key exchanges following the key exchange performed in the CREATE_CHILD_SA.
+                Its Exchange Type is &lt;TBA by IANA&gt;.
                 </t>
 
                 <t> Additional key exchanges are performed in an order of the values of their transform types, so that 
@@ -647,7 +653,10 @@ SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 IKE_FOLLOWUP_KE response message in case the next IKE_FOLLOWUP_KE exchange is expected, filling it with
                 some data that would allow linking current exchange to the next one.  The initiator 
                 MUST send back the content of the received notification intact in the request 
-                message of the next exchange. 
+                message of the next exchange.  In the event that IKE_FOLLOW_KE messages are expected,
+                if an initiator receiving CREATE_CHILD_SA message, or a peer receiving IKE_FOLLOWUP_KE
+                message that does not have ADDITIONAL_KEY_EXCHANGE notification, MUST respond with 
+                INVALID_SYNTAX notification and abort the entire CREATE_CHILD_SA exchange.  
                 </t>
         
                 <t> Below is an example of three additional key exchanges.
@@ -676,7 +685,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 ]]></artwork></figure>
 
                 <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n) and KEr(n) payloads MUST match the
-                n-th negotiated additional key exchange.
+                n-th negotiated additional key exchange. Otherwise, the CREATE_CHILD_SA exchange MUST be rejected with INVALID_KE_PAYLOAD notification.
                 </t>
 
                 <t> It is possible that due to some unexpected events (e.g. reboot)
@@ -691,14 +700,15 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 notification and the content of this notify does not correspond to any active key exchange
                 state the responder has, it MUST send back a new error type notification
                 STATE_NOT_FOUND.  This is a non-fatal error notification, its Notify Message Type is &lt;TBA by IANA&gt;, 
-                Protocol ID and SPI Size are both set to 0 and the data is empty.  If the initiator receives
-                this notification in response to IKE_FOLLOWUP_KE exchange performing additional
+                Protocol ID and SPI Size are both set to 0 and the data is empty.
+                If the initiator receives
+                this error notification in response to IKE_FOLLOWUP_KE exchange performing additional
                 key exchange, it MUST cancel this exchange and MUST treat the whole series 
                 of exchanges started from the CREATE_CHILD_SA exchange as failed.
                 In most cases, the receipt of this notification is caused by premature deletion
                 of the corresponding state on the responder (the time period between
                 IKE_FOLLOWUP_KE exchanges appeared too long from the responder's point of view, e.g. due
-                to a temporary network failure).  After receiving this notification the initiator MAY 
+                to a temporary network failure).  After receiving this notification, the initiator MAY 
                 start a new CREATE_CHILD_SA exchange (eventually followed by the IKE_FOLLOWUP_KE exchanges)
                 to retry the failed attempt.  If the initiator continues to receive
                 STATE_NOT_FOUND notifications after several retries, it MUST treat this situation 
@@ -708,23 +718,22 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 <t> When rekeying IKE SA or Child SA, it is possible that the peers start doing this
                 at the same time, which is called simultaneous rekeying.  Sections 2.8.1 and 2.8.2 of 
                 <xref target="RFC7296" /> describe how IKEv2 handles this situation.  In a nutshell
-                IKEv2 follows the rule that if in case of simultaneous rekeying two identical new
-                IKE SAs (or two pairs of Child SAs) are created, then one of them should be deleted. 
-                Which one is to be deleted is determined by comparing the values of four nonces, 
-                that were used in the colliding CREATE_CHILD_SA exchanges - the IKE SA (or pair of Child SAs) 
-                that was created by the exchange in which the smallest nonce was used should be deleted by 
-                the initiator of this exchange.
+                IKEv2 follows the rule that if in case of simultaneous rekeying, two identical new
+                IKE SAs (or two pairs of Child SAs) are created and one of them should be deleted. 
+                Which one is to be deleted is determined by comparing the values of four nonces 
+                that were used in the colliding CREATE_CHILD_SA exchanges and the IKE SA (or pair of Child SAs) 
+                having the smallest nonce should be deleted by the initiator of this exchange.
                 </t>
 
-                <t> With multiple key exchanges the SAs are not yet created when the CRETE_CHILD_SA is completed,
+                <t> With multiple key exchanges, the SAs are not yet created when the CREATE_CHILD_SA is completed,
                 they would be created only after the series of IKE_FOLLOWUP_KE exchanges is finished.
-                For this reason if additional key exchanges were negotiated in the CREATE_CHILD_SA initiated by the losing side, 
-                there is nothing to delete and this side just stops the rekeying process - this side MUST not initiate 
-                IKE_FOLLOWUP_KE exchange with next key exchange.
+                For this reason, if additional key exchanges were negotiated in the CREATE_CHILD_SA initiated
+                by the side having the smallest nonce, there is nothing to delete and this side just stops the
+                rekeying process - it MUST NOT initiate IKE_FOLLOWUP_KE exchange with next key exchange.
                 </t>
 
                 <t> In most cases, rekey collisions are resolved in the CREATE_CHILD_SA exchange.
-                However, a situation may occur when due to packet loss, one of the peers receives the CREATE_CHILD_SA message
+                However, a situation may occur for example due to packet loss, one of the peers receives the CREATE_CHILD_SA message
                 requesting rekey of SA  that is already being rekeyed by this peer (i.e. the CREATE_CHILD_SA
                 exchange initiated by this peer has been already completed and the series of IKE_FOLLOWUP_KE exchanges is in progress).
                 In this case, TEMPORARY_FAILURE notification MUST be sent in response to such a request.
@@ -742,7 +751,7 @@ SKEYSEED = prf(SK_d, KE  | Ni | Nr | KE(1) | ... KE(n))
                 </t>
 
                 <figure><artwork align="center" ><![CDATA[
-KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
+KEYMAT = prf+(SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
                 ]]></artwork></figure>
 
                 <t> In both cases SK_d is from existing IKE SA; KE, Ni, Nr are the shared key and nonces
@@ -804,10 +813,10 @@ Type     Description                   Used In
     	sufficient resistance to  quantum attacks.  Accordingly the
     	post-quantum security level achieved is at least 128 bits.</t>
     
-    	<t>SKEYSEED is calculated from shared KE(x) using an algorithm defined
+    	<t>SKEYSEED is calculated from shared KE using an algorithm defined
     	in Transform Type 2.  While a quantum attacker may learn the value
-    	of KE(x), if this value is obtained by means of a classical key exchange,
-    	other KE(x) values generated by means of a quantum-resistant algorithm
+    	of KE, if this value is obtained by means of a classical key exchange,
+    	other KE values generated by means of a quantum-resistant algorithm
     	ensure that the final SKEYSEED is not compromised.  This assumes that
     	the algorithm defined in the Transform Type 2 is post-quantum.
     	</t>
@@ -815,8 +824,9 @@ Type     Description                   Used In
         <t>
     	The main focus of this document is to prevent a passive attacker
     	performing a "harvest and decrypt" attack.  In other words, an attacker
-    	that records messages exchanges today and proceeds to decrypt them once
-    	he owns a quantum computer.  This attack is prevented due to the hybrid
+    	that records messages today and proceeds to decrypt them once
+    	they have access to cryptographically relevant quantum computer.  This
+        attack is prevented due to the hybrid
     	nature of the key exchange.  Other attacks involving an active attacker
     	using a quantum-computer are not completely solved by this
     	document.  This is for two reasons.</t>
