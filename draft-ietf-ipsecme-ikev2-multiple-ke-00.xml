@@ -919,7 +919,7 @@ Type     Description                   Used In
 
         <t> The main focus of this document is to prevent a passive attacker
         performing a "harvest and decrypt" attack.  In other words, an attacker
-        that records messages exchanges today and proceeds to decrypt them once
+        that records messages exchanged today and proceeds to decrypt them once
         he owns a quantum computer.  This attack is prevented due to the hybrid
         nature of the key exchange.  Other attacks involving an active attacker
         using a quantum-computer are not completely solved by this
