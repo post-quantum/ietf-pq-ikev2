@@ -970,7 +970,7 @@ Type     Description                   Used In
         initial IKE SA (and initial Child SA if it is created) unprotected
         against quantum computers. Nevertheless the rekeyed IKE SA (and Child
         SAs that will be created over it) will have full protection.
-        This is similar to scenario described in <xref target="RFC8784" />.
+        This is similar to the scenario described in <xref target="RFC8784" />.
         Depending on peers policy this scenario may or may not be appropriate.
         </t>
 	</section>
