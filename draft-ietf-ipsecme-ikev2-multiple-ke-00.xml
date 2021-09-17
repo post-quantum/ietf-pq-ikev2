@@ -736,7 +736,7 @@ SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 key exchange negotiated using Transform Type n always precedes key exchange negotiated using
                 Transform Type n + 1. Each additional key exchange method MUST be fully completed before the next one is started.
                 Note, that this document assumes, that each key exchange method consumes exactly one IKE_FOLLOWUP_KE exchange.
-                For the methods requiring multiple round trips a separate document should define how such
+                For the methods requiring multiple round trips, a separate document should define how such
                 methods are splitted into several IKE_FOLLOWUP_KE exchanges.
                 </t>
 
