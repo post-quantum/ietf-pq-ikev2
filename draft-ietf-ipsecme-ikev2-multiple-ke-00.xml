@@ -956,7 +956,7 @@ Type     Description                   Used In
         increases the responder's susceptibility to DoS attacks, because 
         of an increased amount of resources needed to spend before the initiator
         is authenticated. This is especially true for post-quantum
-        key exchange methods many of which are resource demanding.
+        key exchange methods, where many of them are more memory and/or CPU intensive than the classical counterparts.
         </t>
 
         <t> Responders may consider recommendations from <xref target="RFC8019" />
