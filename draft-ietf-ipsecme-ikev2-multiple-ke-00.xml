@@ -198,7 +198,7 @@
     
             <t>draft-ietf-ipsecme-ikev2-multiple-ke-04</t>
             <t><list style="symbols">
-            <t>Introduction and initial sectiona are reorganized.</t>
+            <t>Introduction and initial sections are reorganized.</t>
             <t>More clarifications for error handling added.</t>
             <t>ASCII arts displaying SA payload are added.</t>
             <t>Clarification for handling multiple round trips key exchange methods added.</t>
