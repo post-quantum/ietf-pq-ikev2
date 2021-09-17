@@ -446,7 +446,7 @@
 
             <t> The fact, that newly defined transforms share
             the same registry for possible Transform IDs with Transform Type 4, allows additional key exchanges
-            to be of any type - either post-quantum ones or classical (EC)DH
+            to be of any type - either post-quantum or classical (EC)DH
             ones.  This approach allows any combination of defined key exchange methods
             to take place.  This also allows performing a single post-quantum 
             key exchange in the IKE_SA_INIT without additional key exchanges, 
