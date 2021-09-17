@@ -432,7 +432,7 @@
             These transforms share allowed Transform IDs with Transform Type 4.
             </t>
 
-            <t> We assume that new Transform Type 4 identifiers will be aasigned later to the
+            <t> We assume that new Transform Type 4 identifiers will be assigned later to the
 			various post-quantum key exchanges.  We specifically do not make a distinction between classical (DH and ECDH)
 			and post-quantum key exchanges, nor post-quantum algorithms which are
 			true key exchanges versus post-quantum algorithms that act as key
