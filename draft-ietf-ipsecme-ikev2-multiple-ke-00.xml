@@ -753,14 +753,21 @@ KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
             </section>
 
             <section title="Interaction with Childless IKE SA">
-            <t>It is also possible to establish a fully quantum-resistant IKE SAs from multiple key exchanges
-            without using IKE_INTERMEDIATE exchanges.  In this case, both peers should immediately rekey the IKE SA
-            and prevent the very first Child SA from being created, following the IKE_AUTH exchange.  In order to
-            achieve this, both peers MUST support the experimental <xref target="RFC6023"/> and exchange
-            CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange.  The rekey of the IKE SA is done using
-            CREATE_CHILD_SA exchange where the multiple key exchange is negotiated and the key exchange payload is carried
-            in the IKE_FOLLOWUP_KE message.
+            <t>It is also possible to establish a fully quantum-resistant IKE SAs from additional key exchanges
+            without using IKE_INTERMEDIATE exchanges.  In this case, the IKE SA created from IKE_SA_INIT exchange
+            can be immediately rekeyed with CREATE_CHILD_SA using additional key exchanges and IKE_FOLLOWUP_KE
+            message to carry the key exchange payload.  If only classical key exchange method is used in
+            the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will not be quantum resistant.
+            Consequently, if the peers' local policy is that all Child SAs should be fully-protected, then the peers
+            can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this case, the
+            peers exchange CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange and a fully-protected
+            Child SA can be created with CREATE_CHILD_SA using additional key exchanges.
             </t>
+
+            <t>Note that if the initial IKE SA is used to transfer sensitive information, then this information
+            will not be protected using the additional (e.g. quantum safe) key exchanges, so this scenario
+            may be inappropriate.  One such example is in G-IKEv2 protocol where cryptographic materials are
+            exchanged in IKE_SA_INIT messages between group member and the group controller.</t>
             </section>
 
         </section>
@@ -947,8 +954,7 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
 
     <section title="Additional Key Exchange in the CREATE_CHILD_SA Exchange only" anchor="sample-exchanges-ake-child-sas">
       <t>The exchanges below show that the initiator does not propose the use of additional key exchanges
-      to establish an IKE SA, but they are required in order to establish a Child SA.  Note that the
-      initiator does not advertise N(INTERMEDIATE_EXCHANGE_SUPPORTED) in the IKE_SA_INIT request. In order
+      to establish an IKE SA, but they are required in order to establish a Child SA.  In order
       to establish a fully quantum-resistant IPsec SA, both peers include CHILDLESS_IKEV2_SUPPORTED
       notification in their exchange so that the first Child SA is not created in IKE_AUTH, but instead
       the IKE SA is immediately rekeyed using CREATED_CHILD_SA. Any Child SA will have to be created via
