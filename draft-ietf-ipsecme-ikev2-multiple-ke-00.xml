@@ -566,7 +566,7 @@ Initiator                             Responder
                 then the corresponding IKE_INTERMEDIATE exchanges should not take place. The IKE_INTERMEDIATE exchanges
                 MUST only be performed for Additional Key Exchange types containing non-NONE responders choices.
                 It means that if the initiator includes NONE in all Additional Key Exchange transforms and the
-                responder selects this value for all of them, then no IKE_INTERMEDIATE exchanges that would have
+                responder selects this value for all of them, then no IKE_INTERMEDIATE exchanges will take place between the peers.
                 perform additional key exchanges will take place (note that they still may take place for other purposes).
                 </t>
 
