@@ -718,7 +718,7 @@ SKEYSEED(n) = prf(SK_d(n-1), KE(n) | Ni | Nr)
                 perform a Diffie-Hellman key exchange to add a fresh entropy into the session keys. 
                 In case of IKE SA rekey, the key exchange is mandatory.
                 Peers supporting this specification may want to use multiple key exchanges
-                in this situations.
+                in these situations.
                 </t>
 
                 <t> Using multiple key exchanges with CREATE_CHILD_SA exchange is negotiated 
