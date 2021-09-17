@@ -480,7 +480,7 @@ Initiator                             Responder
 
             <t> Note, that this document assumes, that each key exchange method requires one round trip and consumes exactly one IKE_INTERMEDIATE exchange.
             This assumption is valid for all classic key exchange methods defined so far and for all post-quantum methods currently known.
-            For hypothetical future key exchange methods requiring multiple round trips to complete a separate document should define how such
+            For hypothetical future key exchange methods requiring multiple round trips to complete, a separate document should define how such
             methods are splitted into several IKE_INTERMEDIATE exchanges.
             </t>
 
