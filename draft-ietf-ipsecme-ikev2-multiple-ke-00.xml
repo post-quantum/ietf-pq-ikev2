@@ -964,7 +964,7 @@ Type     Description                   Used In
         the responder only agrees to create initial IKE SA without performing 
         additional key exchanges, provided the initiator includes such an option in its proposals. Then peers immediately rekey 
         initial IKE SA  with the CREATE_CHILD_SA exchange and additional key exchanges performed via the IKE_FOLLOWUP_KE exchanges.
-        In this case at the point when resourse-consuming operations are required
+        In this case at the point when resource-intensive operations are required,
         peers have already authenticated each other.
         However, in the context of hybrid post-quantum key exchange this scenario would leave
         initial IKE SA (and initial Child SA if it is created) unprotected
