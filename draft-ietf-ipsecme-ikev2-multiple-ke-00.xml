@@ -976,7 +976,7 @@ Type     Description                   Used In
 	</section>
 
     <section title="Acknowledgements" anchor="acknowledgements">
-        <t> The authors would like to thanks Frederic Detienne and Olivier
+        <t> The authors would like to thank Frederic Detienne and Olivier
         Pelerin for their comments and suggestions, including the idea to
         negotiate the post-quantum algorithms using the existing KE payload.
         The authors are also grateful to Tobias Heider and Tobias Guggemos for valuable comments.
