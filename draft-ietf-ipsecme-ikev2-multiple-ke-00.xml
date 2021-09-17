@@ -577,8 +577,8 @@ Initiator                             Responder
                 Additional Key Exchange 2 etc. transforms, that this document defines, 
                 and an abbreviation KE for the Key Exchange transform,
                 that this document renames from the Diffie-Hellman Group transform.
-                We also use not yet defined Transform IDs FRODOKEM_976_AES, SIKE_P434
-                and KYBER512 to denote some of popular post-quantum key exchange methods.
+                We also use not yet defined Transform IDs PQ_KEM_1, PQ_KEM_2
+                and PQ_KEM_3 to denote some of popular post-quantum key exchange methods.
                 </t>
 
                 <figure><artwork align="center" ><![CDATA[
@@ -594,27 +594,27 @@ SA Payload
          |
          +-- Transform PRF ( ID = PRF_HMAC_SHA2_256 )
          |
-         +-- Transform AKE2 ( ID = FRODOKEM_976_AES )
+         +-- Transform AKE2 ( ID = PQ_KEM_1 )
          |
-         +-- Transform AKE2 ( ID = SIKE_P434 )
+         +-- Transform AKE2 ( ID = PQ_KEM_2 )
          |
-         +-- Transform AKE3 ( ID = FRODOKEM_976_AES )
+         +-- Transform AKE3 ( ID = PQ_KEM_1 )
          |
-         +-- Transform AKE3 ( ID = SIKE_P434 )
+         +-- Transform AKE3 ( ID = PQ_KEM_2 )
          |
-         +-- Transform AKE5 ( ID = KYBER512 )
+         +-- Transform AKE5 ( ID = PQ_KEM_3 )
          |
          +-- Transform AKE5 ( ID = NONE )
                 ]]></artwork></figure>
 
                 <t> In this example the initiator proposes to perform initial key exchange using 4096-bit MODP group
-                following by two mandatory additional key exchanges using FRODOKEM_976_AES and SIKE_P434 methods in any order,
-                following by additional key exchange using KYBER512 method that may be omitted.
+                following by two mandatory additional key exchanges using PQ_KEM_1 and PQ_KEM_2 methods in any order,
+                following by additional key exchange using PQ_KEM_3 method that may be omitted.
                 </t>
 
                 <t> The responder might return the following SA payload, indicating that it agrees to 
-                perform two additional key exchanges SIKE_P434 followed by FRODOKEM_976_AES and doesn't
-                want to perform KYBER512 in addition.
+                perform two additional key exchanges PQ_KEM_2 followed by PQ_KEM_1 and doesn't
+                want to perform PQ_KEM_3 additionally.
                 </t>
 
                 <figure><artwork align="center" ><![CDATA[
@@ -630,9 +630,9 @@ SA Payload
          |
          +-- Transform PRF ( ID = PRF_HMAC_SHA2_256 )
          |
-         +-- Transform AKE2 ( ID = SIKE_P434 )
+         +-- Transform AKE2 ( ID = PQ_KEM_2 )
          |
-         +-- Transform AKE3 ( ID = FRODOKEM_976_AES )
+         +-- Transform AKE3 ( ID = PQ_KEM_1 )
          |
          +-- Transform AKE5 ( ID = NONE )
                 ]]></artwork></figure>
