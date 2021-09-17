@@ -3,8 +3,10 @@
 <!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
 <!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
 <!ENTITY I-D.ietf-ipsecme-ikev2-intermediate SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-ikev2-intermediate.xml">
-<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit-00.xml">
+<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit.xml">
+<!ENTITY I-D.ietf-ipsecme-g-ikev2 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-g-ikev2.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC6023 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6023.xml">
 <!ENTITY RFC7296 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml">
 <!ENTITY RFC7383 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7383.xml">
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
@@ -750,6 +752,26 @@ KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
                 </t>
 
             </section>
+
+            <section title="Interaction with Childless IKE SA">
+            <t>It is also possible to establish a fully quantum-resistant IKE SAs from additional key exchanges
+            without using IKE_INTERMEDIATE exchanges.  In this case, the IKE SA created from IKE_SA_INIT exchange
+            can be immediately rekeyed with CREATE_CHILD_SA using additional key exchanges and IKE_FOLLOWUP_KE
+            message to carry the key exchange payload.  If only classical key exchange method is used in
+            the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will not be quantum resistant.
+            Consequently, if the peers' local policy requires that all Child SAs should be fully-protected, then
+            the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this
+            case, the peers exchange CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange and a
+            fully-protected Child SA can be created with CREATE_CHILD_SA using additional key exchanges.
+            </t>
+
+            <t>Note that if the initial IKE SA is used to transfer sensitive information, then this information
+            will not be protected using the additional (e.g. quantum safe) key exchanges, so this scenario
+            may be inappropriate.  One such example is in G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/>
+            where cryptographic materials are exchanged in IKE_SA_INIT messages between group member and the group
+            controller.</t>
+            </section>
+
         </section>
     </section>
 
@@ -870,6 +892,7 @@ Type     Description                   Used In
     <references title='Informative References'>
         &RFC4302;
         &RFC4303;
+        &RFC6023;
         &RFC7383;
     	&RFC8229;
         <reference anchor="GROVER"><front>
@@ -881,9 +904,136 @@ Type     Description                   Used In
             <seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
         </reference>
 	    &RFC8784;
+        &I-D.ietf-ipsecme-g-ikev2;
 	    &I-D.tjhai-ikev2-beyond-64k-limit;
     	&RFC8391;
     </references>
+
+  <section title="Sample Multiple Key Exchanges" anchor="sample-exchanges">
+    <t>This appendix shows some examples of multiple key exchanges.  These examples are purely for information
+    purposes and they describe some message flow scenarios that may occur in establishing an IKE or CHILD SA.  Note
+    that some payloads that are not relevant to multiple key exchanges may be omitted for brevity.
+    </t>
+
+    <section title="No Additional Key Exchange Used" anchor="sample-exchanges-none-selected">
+      <t>The initiator proposes two sets of optional additional key exchanges, but the responder does not
+      support any of them.  The responder chooses NONE for each set and consequently, IKE_INTERMEDIATE
+      exchange does not takes place and the exchange proceeds to IKE_AUTH phase.  The resulting keying
+      materials are the same as those derived with <xref target="RFC7296"/>.</t>
+
+      <figure><artwork align="center"><![CDATA[
+Initiator                     Responder
+------------------------------------------------------------------------
+HDR(IKE_SA_INIT), SAi1(.. AKE*...), --->
+KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+  Proposal #1
+    Transform ECR (ID = ENCR_AES_GCM_16,
+                   256-bit key)
+    Transform PRF (ID = PRF_HMAC_SHA2_512)
+    Transform KE (ID = Curve25519)
+    Transform AKE1 (ID = PQ_KEM_1)
+    Transform AKE1 (ID = PQ_KEM_2)
+    Transform AKE1 (ID = NONE)
+    Transform AKE2 (ID = PQ_KEM_3)
+    Transform AKE2 (ID = PQ_KEM_4)
+    Transform AKE2 (ID = NONE)
+                         <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
+                              KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
+                              N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+                                Proposal #1
+                                  Transform ECR (ID = ENCR_AES_GCM_16,
+                                                 256-bit key)
+                                  Transform PRF (ID = PRF_HMAC_SHA2_512)
+                                  Transform KE (ID = Curve25519)
+                                  Transform AKE1 (ID = NONE)
+                                  Transform AKE2 (ID = NONE)
+
+HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
+                         <--- HDR(IKE_AUTH), SK{ IDr, AUTH, SAr2,
+                              TSi, TSr }
+      ]]></artwork></figure>
+    </section>
+
+    <section title="Additional Key Exchange in the CREATE_CHILD_SA Exchange only" anchor="sample-exchanges-ake-child-sas">
+      <t>The exchanges below show that the initiator does not propose the use of additional key exchanges
+      to establish an IKE SA, but they are required in order to establish a Child SA.  In order
+      to establish a fully quantum-resistant IPsec SA, both peers include CHILDLESS_IKEV2_SUPPORTED
+      notification in their exchange so that the first Child SA is not created in IKE_AUTH, but instead
+      the IKE SA is immediately rekeyed using CREATED_CHILD_SA. Any Child SA will have to be created via
+      subsequent CREATED_CHILD_SA exchange.
+      </t>
+
+      <figure><artwork align="center"><![CDATA[
+Initiator                     Responder
+------------------------------------------------------------------------
+HDR(IKE_SA_INIT), SAi1, --->
+KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+N(CHILDLESS_IKEV2_SUPPORTED)
+                         <--- HDR(IKE_SA_INIT), SAr1,
+                              KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
+                              N(CHILDLESS_IKEV2_SUPPORTED)
+HDR(IKE_AUTH), SK{ IDi, AUTH  } --->
+                         <--- HDR(IKE_AUTH), SK{ IDr, AUTH }
+HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi } --->
+  Proposal #1
+    Transform ECR (ID = ENCR_AES_GCM_16,
+                   256-bit key)
+    Transform PRF (ID = PRF_HMAC_SHA2_512)
+    Transform KE (ID = Curve25519)
+    Transform AKE1 (ID = PQ_KEM_1)
+    Transform AKE1 (ID = PQ_KEM_2)
+    Transform AKE2 (ID = PQ_KEM_5)
+    Transform AKE2 (ID = PQ_KEM_6)
+    Transform AKE2 (ID = NONE)
+                         <--- HDR(CREATE_CHILD_SA), SK{ SAr(.. AKE*...),
+                              Nr, KEr,
+                              N(ADDITIONAL_KEY_EXCHANGE)(link1) }
+                                Proposal #1
+                                  Transform ECR (ID = ENCR_AES_GCM_16,
+                                                 256-bit key)
+                                  Transform PRF (ID = PRF_HMAC_SHA2_512)
+                                  Transform KE (ID = Curve25519)
+                                  Transform AKE1 (ID = PQ_KEM_2)
+                                  Transform AKE2 (ID = PQ_KEM_5)
+
+HDR(IKE_FOLLOWUP_KE), SK{ KEi(1), --->
+N(ADDITIONAL_KEY_EXCHANGE)(link1) }
+                         <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1),
+                              N(ADDITIONAL_KEY_EXCHANGE)(link2) }
+HDR(IKE_FOLLOWUP_KE), SK{ KEi(2), --->
+N(ADDITIONAL_KEY_EXCHANGE)(link2) }
+                         <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2) }
+      ]]></artwork></figure>
+    </section>
+
+    <section title="Not Matching Proposal for Additional Key Exchanges" anchor="sample-exchanges-no-proposal-chosen">
+      <t>The initiator proposes the combination of PQ_KEM_1, PQ_KEM_2, PQ_KEM_3, and PQ_KEM_4 as
+      the additional key exchanges.  The initiator indicates, using the key exchange method NONE,
+      that either PQ_KEM_1 or PQ_KEM_2 must be used to establish a security association.  The responder,
+      although supports the optional PQ_KEM_3 and PQ_KEM_4 method, does not support either PQ_KEM_1 or
+      PQ_KEM_2 mandatory method and therefore responds with NO_PROPOSAL_CHOSEN notification.  </t>
+
+      <figure><artwork align="center"><![CDATA[
+Initiator                     Responder
+------------------------------------------------------------------------
+HDR(IKE_SA_INIT), SAi1(.. AKE*...), --->
+KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+  Proposal #1
+    Transform ECR (ID = ENCR_AES_GCM_16,
+                   256-bit key)
+    Transform PRF (ID = PRF_HMAC_SHA2_512)
+    Transform KE (ID = Curve25519)
+    Transform AKE1 (ID = PQ_KEM_1)
+    Transform AKE1 (ID = PQ_KEM_2)
+    Transform AKE2 (ID = PQ_KEM_3)
+    Transform AKE2 (ID = PQ_KEM_4)
+    Transform AKE2 (ID = NONE)
+                         <--- HDR(IKE_SA_INIT), N(NO_PROPOSAL_CHOSEN)
+      ]]></artwork></figure>
+    </section>
+  </section>
 
     <section title="Alternative Design" anchor="altdesign">
         <t>
