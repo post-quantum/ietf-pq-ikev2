@@ -3,7 +3,8 @@
 <!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
 <!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
 <!ENTITY I-D.ietf-ipsecme-ikev2-intermediate SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-ikev2-intermediate.xml">
-<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit-00.xml">
+<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit.xml">
+<!ENTITY I-D.ietf-ipsecme-g-ikev2 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-g-ikev2.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC6023 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6023.xml">
 <!ENTITY RFC7296 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml">
@@ -758,16 +759,17 @@ KEYMAT = prf+ (SK_d, KE  | Ni | Nr | KE(1) |  ... KE(n))
             can be immediately rekeyed with CREATE_CHILD_SA using additional key exchanges and IKE_FOLLOWUP_KE
             message to carry the key exchange payload.  If only classical key exchange method is used in
             the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will not be quantum resistant.
-            Consequently, if the peers' local policy is that all Child SAs should be fully-protected, then the peers
-            can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this case, the
-            peers exchange CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange and a fully-protected
-            Child SA can be created with CREATE_CHILD_SA using additional key exchanges.
+            Consequently, if the peers' local policy requires that all Child SAs should be fully-protected, then
+            the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this
+            case, the peers exchange CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange and a
+            fully-protected Child SA can be created with CREATE_CHILD_SA using additional key exchanges.
             </t>
 
             <t>Note that if the initial IKE SA is used to transfer sensitive information, then this information
             will not be protected using the additional (e.g. quantum safe) key exchanges, so this scenario
-            may be inappropriate.  One such example is in G-IKEv2 protocol where cryptographic materials are
-            exchanged in IKE_SA_INIT messages between group member and the group controller.</t>
+            may be inappropriate.  One such example is in G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/>
+            where cryptographic materials are exchanged in IKE_SA_INIT messages between group member and the group
+            controller.</t>
             </section>
 
         </section>
@@ -902,6 +904,7 @@ Type     Description                   Used In
             <seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
         </reference>
 	    &RFC8784;
+        &I-D.ietf-ipsecme-g-ikev2;
 	    &I-D.tjhai-ikev2-beyond-64k-limit;
     	&RFC8391;
     </references>
