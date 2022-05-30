@@ -577,7 +577,8 @@ Initiator                             Responder
                 then the corresponding IKE_INTERMEDIATE exchanges should not take place. The IKE_INTERMEDIATE exchanges
                 MUST only be performed for Additional Key Exchange types where the corresponding transform IDs are not NONE.
                 Therefore if the initiator includes NONE in all of the Additional Key Exchange transforms and the
-                responder selects this value for all of them, then no IKE_INTERMEDIATE exchanges will take place between the peers.
+                responder selects this value for all of them, then no IKE_INTERMEDIATE messages performing additional key
+                exchanges will take place between the peers.  Note that the IKE_INTERMEDIATE exchanges may still take place for other purposes.
                 </t>
 
                 <t> Below is an example of the SA payload in the initiator's IKE_SA_INIT request message.
@@ -612,6 +613,7 @@ SA Payload
          +-- Transform AKE5 ( ID = PQ_KEM_3 )
          |
          +-- Transform AKE5 ( ID = NONE )
+
                 ]]></artwork></figure>
 
                 <t> In this example, the initiator proposes to perform initial key exchange using 4096-bit MODP group
@@ -642,10 +644,11 @@ SA Payload
          +-- Transform AKE3 ( ID = PQ_KEM_1 )
          |
          +-- Transform AKE5 ( ID = NONE )
+
                 ]]></artwork></figure>
 
-                <t> If the initiator includes any Additional Key Exchange transform types into SA payload in the IKE_SA_INIT exchange request message,
-                it MUST also negotiate using IKE_INTERMEDIATE exchange as described in <xref target="RFC9242" />,
+                <t> If the initiator includes any Additional Key Exchange transform types into the SA payload in the IKE_SA_INIT exchange request message,
+                then it MUST also negotiate the use of the IKE_INTERMEDIATE exchange as described in <xref target="RFC9242" />,
                 by including INTERMEDIATE_EXCHANGE_SUPPORTED notification in the same message.
                 If the responder agrees to use additional key exchanges while establishing initial IKE SA, 
                 it MUST also return this notification in the IKE_SA_INIT response message,
@@ -845,7 +848,9 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 </t>
 
                 <t> If multiple key exchanges are negotiated in the CREATE_CHILD_SA exchange, then the resulting keys are 
-                computed as follows. In case of IKE SA rekey:
+                computed as follows.</t>
+		    
+		        <t>In case of IKE SA rekey:
                 </t>
 
                 <figure><artwork align="center" ><![CDATA[
@@ -970,7 +975,7 @@ Type     Description                   Used In
         incorporated in due course.
         </t>
 
-        <t> It should be noted that the purpose of post-quantum algorithms is
+        <t> Secondly, it should be noted that the purpose of post-quantum algorithms is
         to provide resistance to attacks mounted in the future.  The current
         threat is that encrypted sessions are subject to eavesdropping and
         archived with decryption by quantum computers taking place at some
@@ -1140,7 +1145,7 @@ N(ADDITIONAL_KEY_EXCHANGE)(link2) }
       ]]></artwork></figure>
     </section>
 
-    <section title="Not Matching Proposal for Additional Key Exchange" anchor="sample-exchanges-no-proposal-chosen">
+    <section title="Not Matching Proposal for Additional Key Exchanges" anchor="sample-exchanges-no-proposal-chosen">
       <t>The initiator proposes the combination of PQ_KEM_1, PQ_KEM_2, PQ_KEM_3, and PQ_KEM_4 as
       the additional key exchanges.  The initiator indicates, using the key exchange method NONE,
       that either PQ_KEM_1 or PQ_KEM_2 must be used to establish a security association.  The responder,
