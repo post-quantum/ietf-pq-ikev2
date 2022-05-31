@@ -884,9 +884,9 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
 
             <t>Note that if the initial IKE SA is used to transfer sensitive information, then this information
             will not be protected using the additional key exchanges, which may use post-quantum algorithms.  Consider
-            G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/> where cryptographic materials are exchanged in IKE_SA_INIT
-            messages between the group member and the group controller, in this arrangement, the peers will have to use
-            post-quantum algorithm in Transform Type 4 in order to mitigate the risk of quantum attack. </t>
+            G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/> where the cryptographic materials are sent from
+            the group controller to the group members when the initial IKE SA is created. In this arrangement,
+            the peers will have to use post-quantum algorithm in Transform Type 4 in order to mitigate the risk of quantum attack. </t>
             </section>
 
         </section>
