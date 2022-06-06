@@ -11,7 +11,6 @@
 <!ENTITY RFC7383 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7383.xml">
 <!ENTITY RFC8019 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8019.xml">
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
-<!ENTITY RFC8229 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8229.xml">
 <!ENTITY RFC8391 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8391.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
@@ -108,10 +107,11 @@
 		<section title="Problem Description" ><t>
 			Internet Key Exchange Protocol (IKEv2) as specified in <xref target="RFC7296"/> 
             uses the Diffie-Hellman (DH) or Elliptic Curve
-			Diffie-Hellman (ECDH) algorithm to establish a shared secret
-			between an initiator and a responder.  The security of the DH and
-			ECDH algorithms relies on the difficulty to solve a discrete logarithm
-			problem in multiplicative and elliptic curve groups respectively when
+			Diffie-Hellman (ECDH) algorithm, which we shall refer to as (EC)DH collectively,
+            to establish a shared secret
+			between an initiator and a responder.  The security of the (EC)DH algorithms relies
+            on the difficulty to solve a discrete logarithm
+			problem in multiplicative (and respectively elliptic curve) groups when
 			the order of the group parameter is large enough.  While solving such
 			a problem remains difficult with current computing power, it is
 			believed that general purpose quantum computers will be able to solve
@@ -131,7 +131,7 @@
 			maintaining backwards compatibility, to derive a set of IKE keys that
 			is resistant to quantum computer attacks.  This extension allows the
 			negotiation of one or more PQC algorithm to exchange data, in addition
-			to the existing DH or ECDH key exchange data.  We believe that the
+			to the existing (EC)DH key exchange data.  We believe that the
 			feature of using more than one post-quantum algorithms is important as
 			many of these algorithms are relatively new and there may be a need to
 			hedge the security risk with multiple key exchange data from several
@@ -152,16 +152,11 @@
             <t>
 			Some post-quantum key exchange payloads may have sizes larger than
 			the standard maximum transmission unit (MTU) size, and therefore there could be issues with
-			fragmentation at the IP layer.  IKE does allow transmission over TCP
-			where fragmentation is not an issue <xref target="RFC8229"/>;
-			however, we believe that a UDP-based solution will be required
-			too.  IKE does have a mechanism to handle fragmentation within
-			UDP <xref target="RFC7383"/>, however that is only applicable to
-			messages exchanged after the IKE_SA_INIT exchange.  To use this mechanism,
-			this specification relies on the IKE_INTERMEDIATE exchange as outlined in
-			<xref target="RFC9242"/>.  With this
+			fragmentation at the IP layer.  In order to allow using those larger payload
+            sizes, this mechanism relies on the IKE_INTERMEDIATE exchange as specified
+            in <xref target="RFC9242"/>.  With this
 			mechanism, we do an initial key exchange, using a smaller, possibly
-			classical primitive, such as ECDH.  Then, before we do
+			classical primitive, such as (EC)DH.  Then, before we do
 			the IKE_AUTH exchange, we perform one or more IKE_INTERMEDIATE exchanges,
 			each of which contains an additional key exchange.  As the IKE_INTERMEDIATE
 			exchange is encrypted, the IKE fragmentation protocol <xref target="RFC7383" />
@@ -174,7 +169,7 @@
 			providing a long term solution in upgrading the IKEv2 protocol to
 			support post-quantum algorithms.  A short term solution to make IKEv2
 			key exchange quantum secure is to use post-quantum pre-shared keys as
-			discussed in <xref target="RFC8784"/>.</t>
+			specified in <xref target="RFC8784"/>.</t>
 
       <t> Note also that the proposed approach of performing multiple successive key exchanges
       in such a way that resulting session keys depend on all of them is not limited
@@ -183,7 +178,7 @@
       (e.g. policy requirements) it is essential to perform multiple of them.
       </t>
 
-    	<t>This draft does not attempt to address key exchanges with KE payloads
+    	<t>This specification does not attempt to address key exchanges with KE payloads
         longer than 64k; the current IKE payload format does not allow such as
         possibility.  At the time of writing, it appears likely that there
         are a number of key exchanges available that would not require such
@@ -201,7 +196,7 @@
             <t>draft-ietf-ipsecme-ikev2-multiple-ke-05</t>
             <t><list style="symbols">
             <t>Updated the reference to RFC9242.</t>
-            <t>Minor editorial changes.</t>
+            <t>Editorial changes.</t>
             </list></t>
             
             <t>draft-ietf-ipsecme-ikev2-multiple-ke-04</t>
@@ -281,7 +276,7 @@
     	<section title="Document Organization" >
             <t>
             The remainder of this document is organized as follows.  <xref target="design"/>
-            summarizes design criteria.  <xref target="framework"/> describes how
+            summarizes design criteria.  <xref target="specification"/> describes how
     	    multiple key exchanges are performed between two IKE peers and how
     	    keying materials are derived for both SAs and Child SAs.  A summary of alternative
     	    approaches that have been considered, but later discarded, are described
@@ -300,7 +295,7 @@
 
 	<section title="Design Criteria" anchor="design">
         <t>
-        The design of the proposed extension is driven by the
+        The design of the extension is driven by the
         following criteria:</t>
     
     	<t><list style="hanging" hangIndent="5"><t hangText="1)">
@@ -318,7 +313,7 @@
     
     	<t hangText="2)">
     	Hybrid.  Currently, there does not exist a post-quantum key
-    	exchange that is trusted at the level that ECDH is trusted
+    	exchange that is trusted at the level that (EC)DH is trusted
         against conventional (non-quantum) adversaries.  A hybrid
         post-quantum algorithm to be introduced
         next to well-established primitives, since the overall security
@@ -413,7 +408,7 @@
 
 	</section>
 
-	<section title="Multiple Key Exchanges" anchor="framework">
+	<section title="Multiple Key Exchanges" anchor="specification">
 		<section title="Design Overview">
             <t> Most post-quantum key agreement algorithms are relatively new, and
             thus are not fully trusted.  There are also many proposed algorithms,
@@ -427,7 +422,7 @@
             key exchanges.</t>
 
             <t> In order to be able to use IKE fragmentation <xref target="RFC7383"/> for those key exchanges
-            that may have long public keys, the proposed framework utilizes the IKE_INTERMEDIATE exchange 
+            that may have long public keys, this specification utilizes the IKE_INTERMEDIATE exchange 
             defined in <xref target="RFC9242"/>.
             The initial IKE_INIT messages do not have any inherent fragmentation support within IKE; however that can include a
             relatively short KE payload.  The additional key exchanges are performed 
@@ -441,7 +436,7 @@
             </t>
 
             <t> We assume that new Transform Type 4 identifiers will be assigned later to the
-			various post-quantum key exchanges.  We specifically do not make a distinction between classical (DH and ECDH)
+			various post-quantum key exchanges.  We specifically do not make a distinction between classical (EC)DH
 			and post-quantum key exchanges, nor post-quantum algorithms which are
 			true key exchanges versus post-quantum algorithms that act as key
 			transport mechanisms; all are treated equivalently by the
@@ -539,8 +534,8 @@ Initiator                             Responder
                 <t> Key exchange method negotiated via Transform Type 4 always takes place
                 in the IKE_SA_INIT exchange, as defined in <xref target="RFC7296" />.  Additional key exchanges negotiated via newly
                 defined transforms MUST take place in a series of IKE_INTERMEDIATE exchanges following the IKE_SA_INIT exchange, 
-                performed in an order of the values of their transform types, so that key exchange negotiated using Transform Type n always precedes that of
-                Transform Type n + 1. Each additional key exchange method MUST be fully completed before the next one is started.
+                performed in an order of the values of their transform types, so that key exchange negotiated using Additional Key Exchange i always precedes that of
+                Additional Key Exchange i+1. Each additional key exchange method MUST be fully completed before the next one is started.
                 </t>
 
                 <t> Note that with this semantics, Additional Key Exchange transforms are not associated
@@ -552,7 +547,7 @@ Initiator                             Responder
                 </t>
 
                 <t> When forming a proposal the initiator adds transforms for the IKE_SA_INIT exchange
-                using Transform Type 4.  In most cases they will contain classical key exchange methods (DH or ECDH), 
+                using Transform Type 4.  In most cases they will contain classical (EC)DH key exchange methods, 
                 however it is not a requirement.  Additional key exchange methods are proposed using Additional Key Exchange 
                 transform types.  All of these transform types are optional, the initiator is free 
                 to select any of them for proposing additional key exchange methods.  Consequently, 
@@ -574,13 +569,18 @@ Initiator                             Responder
                 </t>
 
                 <t> If the responder selects NONE for some Additional Key Exchange types (provided they are proposed by the initiator), 
-                then the corresponding IKE_INTERMEDIATE exchanges should not take place. The IKE_INTERMEDIATE exchanges
-                MUST only be performed for Additional Key Exchange types where the corresponding transform IDs are not NONE.
+                then the corresponding IKE_INTERMEDIATE exchanges MUST NOT take place.
+                <!-- The IKE_INTERMEDIATE exchanges
+                MUST only be performed for Additional Key Exchange types where the corresponding transform IDs are not NONE. -->
                 Therefore if the initiator includes NONE in all of the Additional Key Exchange transforms and the
                 responder selects this value for all of them, then no IKE_INTERMEDIATE messages performing additional key
                 exchanges will take place between the peers.  Note that the IKE_INTERMEDIATE exchanges may still take place for other purposes.
                 </t>
 
+                <t>Moreover, if the initiator does not proposes Additional Key Exchange i, then the responder MUST treat that the 
+                i-th Additional Key Exchange as not proposed and both peers MUST NOT send their corresponding IKE_INTERMEDIATE message.
+                </t>
+    
                 <t> Below is an example of the SA payload in the initiator's IKE_SA_INIT request message.
                 Here we use an abbreviation AKEi to denote the i-th Additional Key Exchange transform defined in this document, 
                 and an abbreviation KE for the Key Exchange transform,
@@ -1032,7 +1032,6 @@ Type     Description                   Used In
         &RFC6023;
         &RFC7383;
         &RFC8019;
-    	&RFC8229;
         <reference anchor="GROVER"><front>
             <title>A Fast Quantum Mechanical Algorithm for Database Search</title>
             <author fullname="L. Grover" initials="L." surname="Grover">
@@ -1052,6 +1051,94 @@ Type     Description                   Used In
     purposes and they describe some message flow scenarios that may occur in establishing an IKE or CHILD SA.  Note
     that some payloads that are not relevant to multiple key exchanges may be omitted for brevity.
     </t>
+
+    <section title="IKE_INTERMEDIATE Exchanges Carrying Additional Key Exchange Payloads" anchor="sample-ake-ike-intermediate">
+      <t>The exchanges below show that the initiator proposes the use of additional key exchanges
+        to establish an IKE SA.  The initiator proposes three sets of additional key exchanges and all of which are optional.  
+        So the responder can choose NONE for some or all of the additional exchanges
+        if the proposed key exchange methods are not supported or for whatever reasons the responder decides not to perform
+        the additional key exchange.</t>
+
+        <figure><artwork align="center"><![CDATA[
+Initiator                     Responder
+------------------------------------------------------------------------
+HDR(IKE_SA_INIT), SAi1(.. AKE*...), --->
+KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+    Proposal #1
+    Transform ECR (ID = ENCR_AES_GCM_16,
+                    256-bit key)
+    Transform PRF (ID = PRF_HMAC_SHA2_512)
+    Transform KE (ID = Curve25519)
+    Transform AKE1 (ID = PQ_KEM_1)
+    Transform AKE1 (ID = PQ_KEM_2)
+    Transform AKE1 (ID = NONE)
+    Transform AKE2 (ID = PQ_KEM_3)
+    Transform AKE2 (ID = PQ_KEM_4)
+    Transform AKE2 (ID = NONE)
+    Transform AKE3 (ID = PQ_KEM_5)
+    Transform AKE3 (ID = PQ_KEM_6)
+    Transform AKE3 (ID = NONE)
+                      <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
+                           KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
+                           N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+                           Proposal #1
+                             Transform ECR (ID = ENCR_AES_GCM_16,
+                                            256-bit key)
+                             Transform PRF (ID = PRF_HMAC_SHA2_512)
+                             Transform KE (ID = Curve25519)
+                             Transform AKE1 (ID = PQ_KEM_2)
+                             Transform AKE2 (ID = NONE)
+                             Transform AKE3 (ID = PQ_KEM_5)
+
+HDR(IKE_INTERMEDIATE), SK {KEi(1)(PQ_KEM_2)} -->
+                      <--- HDR(IKE_INTERMEDIATE), SK {KEr(1)(PQ_KEM_2)}
+HDR(IKE_INTERMEDIATE), SK {KEi(2)(PQ_KEM_5)} -->
+                      <--- HDR(IKE_INTERMEDIATE), SK {KEr(2)(PQ_KEM_5)}
+
+HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
+                      <--- HDR(IKE_AUTH), SK{ IDr, AUTH, SAr2,
+                           TSi, TSr }
+        ]]></artwork></figure>
+
+        <t>In this particular example, the responder chooses to perform two additional key exchanges.  It selects
+            PQ_KEM_2, NONE and PQ_KEM_5 for the first, second and third additional key exchanges respectively.  
+            As per <xref target="RFC7296"/> specification, a set of keying materials are derived, in particular
+            SK_d, SK_a[i/r], SK_e[i/r].  Both peers then perform an IKE_INTERMEDIATE exchange carrying PQ_KEM_2 payload
+            which is protected with SK_e[i/r] and SK_a[i/r] keys.  After the completion of this IKE_INTERMEDIATE exchange,
+            the SKEYSEED is updated using SK(1), which is the PQ_KEM_2 shared secret, as follows</t>
+             
+            <figure><artwork align="center" ><![CDATA[
+SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
+            ]]></artwork></figure>
+            
+            <t>Then the keying materials are updated</t>
+            
+            <figure><artwork align="center" ><![CDATA[
+{SK_d(1) | SK_ai(1) | SK_ar(1) | SK_ei(1) | SK_er(1) | SK_pi(1) | 
+ SK_pr(1)} = prf+ (SKEYSEED(1), Ni | Nr | SPIi | SPIr).
+            ]]></artwork></figure>
+
+            <t>As per <xref target="RFC9242"/> specification, both peers compute IntAuth_i1 and IntAuth_r1 using the SK_pi(1)
+            and SK_pr(1) keys respectively.  These values are required in the IKE_AUTH phase of the exchange.</t>
+                            
+            <t>In the next IKE_INTERMEDIATE exchange, the peers use SK_e[i/r](1) and SK_a[i/r](1) keys to protect the PQ_KEM_5 payload.  
+            After completing this exchange, keying materials are updated as below</t>
+            
+            <figure><artwork align="center" ><![CDATA[
+SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
+{SK_d(2) | SK_ai(2) | SK_ar(2) | SK_ei(2) | SK_er(2) | SK_pi(2) | 
+    SK_pr(2)} = prf+ (SKEYSEED(2), Ni | Nr | SPIi | SPIr)
+            ]]></artwork></figure>
+            
+            <t>where SK(2) is the shared secret from the third additional key exchange, i.e. PQ_KEM_5.  Both peers then computes
+            the values of IntAuth_[i/r]2 using the SK_p[i/r](2) keys.
+            </t>
+
+            <t>After the completion of the second IKE_INTERMEDIATE exchange, both peers continue to the IKE_AUTH exchange phase.  
+            As defined in <xref target="RFC9242"/>, the values IntAuth_[i/r]2 are used to compute IntAuth which is used to calculate
+            the payload to be signed or MACed, i.e. InitiatorSignedOctets and ResponderSignedOctets.</t>
+    </section>
 
     <section title="No Additional Key Exchange Used" anchor="sample-exchanges-none-selected">
       <t>The initiator proposes two sets of optional additional key exchanges, but the responder does not
@@ -1076,20 +1163,20 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
     Transform AKE2 (ID = PQ_KEM_3)
     Transform AKE2 (ID = PQ_KEM_4)
     Transform AKE2 (ID = NONE)
-                         <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
-                              KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
-                              N(INTERMEDIATE_EXCHANGE_SUPPORTED)
-                                Proposal #1
-                                  Transform ECR (ID = ENCR_AES_GCM_16,
-                                                 256-bit key)
-                                  Transform PRF (ID = PRF_HMAC_SHA2_512)
-                                  Transform KE (ID = Curve25519)
-                                  Transform AKE1 (ID = NONE)
-                                  Transform AKE2 (ID = NONE)
+                       <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
+                            KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
+                            N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+                              Proposal #1
+                                Transform ECR (ID = ENCR_AES_GCM_16,
+                                               256-bit key)
+                                Transform PRF (ID = PRF_HMAC_SHA2_512)
+                                Transform KE (ID = Curve25519)
+                                Transform AKE1 (ID = NONE)
+                                Transform AKE2 (ID = NONE)
 
 HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
-                         <--- HDR(IKE_AUTH), SK{ IDr, AUTH, SAr2,
-                              TSi, TSr }
+                       <--- HDR(IKE_AUTH), SK{ IDr, AUTH, SAr2,
+                            TSi, TSr }
       ]]></artwork></figure>
     </section>
 
@@ -1108,12 +1195,12 @@ Initiator                     Responder
 HDR(IKE_SA_INIT), SAi1, --->
 KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
 N(CHILDLESS_IKEV2_SUPPORTED)
-                         <--- HDR(IKE_SA_INIT), SAr1,
-                              KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
-                              N(CHILDLESS_IKEV2_SUPPORTED)
+                       <--- HDR(IKE_SA_INIT), SAr1,
+                            KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
+                            N(CHILDLESS_IKEV2_SUPPORTED)
 HDR(IKE_AUTH), SK{ IDi, AUTH  } --->
-                         <--- HDR(IKE_AUTH), SK{ IDr, AUTH }
-HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi } --->
+                       <--- HDR(IKE_AUTH), SK{ IDr, AUTH }
+HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi(Curve25519) } --->
   Proposal #1
     Transform ECR (ID = ENCR_AES_GCM_16,
                    256-bit key)
@@ -1124,32 +1211,33 @@ HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi } --->
     Transform AKE2 (ID = PQ_KEM_5)
     Transform AKE2 (ID = PQ_KEM_6)
     Transform AKE2 (ID = NONE)
-                         <--- HDR(CREATE_CHILD_SA), SK{ SAr(.. AKE*...),
-                              Nr, KEr,
-                              N(ADDITIONAL_KEY_EXCHANGE)(link1) }
-                                Proposal #1
-                                  Transform ECR (ID = ENCR_AES_GCM_16,
-                                                 256-bit key)
-                                  Transform PRF (ID = PRF_HMAC_SHA2_512)
-                                  Transform KE (ID = Curve25519)
-                                  Transform AKE1 (ID = PQ_KEM_2)
-                                  Transform AKE2 (ID = PQ_KEM_5)
+                       <--- HDR(CREATE_CHILD_SA), SK{ SAr(.. AKE*...),
+                            Nr, KEr(Curve25519),
+                            N(ADDITIONAL_KEY_EXCHANGE)(link1) }
+                              Proposal #1
+                                Transform ECR (ID = ENCR_AES_GCM_16,
+                                               256-bit key)
+                                Transform PRF (ID = PRF_HMAC_SHA2_512)
+                                Transform KE (ID = Curve25519)
+                                Transform AKE1 (ID = PQ_KEM_2)
+                                Transform AKE2 (ID = PQ_KEM_5)
 
-HDR(IKE_FOLLOWUP_KE), SK{ KEi(1), --->
+HDR(IKE_FOLLOWUP_KE), SK{ KEi(1)(PQ_KEM_2), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link1) }
-                         <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1),
-                              N(ADDITIONAL_KEY_EXCHANGE)(link2) }
-HDR(IKE_FOLLOWUP_KE), SK{ KEi(2), --->
+                       <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1)(PQ_KEM_2),
+                            N(ADDITIONAL_KEY_EXCHANGE)(link2) }
+HDR(IKE_FOLLOWUP_KE), SK{ KEi(2)(PQ_KEM_5), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link2) }
-                         <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2) }
+                       <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2)(PQ_KEM_5) }
       ]]></artwork></figure>
     </section>
 
     <section title="Not Matching Proposal for Additional Key Exchanges" anchor="sample-exchanges-no-proposal-chosen">
       <t>The initiator proposes the combination of PQ_KEM_1, PQ_KEM_2, PQ_KEM_3, and PQ_KEM_4 as
-      the additional key exchanges.  The initiator indicates, using the key exchange method NONE,
-      that either PQ_KEM_1 or PQ_KEM_2 must be used to establish a security association.  The responder,
-      although supports the optional PQ_KEM_3 and PQ_KEM_4 method, does not support either PQ_KEM_1 or
+      the additional key exchanges.  The initiator indicates that either PQ_KEM_1 or PQ_KEM_2 must be
+      used to establish a security association, but Additional Key Exchange 2 is optional so the responder
+      can either select PQ_KEM_3 or PQ_KEM_4 or omit this key exchange by selecting NONE.  The responder,
+      although supports the optional PQ_KEM_3 and PQ_KEM_4 methods, does not support either PQ_KEM_1 or
       PQ_KEM_2 mandatory method and therefore responds with NO_PROPOSAL_CHOSEN notification.  </t>
 
       <figure><artwork align="center"><![CDATA[
@@ -1232,10 +1320,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         backward compatibility issue from non-conforming RFC IKEv2
         implementations.  Since we could not see any other compelling advantages
         apart from a semantic one, we use the existing transform type and
-        notify payloads instead.  In fact, as described above, we use the KE
-        payload in the first IKE_SA_INIT request round and the notify payload
-        to carry the post-quantum proposals and policies. We use one or more
-        of the existing KE payloads to carry the hybrid public values.
+        notify payloads instead.
         </t>
 
         <t>Hybrid public value payload<vspace blankLines="1"/>
@@ -1330,8 +1415,8 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         received payload.  More importantly, fragmenting the messages
         in this way may leave the system to be more prone to denial of
         service (DoS) attacks.  By using IKE_INTERMEDIATE to transport the large
-        post-quantum key exchange payloads, there is no longer any issue
-        with fragmentation.</t>
+        post-quantum key exchange payloads, and using the generic IKEv2
+        fragmentation protocol <xref target="RFC7383" /> solve the issue.</t>
         </list>
         </t>
 
