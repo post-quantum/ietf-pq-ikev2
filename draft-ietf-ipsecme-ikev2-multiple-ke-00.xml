@@ -486,19 +486,6 @@ Initiator                             Responder
             For hypothetical future key exchange methods requiring multiple round trips to complete, a separate document should define how such
             methods are splitted into several IKE_INTERMEDIATE exchanges.
             </t>
-
-            <!-- <t> The additional key exchanges may use algorithms that are
-    		currently considered to be resistant to quantum computer attacks.  These
-    		algorithms are collectively referred to as post-quantum algorithms in
-    		this document.  However, it is also possible to use classical (EC)DH primitives for non post-quantum requirements.</t> -->
-    
-            <!-- <t> The method that we use to perform additional key exchanges also addresses
-            the fragmentation issue.  The initial IKE_INIT messages do not have any
-            inherent fragmentation support within IKE; however that can include a
-            relatively short KE payload.  The
-            rest of the KE payloads are transferred within IKE_INTERMEDIATE messages; because
-            these messages are encrypted, the standard IKE fragmentation solution
-            <xref target="RFC7383"/> is available.</t> -->
         </section>
 
     	<section title="Protocol Details">
@@ -930,6 +917,17 @@ Type     Description                   Used In
         <figure align="center"><artwork align="left"><![CDATA[
 <TBA>       STATE_NOT_FOUND
         ]]></artwork></figure>
+
+        <section title="Additional Changes">
+            <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
+            <t><list style="symbols">
+              <t>Add a reference to RFCXXXX in the "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry, where RFCXXXX is this specification.</t>
+              <t>Replace the note on "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry with: To find out requirement levels for Key Exchange Methods for IKEv2, see [RFC8247].</t>
+              <t>Add this note to "Transform Type Values" registry: All "Additional Key Exchange" entries use the same "Transform Type 4 - Key Exchange Method Transform IDs" as the "Key Exchange Method (KE)".</t>
+              <t>Append this note to "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry: All "Additional Key Exchange" entries use these values as the "Key Exchange Method (KE)".</t>
+            </list></t>
+        </section>
+
     </section>
 
 	<section title="Security Considerations" anchor="security">
@@ -1108,13 +1106,13 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
             which is protected with SK_e[i/r] and SK_a[i/r] keys.  After the completion of this IKE_INTERMEDIATE exchange,
             the SKEYSEED is updated using SK(1), which is the PQ_KEM_2 shared secret, as follows</t>
              
-            <figure><artwork align="center" ><![CDATA[
+            <figure><artwork align="left" ><![CDATA[
 SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
             ]]></artwork></figure>
             
             <t>Then the keying materials are updated</t>
             
-            <figure><artwork align="center" ><![CDATA[
+            <figure><artwork align="left" ><![CDATA[
 {SK_d(1) | SK_ai(1) | SK_ar(1) | SK_ei(1) | SK_er(1) | SK_pi(1) | 
  SK_pr(1)} = prf+ (SKEYSEED(1), Ni | Nr | SPIi | SPIr).
             ]]></artwork></figure>
@@ -1125,7 +1123,7 @@ SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
             <t>In the next IKE_INTERMEDIATE exchange, the peers use SK_e[i/r](1) and SK_a[i/r](1) keys to protect the PQ_KEM_5 payload.  
             After completing this exchange, keying materials are updated as below</t>
             
-            <figure><artwork align="center" ><![CDATA[
+            <figure><artwork align="left" ><![CDATA[
 SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
 {SK_d(2) | SK_ai(2) | SK_ar(2) | SK_ei(2) | SK_er(2) | SK_pi(2) | 
     SK_pr(2)} = prf+ (SKEYSEED(2), Ni | Nr | SPIi | SPIr)
