@@ -3,7 +3,7 @@
 <!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
 <!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
 <!ENTITY RFC9242 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml">
-<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit.xml">
+<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit-02.xml">
 <!ENTITY I-D.ietf-ipsecme-g-ikev2 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-g-ikev2.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC6023 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6023.xml">
@@ -484,7 +484,7 @@ Initiator                             Responder
             <t> Note that this document assumes, that each key exchange method requires one round trip and consumes exactly one IKE_INTERMEDIATE exchange.
             This assumption is valid for all classic key exchange methods defined so far and for all post-quantum methods currently known.
             For hypothetical future key exchange methods requiring multiple round trips to complete, a separate document should define how such
-            methods are splitted into several IKE_INTERMEDIATE exchanges, see <xref target="I-D.tjhai-ikev2-beyond-64k-limit"/> as an example.
+            methods are splitted into several IKE_INTERMEDIATE exchanges.
             </t>
 
             <!-- <t> The additional key exchanges may use algorithms that are
@@ -554,9 +554,10 @@ Initiator                             Responder
                 if none of the Additional Key Exchange transforms is included in the proposal, then this proposal
                 indicates performing standard IKEv2, as defined in <xref target="RFC7296"/>.
                 On the other hand, if the initiator includes any Additional Key Exchange transform in the proposal, 
-                the responder MUST select one of the algorithms proposed using this type.  A transform ID NONE 
-                MAY be added to those transform types which contain key exchange methods that the initiator believes is optional
-                according to its local policy.
+                the responder MUST select one of the algorithms proposed using this type.  Note that this is not a
+                new requirement, but this behaviour is already specified in Section 2.7 of <xref target="RFC7296"/>.
+                A transform ID NONE MAY be added to those transform types which contain key exchange methods that
+                the initiator believes is optional according to its local policy.
                 </t>
 
                 <t> The responder performs negotiation using the standard IKEv2 procedure described in Section 3.3 of <xref target="RFC7296"/>.
@@ -570,16 +571,15 @@ Initiator                             Responder
 
                 <t> If the responder selects NONE for some Additional Key Exchange types (provided they are proposed by the initiator), 
                 then the corresponding IKE_INTERMEDIATE exchanges MUST NOT take place.
-                <!-- The IKE_INTERMEDIATE exchanges
-                MUST only be performed for Additional Key Exchange types where the corresponding transform IDs are not NONE. -->
                 Therefore if the initiator includes NONE in all of the Additional Key Exchange transforms and the
                 responder selects this value for all of them, then no IKE_INTERMEDIATE messages performing additional key
                 exchanges will take place between the peers.  Note that the IKE_INTERMEDIATE exchanges may still take place for other purposes.
                 </t>
 
-                <t>Moreover, if the initiator does not proposes Additional Key Exchange i, then the responder MUST treat that the 
-                i-th Additional Key Exchange as not proposed and both peers MUST NOT send their corresponding IKE_INTERMEDIATE message.
-                </t>
+                <t>The initiator MAY propose non-consecutive Additional Key Exchange transforms, for example
+                proposing Additional Key Exchange 2 and Additional Key Exchange 5 transforms only.  The responder
+                MUST treat all of the omitted Additional Key Exchange transforms as if they are proposed with
+                Transform ID NONE.</t>
     
                 <t> Below is an example of the SA payload in the initiator's IKE_SA_INIT request message.
                 Here we use an abbreviation AKEi to denote the i-th Additional Key Exchange transform defined in this document, 
@@ -825,7 +825,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 <t> When rekeying IKE SA or Child SA, it is possible that the peers start doing this
                 at the same time, which is called simultaneous rekeying.  Sections 2.8.1 and 2.8.2 of 
                 <xref target="RFC7296" /> describe how IKEv2 handles this situation.  In a nutshell
-                IKEv2 follows the rule that if in case of simultaneous rekeying two identical new
+                IKEv2 follows the rule that if in case of simultaneous rekeying, two identical new
                 IKE SAs (or two pairs of Child SAs) are created, then one of them should be deleted. 
                 Which one is to be deleted is determined by comparing the values of four nonces
                 that are used in the colliding CREATE_CHILD_SA exchanges. The IKE SA (or pair of Child SAs) 
@@ -835,9 +835,9 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
 
                 <t> With multiple key exchanges, the SAs are not yet created when the CREATE_CHILD_SA is completed,
                 they would be created only after the series of IKE_FOLLOWUP_KE exchanges is finished.
-                For this reason, if additional key exchanges are negotiated in the CREATE_CHILD_SA initiated by the side having the smallest nonce, 
-                there is nothing to delete and this side just stops the rekeying process - this side MUST NOT initiate 
-                IKE_FOLLOWUP_KE exchange in the next key exchange.
+                For this reason, if additional key exchanges are negotiated in the CREATE_CHILD_SA that is initiated
+                by the side having the smallest nonce, there is nothing to delete and this side just stops the rekeying
+                process and it MUST NOT initiate the IKE_FOLLOWUP_KE exchange.
                 </t>
 
                 <t> In most cases, rekey collisions are resolved in the CREATE_CHILD_SA exchange.
@@ -874,7 +874,7 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             <t>It is also possible to establish a fully post-quantum secure IKE SAs from additional key exchanges
             without using IKE_INTERMEDIATE exchanges.  In this case, the IKE SA created from IKE_SA_INIT exchange
             can be immediately rekeyed with CREATE_CHILD_SA using additional key exchanges where IKE_FOLLOWUP_KE
-            messages are used to carry the key exchange payload.  If classical key exchange method only is used in
+            messages are used to carry the key exchange payload.  If classical key exchange method is used in
             the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will offer no resistance against the
             quantum threats.  Consequently, if the peers' local policy requires that all Child SAs should be fully-protected, then
             the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this
