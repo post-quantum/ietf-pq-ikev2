@@ -649,9 +649,9 @@ SA Payload
                 <figure><artwork align="center" ><![CDATA[
 Initiator                          Responder
 ---------------------------------------------------------------------
-HDR, SAi1(.. AKE*...), KEi1, Ni,
+HDR, SAi1(.. AKE*...), KEi, Ni,
 N(INTERMEDIATE_EXCHANGE_SUPPORTED)    --->
-                                   HDR, SAr1(.. AKE*...), KEr1, Nr,
+                                   HDR, SAr1(.. AKE*...), KEr, Nr,
                                    [CERTREQ],
                            <---    N(INTERMEDIATE_EXCHANGE_SUPPORTED)
                 ]]></artwork></figure>
@@ -670,11 +670,14 @@ HDR, SK {KEi(n)}    -->
                             <--    HDR, SK {KEr(n)}
                 ]]></artwork></figure>
 
-                <t> The initiator sends key exchange data in the KEi(n) payload. 
-                This packet is protected with the current SK_ei/SK_ai keys.</t>
+                <t> The initiator sends key exchange data in the KEi(n) payload.
+                This packet is protected with the current SK_ei/SK_ai keys.
+                The notation KEi(n) denotes the n-th IKE_INTERMEDIATE KE payload from the initiator
+                and the integer n is sequential starting from 1.</t>
         
-                <t> On receiving this, the responder sends back key exchange payload KEr(n); 
-                again, this packet is protected with the current SK_er/SK_ar keys.</t>
+                <t> On receiving this, the responder sends back key exchange payload KEr(n),
+                which denotes the n-th IKE_INTERMEDIATE KE payload from the responder.
+                As before, this packet is protected with the current SK_er/SK_ar keys.</t>
 
                 <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n) and KEr(n) payloads MUST match the
                 n-th negotiated additional key exchange.
@@ -684,7 +687,7 @@ HDR, SK {KEi(n)}    -->
                 <t> Once this exchange is done, both sides compute an updated keying material:</t>
         
                 <figure><artwork align="center" ><![CDATA[
-SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
+SKEYSEED = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 ]]></artwork></figure>
 
                 <t> where SK(n) is the resulting shared secret of this key exchange,
@@ -695,7 +698,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
     
                 <figure><artwork align="center" ><![CDATA[
 {SK_d(n) | SK_ai(n) | SK_ar(n) | SK_ei(n) | SK_er(n) | SK_pi(n) | 
- SK_pr(n)} = prf+ (SKEYSEED(n), Ni | Nr | SPIi | SPIr)
+ SK_pr(n)} = prf+ (SKEYSEED, Ni | Nr | SPIi | SPIr)
                 ]]></artwork></figure>
 
                 <t> Both the initiator and the responder use these updated key
@@ -830,7 +833,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
 
                 <t> In most cases, rekey collisions are resolved in the CREATE_CHILD_SA exchange.
                 However, a situation may occur when due to packet loss, one of the peers receives the CREATE_CHILD_SA message
-                requesting rekey of SA  that is already being rekeyed by this peer (i.e. the CREATE_CHILD_SA
+                requesting rekey of SA that is already being rekeyed by this peer (i.e. the CREATE_CHILD_SA
                 exchange initiated by this peer has been already completed and the series of IKE_FOLLOWUP_KE exchanges is in progress).
                 In this case, TEMPORARY_FAILURE notification MUST be sent in response to such a request.
                 </t>
@@ -1077,7 +1080,7 @@ Type     Description                   Used In
 Initiator                     Responder
 ------------------------------------------------------------------------
 HDR(IKE_SA_INIT), SAi1(.. AKE*...), --->
-KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED),
 N(INTERMEDIATE_EXCHANGE_SUPPORTED)
     Proposal #1
     Transform ECR (ID = ENCR_AES_GCM_16,
@@ -1093,22 +1096,22 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
     Transform AKE3 (ID = PQ_KEM_5)
     Transform AKE3 (ID = PQ_KEM_6)
     Transform AKE3 (ID = NONE)
-                      <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
-                           KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
-                           N(INTERMEDIATE_EXCHANGE_SUPPORTED)
-                           Proposal #1
-                             Transform ECR (ID = ENCR_AES_GCM_16,
-                                            256-bit key)
-                             Transform PRF (ID = PRF_HMAC_SHA2_512)
-                             Transform KE (ID = Curve25519)
-                             Transform AKE1 (ID = PQ_KEM_2)
-                             Transform AKE2 (ID = NONE)
-                             Transform AKE3 (ID = PQ_KEM_5)
+                   <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
+                        KEr(Curve25519), Nr, N(IKEV2_FRAG_SUPPORTED),
+                        N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+                        Proposal #1
+                          Transform ECR (ID = ENCR_AES_GCM_16,
+                                         256-bit key)
+                          Transform PRF (ID = PRF_HMAC_SHA2_512)
+                          Transform KE (ID = Curve25519)
+                          Transform AKE1 (ID = PQ_KEM_2)
+                          Transform AKE2 (ID = NONE)
+                          Transform AKE3 (ID = PQ_KEM_5)
 
 HDR(IKE_INTERMEDIATE), SK {KEi(1)(PQ_KEM_2)} -->
-                      <--- HDR(IKE_INTERMEDIATE), SK {KEr(1)(PQ_KEM_2)}
+                   <--- HDR(IKE_INTERMEDIATE), SK {KEr(1)(PQ_KEM_2)}
 HDR(IKE_INTERMEDIATE), SK {KEi(2)(PQ_KEM_5)} -->
-                      <--- HDR(IKE_INTERMEDIATE), SK {KEr(2)(PQ_KEM_5)}
+                   <--- HDR(IKE_INTERMEDIATE), SK {KEr(2)(PQ_KEM_5)}
 
 HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
                       <--- HDR(IKE_AUTH), SK{ IDr, AUTH, SAr2,
@@ -1123,14 +1126,14 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
             the SKEYSEED is updated using SK(1), which is the PQ_KEM_2 shared secret, as follows</t>
              
             <figure><artwork align="left" ><![CDATA[
-SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
+SKEYSEED = prf(SK_d, SK(1) | Ni | Nr).
             ]]></artwork></figure>
             
-            <t>Then the keying materials are updated</t>
+            <t>The updated SKEYSEED value is then used to derive the following keying materials</t>
             
             <figure><artwork align="left" ><![CDATA[
 {SK_d(1) | SK_ai(1) | SK_ar(1) | SK_ei(1) | SK_er(1) | SK_pi(1) | 
- SK_pr(1)} = prf+ (SKEYSEED(1), Ni | Nr | SPIi | SPIr).
+ SK_pr(1)} = prf+ (SKEYSEED, Ni | Nr | SPIi | SPIr).
             ]]></artwork></figure>
 
             <t>As per <xref target="RFC9242"/> specification, both peers compute IntAuth_i1 and IntAuth_r1 using the SK_pi(1)
@@ -1140,9 +1143,9 @@ SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
             After completing this exchange, keying materials are updated as below</t>
             
             <figure><artwork align="left" ><![CDATA[
-SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
+SKEYSEED = prf(SK_d(1), SK(2) | Ni | Nr)
 {SK_d(2) | SK_ai(2) | SK_ar(2) | SK_ei(2) | SK_er(2) | SK_pi(2) | 
-    SK_pr(2)} = prf+ (SKEYSEED(2), Ni | Nr | SPIi | SPIr)
+    SK_pr(2)} = prf+ (SKEYSEED, Ni | Nr | SPIi | SPIr)
             ]]></artwork></figure>
             
             <t>where SK(2) is the shared secret from the third additional key exchange, i.e. PQ_KEM_5.  Both peers then computes
@@ -1150,7 +1153,7 @@ SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
             </t>
 
             <t>After the completion of the second IKE_INTERMEDIATE exchange, both peers continue to the IKE_AUTH exchange phase.  
-            As defined in <xref target="RFC9242"/>, the values IntAuth_[i/r]2 are used to compute IntAuth which is used to calculate
+            As defined in <xref target="RFC9242"/>, the values IntAuth_[i/r]2 are used to compute IntAuth which in turn is used to calculate
             the payload to be signed or MACed, i.e. InitiatorSignedOctets and ResponderSignedOctets.</t>
     </section>
 
@@ -1162,9 +1165,9 @@ SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
 
       <figure><artwork align="center"><![CDATA[
 Initiator                     Responder
-------------------------------------------------------------------------
+-----------------------------------------------------------------------
 HDR(IKE_SA_INIT), SAi1(.. AKE*...), --->
-KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED),
 N(INTERMEDIATE_EXCHANGE_SUPPORTED)
   Proposal #1
     Transform ECR (ID = ENCR_AES_GCM_16,
@@ -1177,16 +1180,16 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
     Transform AKE2 (ID = PQ_KEM_3)
     Transform AKE2 (ID = PQ_KEM_4)
     Transform AKE2 (ID = NONE)
-                       <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
-                            KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
-                            N(INTERMEDIATE_EXCHANGE_SUPPORTED)
-                              Proposal #1
-                                Transform ECR (ID = ENCR_AES_GCM_16,
-                                               256-bit key)
-                                Transform PRF (ID = PRF_HMAC_SHA2_512)
-                                Transform KE (ID = Curve25519)
-                                Transform AKE1 (ID = NONE)
-                                Transform AKE2 (ID = NONE)
+                    <--- HDR(IKE_SA_INIT), SAr1(.. AKE*...),
+                         KEr(Curve25519), Nr, N(IKEV2_FRAG_SUPPORTED),
+                         N(INTERMEDIATE_EXCHANGE_SUPPORTED)
+                           Proposal #1
+                             Transform ECR (ID = ENCR_AES_GCM_16,
+                                            256-bit key)
+                             Transform PRF (ID = PRF_HMAC_SHA2_512)
+                             Transform KE (ID = Curve25519)
+                             Transform AKE1 (ID = NONE)
+                             Transform AKE2 (ID = NONE)
 
 HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
                        <--- HDR(IKE_AUTH), SK{ IDr, AUTH, SAr2,
@@ -1205,13 +1208,13 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
 
       <figure><artwork align="center"><![CDATA[
 Initiator                     Responder
-------------------------------------------------------------------------
+-----------------------------------------------------------------------
 HDR(IKE_SA_INIT), SAi1, --->
-KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED),
 N(CHILDLESS_IKEV2_SUPPORTED)
-                       <--- HDR(IKE_SA_INIT), SAr1,
-                            KEr1, Nr, N(IKEV2_FRAG_SUPPORTED),
-                            N(CHILDLESS_IKEV2_SUPPORTED)
+                     <--- HDR(IKE_SA_INIT), SAr1,
+                          KEr(Curve25519), Nr, N(IKEV2_FRAG_SUPPORTED),
+                          N(CHILDLESS_IKEV2_SUPPORTED)
 HDR(IKE_AUTH), SK{ IDi, AUTH  } --->
                        <--- HDR(IKE_AUTH), SK{ IDr, AUTH }
 HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi(Curve25519) } --->
@@ -1238,11 +1241,11 @@ HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi(Curve25519) } --->
 
 HDR(IKE_FOLLOWUP_KE), SK{ KEi(1)(PQ_KEM_2), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link1) }
-                       <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1)(PQ_KEM_2),
+                      <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1)(PQ_KEM_2),
                             N(ADDITIONAL_KEY_EXCHANGE)(link2) }
 HDR(IKE_FOLLOWUP_KE), SK{ KEi(2)(PQ_KEM_5), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link2) }
-                       <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2)(PQ_KEM_5) }
+                      <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2)(PQ_KEM_5) }
       ]]></artwork></figure>
     </section>
 
@@ -1256,9 +1259,9 @@ N(ADDITIONAL_KEY_EXCHANGE)(link2) }
 
       <figure><artwork align="center"><![CDATA[
 Initiator                     Responder
-------------------------------------------------------------------------
+-----------------------------------------------------------------------
 HDR(IKE_SA_INIT), SAi1(.. AKE*...), --->
-KEi1, Ni, N(IKEV2_FRAG_SUPPORTED),
+KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED),
 N(INTERMEDIATE_EXCHANGE_SUPPORTED)
   Proposal #1
     Transform ECR (ID = ENCR_AES_GCM_16,
