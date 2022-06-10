@@ -822,9 +822,10 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
 
                 <t> With multiple key exchanges, the SAs are not yet created when the CREATE_CHILD_SA is completed,
                 they would be created only after the series of IKE_FOLLOWUP_KE exchanges is finished.
-                For this reason, if additional key exchanges are negotiated in the CREATE_CHILD_SA that is initiated
-                by the side having the smallest nonce, there is nothing to delete and this side just stops the rekeying
-                process and it MUST NOT initiate the IKE_FOLLOWUP_KE exchange.
+                For this reason, if additional key exchanges are negotiated in the CREATE_CHILD_SA
+                exchange in which the smallest nonce is used, then because there is nothing to delete
+                yet, the initiator of this exchange just stops the rekeying process and it MUST NOT
+                initiate the IKE_FOLLOWUP_KE exchange.
                 </t>
 
                 <t> In most cases, rekey collisions are resolved in the CREATE_CHILD_SA exchange.
@@ -920,11 +921,26 @@ Type     Description                   Used In
 
         <section title="Additional Changes">
             <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
+            <t>It is assumed that RFCXXXX refers to this specification.</t>
             <t><list style="symbols">
-              <t>Add a reference to RFCXXXX in the "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry, where RFCXXXX is this specification.</t>
-              <t>Replace the note on "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry with: To find out requirement levels for Key Exchange Methods for IKEv2, see [RFC8247].</t>
-              <t>Add this note to "Transform Type Values" registry: All "Additional Key Exchange" entries use the same "Transform Type 4 - Key Exchange Method Transform IDs" as the "Key Exchange Method (KE)".</t>
-              <t>Append this note to "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry: All "Additional Key Exchange" entries use these values as the "Key Exchange Method (KE)".</t>
+              
+              <t>Add a reference to RFCXXXX in the "Transform Type 4 - Diffie-Hellman Group Transform IDs"
+              registry.</t>
+              
+              <t>Replace the note on "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry with:
+              This registry was originally named "Transform Type 4 - Diffie-Hellman Group Transform IDs" and
+              was renamed to its current name by [RFCXXXX].  It has been referenced in its original name in
+              a number of RFCs prior to [RFCXXXX].  To find out requirement levels for Key Exchange Methods
+              for IKEv2, see [RFC8247].</t>
+              
+              <t>Add this note to "Transform Type Values" registry: Transform Type "Transform Type 4 - Key
+              Exchange Method Transform IDs" was originally named "Transform Type 4 - Diffie-Hellman Group
+              Transform IDs" and was renamed to its current name by [RFCXXXX].  It has been referenced in its
+              original name in a number of RFCs prior to [RFCXXXX].  All "Additional Key Exchange" entries use
+              the same "Transform Type 4 - Key Exchange Method Transform IDs" as the "Key Exchange Method (KE)".</t>
+
+              <t>Append this note to "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry: All
+               "Additional Key Exchange" entries use these values as the "Key Exchange Method (KE)".</t>
             </list></t>
         </section>
 
