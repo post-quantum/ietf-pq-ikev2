@@ -671,13 +671,13 @@ HDR, SK {KEi(n)}    -->
                 ]]></artwork></figure>
 
                 <t> The initiator sends key exchange data in the KEi(n) payload.
-                This packet is protected with the current SK_ei/SK_ai keys.
+                This message is protected with the current SK_ei/SK_ai keys.
                 The notation KEi(n) denotes the n-th IKE_INTERMEDIATE KE payload from the initiator
                 and the integer n is sequential starting from 1.</t>
         
                 <t> On receiving this, the responder sends back key exchange payload KEr(n),
                 which denotes the n-th IKE_INTERMEDIATE KE payload from the responder.
-                As before, this packet is protected with the current SK_er/SK_ar keys.</t>
+                As before, this message is protected with the current SK_er/SK_ar keys.</t>
 
                 <t> The former "Diffie-Hellman Group Num" (now called "Key Exchange Method") field in the KEi(n) and KEr(n) payloads MUST match the
                 n-th negotiated additional key exchange.
@@ -687,7 +687,7 @@ HDR, SK {KEi(n)}    -->
                 <t> Once this exchange is done, both sides compute an updated keying material:</t>
         
                 <figure><artwork align="center" ><![CDATA[
-SKEYSEED = prf(SK_d(n-1), SK(n) | Ni | Nr)
+SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 ]]></artwork></figure>
 
                 <t> where SK(n) is the resulting shared secret of this key exchange,
@@ -698,7 +698,7 @@ SKEYSEED = prf(SK_d(n-1), SK(n) | Ni | Nr)
     
                 <figure><artwork align="center" ><![CDATA[
 {SK_d(n) | SK_ai(n) | SK_ar(n) | SK_ei(n) | SK_er(n) | SK_pi(n) | 
- SK_pr(n)} = prf+ (SKEYSEED, Ni | Nr | SPIi | SPIr)
+ SK_pr(n)} = prf+ (SKEYSEED(n), Ni | Nr | SPIi | SPIr)
                 ]]></artwork></figure>
 
                 <t> Both the initiator and the responder use these updated key
@@ -835,7 +835,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 However, a situation may occur when due to packet loss, one of the peers receives the CREATE_CHILD_SA message
                 requesting rekey of SA that is already being rekeyed by this peer (i.e. the CREATE_CHILD_SA
                 exchange initiated by this peer has been already completed and the series of IKE_FOLLOWUP_KE exchanges is in progress).
-                In this case, TEMPORARY_FAILURE notification MUST be sent in response to such a request.
+                In this case, a TEMPORARY_FAILURE notification MUST be sent in response to such a request.
                 </t>
 
                 <t> If multiple key exchanges are negotiated in the CREATE_CHILD_SA exchange, then the resulting keys are 
@@ -1126,14 +1126,14 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
             the SKEYSEED is updated using SK(1), which is the PQ_KEM_2 shared secret, as follows</t>
              
             <figure><artwork align="left" ><![CDATA[
-SKEYSEED = prf(SK_d, SK(1) | Ni | Nr).
+SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
             ]]></artwork></figure>
             
             <t>The updated SKEYSEED value is then used to derive the following keying materials</t>
             
             <figure><artwork align="left" ><![CDATA[
 {SK_d(1) | SK_ai(1) | SK_ar(1) | SK_ei(1) | SK_er(1) | SK_pi(1) | 
- SK_pr(1)} = prf+ (SKEYSEED, Ni | Nr | SPIi | SPIr).
+ SK_pr(1)} = prf+ (SKEYSEED(1), Ni | Nr | SPIi | SPIr).
             ]]></artwork></figure>
 
             <t>As per <xref target="RFC9242"/> specification, both peers compute IntAuth_i1 and IntAuth_r1 using the SK_pi(1)
@@ -1143,9 +1143,9 @@ SKEYSEED = prf(SK_d, SK(1) | Ni | Nr).
             After completing this exchange, keying materials are updated as below</t>
             
             <figure><artwork align="left" ><![CDATA[
-SKEYSEED = prf(SK_d(1), SK(2) | Ni | Nr)
+SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
 {SK_d(2) | SK_ai(2) | SK_ar(2) | SK_ei(2) | SK_er(2) | SK_pi(2) | 
-    SK_pr(2)} = prf+ (SKEYSEED, Ni | Nr | SPIi | SPIr)
+    SK_pr(2)} = prf+ (SKEYSEED(2), Ni | Nr | SPIi | SPIr)
             ]]></artwork></figure>
             
             <t>where SK(2) is the shared secret from the third additional key exchange, i.e. PQ_KEM_5.  Both peers then computes
