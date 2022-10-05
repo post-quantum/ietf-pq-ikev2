@@ -950,12 +950,14 @@ Type     Description                   Used In
               was renamed to its current name by [RFCXXXX].  It has been referenced in its original name in
               a number of RFCs prior to [RFCXXXX].  To find out requirement levels for Key Exchange Methods
               for IKEv2, see [RFC8247].</t>
-              
+
               <t>Add this note to "Transform Type Values" registry: Transform Type "Transform Type 4 - Key
               Exchange Method Transform IDs" was originally named "Transform Type 4 - Diffie-Hellman Group
               Transform IDs" and was renamed to its current name by [RFCXXXX].  It has been referenced in its
               original name in a number of RFCs prior to [RFCXXXX].  All "Additional Key Exchange" entries use
               the same "Transform Type 4 - Key Exchange Method Transform IDs" as the "Key Exchange Method (KE)".</t>
+
+              <t>Append RFCXXXX to the Reference column of Transform Type 4 in the Transform Type Values registry.</t>
 
               <t>Append this note to "Transform Type 4 - Diffie-Hellman Group Transform IDs" registry: All
                "Additional Key Exchange" entries use these values as the "Key Exchange Method (KE)".</t>
@@ -976,7 +978,7 @@ Type     Description                   Used In
 
         <t>Unlike key exchange methods (Transform Type 4), the Encryption Algorithm (Transform Type 1),
         the Pseudorandom Function (Transform Type 2) and the Integrity Algorithm (Transform Type 3) are
-        not susceptible to Shor's algorithm.  They are however, are susceptible to Grover's attack <xref target="GROVER"/>,
+        not susceptible to Shor's algorithm.  However, they are susceptible to Grover's attack <xref target="GROVER"/>,
         which allows a quantum computer to perform a brute force key search using quadratically fewer
         steps than the classical counterpart.  Simply increasing the key length can dwarfed this attack.
         It was previously believed that one needed to double the key length of these algorithms.  However,
