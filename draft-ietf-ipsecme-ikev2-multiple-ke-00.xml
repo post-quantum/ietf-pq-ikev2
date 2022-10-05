@@ -309,17 +309,10 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
         following criteria:</t>
     
     	<t><list style="hanging" hangIndent="5"><t hangText="1)">
-    	Need for post-quantum cryptography in IPsec.  Quantum computers
-    	might become feasible in the near future.  If current
-        Internet communications are monitored and recorded today (D),
-        the communications could be decrypted as soon as a quantum-
-        computer is available (e.g., year Q) if key negotiation only
-        relies on non post-quantum primitives.  This is a high threat
-        for any information that must remain confidential for a long
-        period of time T &gt; Q-D.  The need is obvious if we assume that Q
-        is 2040, D is 2020, and T is 30 years.  Such a value of T is
-        typical in classified or healthcare data.
-    	</t>
+    	Need for PQC in IPsec.  Quantum computers, which might become feasible in the near future, pose a threat to
+        our classical public key cryptography.  PQC, a family of public key cryptography that is believed to
+        be resistant against these computers, needs to be integrated into IPsec protocol suite to restore
+        confidentiality and authenticity.</t>
     
     	<t hangText="2)">
     	Hybrid.  Currently, there does not exist a post-quantum key
@@ -452,8 +445,9 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
 			true key exchanges versus post-quantum algorithms that act as key
 			transport mechanisms; all are treated equivalently by the
 			protocol.  This document renames a field in the Key Exchange Payload from
-            "Diffie-Hellman Group Num" to "Key Exchange Method", and the corresponding
-            renaming to the IANA registry is described in <xref target="IANA"/>.</t>
+            "Diffie-Hellman Group Num" to "Key Exchange Method". It also renames
+            Transform Type 4 from "Diffie-Hellman Group (D-H)" to "Key Exchange Method (KE)"; 
+            the corresponding renaming to the IANA registry is described in <xref target="IANA"/>.</t>
 
             <t> The fact, that newly defined transforms share
             the same registry for possible Transform IDs with Transform Type 4, allows additional key exchanges
@@ -509,7 +503,7 @@ Initiator                             Responder
             the policy, it responds with an IKE_SA_INIT response, and IKE continues as usual.</t>
     
             <t> If the initiator desires to negotiate multiple key exchanges, then the initiator uses the protocol
-    		behaviour listed below.</t>
+    		behavior listed below.</t>
     
             <section anchor="negotiation" title="IKE_SA_INIT Round: Negotiation" >
                 <t> Multiple key exchanges are negotiated using the standard IKEv2 mechanism, via SA payload.
@@ -548,7 +542,7 @@ Initiator                             Responder
                 indicates performing standard IKEv2, as defined in <xref target="RFC7296"/>.
                 On the other hand, if the initiator includes any Additional Key Exchange transform in the proposal, 
                 the responder MUST select one of the algorithms proposed using this type.  Note that this is not a
-                new requirement, but this behaviour is already specified in Section 2.7 of <xref target="RFC7296"/>.
+                new requirement, but this behavior is already specified in Section 2.7 of <xref target="RFC7296"/>.
                 A transform ID NONE MAY be added to those transform types which contain key exchange methods that
                 the initiator believes is optional according to its local policy.
                 </t>
@@ -560,8 +554,9 @@ Initiator                             Responder
                 transforms can be the same, but the attributes must be different.  Additionally, the order of the attributes
                 does not affect the equality of the algorithm, so two transforms (ID=alg1,ATTR1=attr1,ATTR2=attr2) and
                 (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm.  In the event of duplicated algorithms in the
-                initiator's (resp. responder's) message, the responder (resp. initiator) MUST reject the message with an
-                error notification of type NO_PROPOSAL_CHOSEN.
+                initiator's message, the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN.
+                On the other hand, if the responder's message contains one or more duplicated choices, the initiator
+                should log the error and MUST stop creating the SA or delete the SA if it is a rekey.
                 </t>
 
                 <t> If the responder selects NONE for some Additional Key Exchange types (provided they are proposed by the initiator), 
@@ -870,12 +865,12 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             </section>
 
             <section title="Interaction with Childless IKE SA">
-            <t>It is also possible to establish IKE SAs using post-quantum algorithms only using additional key exchanges,
+            <t>It is also possible to establish IKE SAs with post-quantum algorithms only using additional key exchanges,
             but without using IKE_INTERMEDIATE exchanges.  In this case, the IKE SA created from IKE_SA_INIT exchange
             can be immediately rekeyed with CREATE_CHILD_SA using additional key exchanges where IKE_FOLLOWUP_KE
             messages are used to carry the key exchange payload.  If classical key exchange method is used in
             the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will offer no resistance against the
-            quantum threats.  Consequently, if the peers' local policy requires that all Child SAs should be post-quantum
+            quantum threats.  Consequently, if the peers' local policy requires that all Child SAs to be post-quantum
             secure, then the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this
             case, the peers exchange CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange and the desired
             Child SA can be created with CREATE_CHILD_SA using additional key exchanges.
@@ -930,6 +925,18 @@ Type     Description                   Used In
 47         STATE_NOT_FOUND
         ]]></artwork></figure>
 
+        <section title="Transform Type 4 Identifiers">
+            <t>While this document does not introduce any new Transform Type 4 Identifier, an additional
+            consideration should be made before adding an entry to the registry, that is the public value
+            of any new key exchange algorithm must fit into a single IKE_INTERMEDIATE message.  If there
+            is a need to add an algorithm that does not meet this restriction, considerations should be
+            made based on how the algorithm is used.  For example if the public value is distributed
+            out-of-band and no IKE_INTERMEDIATE exchange is required, then this restriction should not apply.
+            On the other hand, if the algorithm needs to use IKE_INTERMEDIATE exchanges, then there must
+            be documentation on how the public value is handled in the IKE_INTERMEDIATE exchange. 
+            </t>
+        </section>
+
         <section title="Additional Changes">
             <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
             <t>It is assumed that RFCXXXX refers to this specification.</t>
@@ -977,7 +984,7 @@ Type     Description                   Used In
         using Grover's algorithm.  According to NIST <xref target="NISTPQCFAQ"/>, current applications can
         continue using AES algorithm with the minimum key length of 128 bit.  Nevertheless, if the data
         need to remain secure for many years to come, one should consider using a longer key size for the
-        algorithms in Transform Type 1-3.
+        algorithms in Transform Types 1-3.
         </t>
     
     	<t>SKEYSEED is calculated from shared SK(x) using an algorithm defined
