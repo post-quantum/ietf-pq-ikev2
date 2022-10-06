@@ -507,11 +507,10 @@ Initiator                             Responder
     
             <section anchor="negotiation" title="IKE_SA_INIT Round: Negotiation" >
                 <t> Multiple key exchanges are negotiated using the standard IKEv2 mechanism, via SA payload.
-                For this purpose seven new transform types, 
-                namely Additional Key Exchange 1 (&lt;6 by IANA&gt;), Additional Key Exchange 2 (&lt;7 by IANA&gt;), 
-                Additional Key Exchange 3 (&lt;8 by IANA&gt;), Additional Key Exchange 4 (&lt;9 by IANA&gt;), 
-                Additional Key Exchange 5 (&lt;10 by IANA&gt;), Additional Key Exchange 6 (&lt;11 by IANA&gt;) and Additional Key Exchange 7 (&lt;12 by IANA&gt;)
-                are defined. They are collectively called Additional Key Exchange transforms in this document 
+                For this purpose seven new transform types, namely Additional Key Exchange 1 (with IANA assigned value 6),
+                Additional Key Exchange 2 (7), Additional Key Exchange 3 (8), Additional Key Exchange 4 (9),
+                Additional Key Exchange 5 (10), Additional Key Exchange 6 (11) and Additional Key Exchange 7 (12)
+                are defined.  They are collectively called Additional Key Exchange transforms in this document 
                 and have slightly different semantics than the existing IKEv2 transform types.
                 They are interpreted as an indication of additional key exchange methods that peers agree to perform
                 in a series of IKE_INTERMEDIATE exchanges following the IKE_SA_INIT exchange.  The allowed transform IDs for these transform types 
@@ -734,7 +733,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 key exchanges, then the additional key exchanges are performed in a series 
                 of new IKE_FOLLOWUP_KE exchanges that follows the CREATE_CHILD_SA exchange.
                 The IKE_FOLLOWUP_KE exchange is introduced as a dedicated exchange for transferring data of additional key exchanges 
-                following the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type is &lt;44 by IANA&gt;.
+                following the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type is 44.
                 </t>
 
                 <t> Key exchange negotiated via Transform Type 4 always takes place in the CREATE_CHILD_SA exchange, as per IKEv2 specification. 
@@ -749,7 +748,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 <t> After IKE SA is created the window size may be greater than one and multiple
                 concurrent exchanges may be in progress, it is essential to link the IKE_FOLLOWUP_KE exchanges together and 
                 with the corresponding CREATE_CHILD_SA exchange.  A new status type notification ADDITIONAL_KEY_EXCHANGE
-                is used for this purpose.  Its Notify Message Type is &lt;16441 by IANA&gt;, and Protocol ID and SPI Size 
+                is used for this purpose.  Its Notify Message Type is 16441, and Protocol ID and SPI Size 
                 are both set to 0.  The data associated with this notification is a blob meaningful 
                 only to the responder, so that the responder can correctly link successive
                 exchanges.  For the initiator the content of this notification is an opaque blob.
@@ -800,7 +799,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
 
                 <t> If the responder receives IKE_FOLLOWUP_KE and the content of this notify does not correspond
                 to any active key exchange state the responder has, it MUST send back a new error type notification
-                STATE_NOT_FOUND.  This is a non-fatal error notification, its Notify Message Type is &lt;47 by IANA&gt;, 
+                STATE_NOT_FOUND.  This is a non-fatal error notification, its Notify Message Type is 47, 
                 Protocol ID and SPI Size are both set to 0 and the data is empty.  If the initiator receives
                 this notification in response to IKE_FOLLOWUP_KE exchange performing additional
                 key exchange, it MUST cancel this exchange and MUST treat the whole series 
@@ -925,18 +924,20 @@ Type     Description                   Used In
 47         STATE_NOT_FOUND
         ]]></artwork></figure>
 
-        <section title="Transform Type 4 Identifiers">
-            <t>While this document does not introduce any new Transform Type 4 Identifier, an additional
-            consideration should be made before adding an entry to the registry, that is the public value
-            of any new key exchange algorithm must fit into a single IKE_INTERMEDIATE message.  If there
-            is a need to add an algorithm that does not meet this restriction, considerations should be
-            made based on how the algorithm is used.  For example if the public value is distributed
-            out-of-band and no IKE_INTERMEDIATE exchange is required, then this restriction should not apply.
-            On the other hand, if the algorithm needs to use IKE_INTERMEDIATE exchanges, then there must
-            be documentation on how the public value is handled in the IKE_INTERMEDIATE exchange. 
-            </t>
-        </section>
-
+        <t>The KE method is expected to take exactly one round-trip (one IKE_INTERMEDIATE exchange)
+        and at the end of this exchange, both peers can derive the shared secret.  If the KE method
+        requires several round-trips, then additional considerations should be given in the document
+        specifying such a method of how it is used in the context of this specification.</t>
+    
+        <t>While this document does not introduce any new Transform Type 4 Identifier, an additional
+        consideration should be made before adding an entry to the registry, that is the public value
+        of any new key exchange algorithm must fit into a single IKE_INTERMEDIATE message.  If there
+        is a need to add an algorithm that does not meet this restriction, considerations should be
+        made based on how the algorithm is used.  For example if the public value is distributed
+        out-of-band and no IKE_INTERMEDIATE exchange is required, then this restriction should not apply.
+        On the other hand, if the algorithm needs to use IKE_INTERMEDIATE exchanges, then there must
+        be documentation on how the public value is handled in the IKE_INTERMEDIATE exchange.</t>        
+        
         <section title="Additional Changes">
             <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
             <t>It is assumed that RFCXXXX refers to this specification.</t>
@@ -985,7 +986,7 @@ Type     Description                   Used In
         there are a number of factors that suggest that it is quite unlikely to achieve the quadratic speed up
         using Grover's algorithm.  According to NIST <xref target="NISTPQCFAQ"/>, current applications can
         continue using AES algorithm with the minimum key length of 128 bit.  Nevertheless, if the data
-        need to remain secure for many years to come, one should consider using a longer key size for the
+        need to remain secure for many years to come, one may want to consider using a longer key size for the
         algorithms in Transform Types 1-3.
         </t>
     
@@ -1028,7 +1029,7 @@ Type     Description                   Used In
         point in the future.  Until quantum computers become available there
         is no point in attacking the authenticity of a connection because
         there are no possibilities for exploitation.  These only occur at
-        the time of the connection, for example by mounting an on-path (i.e. man-in-the-middle)
+        the time of the connection, for example by mounting an on-path
         attack.  Consequently there is less urgency for
         post-quantum authenticity compared to post-quantum confidentiality.</t>
 
