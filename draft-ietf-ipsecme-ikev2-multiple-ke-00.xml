@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
-<!ENTITY RFC4302 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4302.xml">
-<!ENTITY RFC4303 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4303.xml">
 <!ENTITY RFC9242 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml">
 <!-- TODO:
 There seems to be a bug on the reference for ikev2-beyond64k-limit draft, for time being
@@ -15,10 +13,9 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
 <!ENTITY RFC7383 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7383.xml">
 <!ENTITY RFC8019 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8019.xml">
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
-<!ENTITY RFC8391 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8391.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-07" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
+<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-08" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -142,16 +139,19 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
 			distinct PQC algorithms.
             </t>
 
-            <t>
-			The secrets established from each key exchange are combined in a way
-			such that should the post-quantum secrets not be present, the derived
-			shared secret is equivalent to that of the standard IKEv2; on the
-			other hand, a post-quantum shared secret is obtained if both classical
-			and post-quantum key exchange data are present.  This extension also
-			applies to key exchanges in IKE Security Associations (SAs) for
-			Encapsulating Security Payload (ESP) <xref target="RFC4303"/> or
-			Authentication Header (AH) <xref target="RFC4302"/>, i.e. Child SAs,
-			in order to provide a stronger guarantee of forward security.</t>
+            <t>IKE peers perform multiple successive key exchanges to establish
+            an IKE Security Association (SA).  Each exchange produces a piece of secret and
+            these secrets are combined in a way such that:
+            <ol type="(%c)">
+            <li>the final shared secret is computed from all of the component key exchange
+            secret;</li>
+            <li>the shared secret as specified in <xref target="RFC7296"/> is obtained
+            unless both peers support and agree to use the additional key exchanges introduced
+            in this specification; and</li>
+            <li>if any of the component key exchange method is a post-quantum algorithm,
+            the final shared secret is post-quantum secure.</li>
+            </ol>
+            </t>
 
             <t>
 			Some post-quantum key exchange payloads may have sizes larger than
@@ -164,9 +164,16 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
 			the IKE_AUTH exchange, we perform one or more IKE_INTERMEDIATE exchanges,
 			each of which contains an additional key exchange.  As the IKE_INTERMEDIATE
 			exchange is encrypted, the IKE fragmentation protocol <xref target="RFC7383" />
-			can be used. The IKE SK_* values are updated after each exchange,
+			can be used. The IKE SK_* values are updated after each exchange as described in
+            <xref target="additional_ke"/>,
 			and so the final IKE SA keys depend on all the key exchanges,
 			hence they are secure if any of the key exchanges are secure.</t>
+
+            <t>While this extension is primarily aimed for IKE SAs due to the
+            potential fragmentation issue discussed above, it also applies to
+            CREATE_CHILD_SA exchanges as illustrated in
+            <xref target="create_child_sa_exchange"/> for creating/rekeying of
+            Child SAs and rekeying of IKE SAs.</t>
 
             <t>
 			Note that readers should consider the approach defined in this document as
@@ -196,6 +203,11 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
             <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
 
             <t> Changes in this draft in each version iterations.</t>
+
+            <t>draft-ietf-ipsecme-ikev2-multiple-ke-07</t>
+            <t><list style="symbols">
+            <t>Editorial changes.</t>
+            </list></t>
 
             <t>draft-ietf-ipsecme-ikev2-multiple-ke-06</t>
             <t><list style="symbols">
@@ -268,7 +280,7 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
      		IKE_SA_INIT with a few extra notifies) small, and encrypting the rest
      		of the key exchanges.</t>
     
-     		<t>Simplify the negotiation of the ‘extra’ key exchanges.</t>
+     		<t>Simplify the negotiation of the 'extra' key exchanges.</t>
      	    </list></t>
     
             <t>draft-tjhai-ipsecme-hybrid-qske-ikev2-00</t>
@@ -392,9 +404,10 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
     	<t hangText="11)">
     	Federal Information Processing Standards (FIPS) compliance.  IPsec is widely used in Federal Information
     	Systems and FIPS certification is an important requirement.
-        However, algorithms that are believed to be post-quantum are not
-        FIPS compliant yet.  Still, the goal is that the overall hybrid
-        post-quantum IKEv2 design can be FIPS compliant.
+        However, at the time of writing, none of the algorithms that is believed
+        to be post-quantum is FIPS compliant yet.  Nonetheless, it is possible to combine
+        this post-quantum algorithm with a FIPS complaint key establishment method so that
+        the overall design is FIPS compliant <xref target="NISTPQCFAQ"/>.
     	</t>
     
         <t hangText="12)">
@@ -427,10 +440,16 @@ after we submit a new draft to ikev2-beyond64k-limit. -->
             <t> In order to be able to use IKE fragmentation <xref target="RFC7383"/> for those key exchanges
             that may have long public keys, this specification utilizes the IKE_INTERMEDIATE exchange 
             defined in <xref target="RFC9242"/>.
-            The initial IKE_INIT messages do not have any inherent fragmentation support within IKE; however that can include a
+            The initial IKE_INIT messages do not have any inherent fragmentation support within IKE; however IKE_INIT messages can include a
             relatively short KE payload.  The additional key exchanges are performed 
             using IKE_INTERMEDIATE messages; because these messages are encrypted, the standard IKE fragmentation 
             mechanism is available.
+            </t>
+
+            <t> Note that this document assumes, that each key exchange method requires one round trip and consumes exactly one IKE_INTERMEDIATE exchange.
+            This assumption is valid for all classic key exchange methods defined so far and for all post-quantum methods currently known.
+            For hypothetical future key exchange methods requiring multiple round trips to complete, a separate document should define how such
+            methods are split into several IKE_INTERMEDIATE exchanges.
             </t>
 
             <t> In order to minimize communication overhead, only the key shares that are agreed to be used
@@ -482,12 +501,6 @@ Initiator                             Responder
 
 <-- {IKE_AUTH} -->
             ]]></artwork></figure>
-
-            <t> Note that this document assumes, that each key exchange method requires one round trip and consumes exactly one IKE_INTERMEDIATE exchange.
-            This assumption is valid for all classic key exchange methods defined so far and for all post-quantum methods currently known.
-            For hypothetical future key exchange methods requiring multiple round trips to complete, a separate document should define how such
-            methods are split into several IKE_INTERMEDIATE exchanges.
-            </t>
         </section>
 
     	<section title="Protocol Details">
@@ -661,7 +674,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)    --->
 
             </section>
         
-        	<section title="IKE_INTERMEDIATE Round: Additional Key Exchanges">
+        	<section title="IKE_INTERMEDIATE Round: Additional Key Exchanges" anchor="additional_ke">
                 <t> For each additional key exchange agreed to in the IKE_SA_INIT exchange,
         		the initiator and the responder perform IKE_INTERMEDIATE exchange, 
                 as described in <xref target="RFC9242"/>.</t>
@@ -695,8 +708,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
 
                 <t> where SK(n) is the resulting shared secret of this key exchange,
                 Ni and Nr are nonces from the IKE_SA_INIT exchange and SK_d(n-1) is the 
-                last generated SK_d, (derived from the previous IKE_INTERMEDIATE exchange, 
-                or the IKE_SA_INIT if there have not already been any IKE_INTERMEDIATE exchanges).
+                last generated SK_d, (derived from IKE_SA_INIT for the first use of IKE_INTERMEDIATE, otherwise from the previous IKE_INTERMEDIATE exchange).
                 The other keying materials SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, SK_pr are updated as:</t>
     
                 <figure><artwork align="center" ><![CDATA[
@@ -716,7 +728,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
         		<xref target="RFC9242"/>.</t>
         	</section>
         
-            <section title="CREATE_CHILD_SA Exchange">
+            <section title="CREATE_CHILD_SA Exchange" anchor="create_child_sa_exchange">
                 <t> The CREATE_CHILD_SA exchange is used in IKEv2 for the purposes 
                 of creating additional Child SAs, rekeying them and rekeying IKE SA itself.
                 When creating or rekeying Child SAs, the peers may optionally 
@@ -795,6 +807,10 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 The responder MUST handle this situation gracefully and delete
                 the associated state if it does not receive the next expected 
                 IKE_FOLLOWUP_KE request after some reasonable period of time.
+                Note that due to various factors such as computational resource and
+                key exchange algorithm used, it is not possible to give a normative
+                guidance on how long this timeout period should be. In general, 5-20
+                seconds of waiting time should be appropriate in most cases.  
                 </t>
 
                 <t> If the responder receives IKE_FOLLOWUP_KE and the content of this notify does not correspond
@@ -870,15 +886,34 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             messages are used to carry the key exchange payload.  If classical key exchange method is used in
             the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will offer no resistance against the
             quantum threats.  Consequently, if the peers' local policy requires that all Child SAs to be post-quantum
-            secure, then the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this
-            case, the peers exchange CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT exchange and the desired
-            Child SA can be created with CREATE_CHILD_SA using additional key exchanges.
-            </t>
+            secure, then the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this case, the initiator sends two types of
+            proposal in the IKE_SA_INIT request, one with and another one without Additional
+            Key Exchange transform(s).  The responder chooses the latter proposal type and includes
+            CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT response.  Assuming that
+            the initiator supports childless IKE SA extension, then both peers performs
+            the modified IKE_AUTH exchange described in <xref target="RFC6023"/> and no
+            child SA is created in this exchange.  The peers should then immediately rekey
+            the IKE SA and subsequently create the child SAs, all with additional key
+            exchanges using CREATE_CHILD_SA exchange.</t>
+
+            <t>It is also possible for the initiator to send proposals without Additional Key
+            Exchange transform(s) in the IKE_SA_INIT message and in this instance, the responder will have
+            no information whether or not the initiator supports the extension in this
+            specification.  This may not be efficient as the responder will have to wait for
+            the subsequent CREATE_CHILD_SA request to determine whether or not the initiator's 
+            request is appropriate for its local policy.</t>
+
+            <t>The support for childless IKE SA is not negotiated, but it is the responder that
+            indicates the support for this mode.  As such, the responder cannot enforce the
+            initiator to use this mode and therefore, it is entirely possible that the
+            initiator does not support this extension and sends IKE_AUTH request as per
+            <xref target="RFC7296"/> instead of <xref target="RFC6023"/>.  In this case, the
+            responder may respond with non-fatal error such as NO_PROPOSAL_CHOSEN notify message type.</t>
 
             <t>Note that if the initial IKE SA is used to transfer sensitive information, then this information
             will not be protected using the additional key exchanges, which may use post-quantum algorithms.  Consider
             G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/> where the cryptographic materials are sent from
-            the group controller to the group members when the initial IKE SA is created. In this arrangement,
+            the group controller to the group members when the initial IKE SA is created.  In this arrangement,
             the peers will have to use post-quantum algorithm in Transform Type 4 in order to mitigate the risk of quantum attack. </t>
             </section>
 
@@ -923,24 +958,20 @@ Type     Description                   Used In
         <figure align="center"><artwork align="left"><![CDATA[
 47         STATE_NOT_FOUND
         ]]></artwork></figure>
-
-        <t>The KE method is expected to take exactly one round-trip (one IKE_INTERMEDIATE exchange)
-        and at the end of this exchange, both peers can derive the shared secret.  If the KE method
-        requires several round-trips, then additional considerations should be given in the document
-        specifying such a method of how it is used in the context of this specification.</t>
     
-        <t>While this document does not introduce any new Transform Type 4 Identifier, an additional
-        consideration should be made before adding an entry to the registry, that is the public value
-        of any new key exchange algorithm must fit into a single IKE_INTERMEDIATE message.  If there
-        is a need to add an algorithm that does not meet this restriction, considerations should be
-        made based on how the algorithm is used.  For example if the public value is distributed
-        out-of-band and no IKE_INTERMEDIATE exchange is required, then this restriction should not apply.
-        On the other hand, if the algorithm needs to use IKE_INTERMEDIATE exchanges, then there must
-        be documentation on how the public value is handled in the IKE_INTERMEDIATE exchange.</t>        
+        <section title="Additional Considerations and Changes">
+
+            <t>The IANA is requested to add the following instructions for designated experts
+            for Transform Type 4 sub-registry.</t>
+
+            <t>While adding new KE methods, the following considerations must be applied.
+            A KE method must take exactly one round-trip (one IKE exchange) and at the end
+            of this exchange, both peers must be able to derive the shared secret. In addition,any public value peers exchanged during a KE method must fit into a single IKE
+            message.  If these restrictions are not met for a KE method, then there must be
+            documentation on how this KE method is used in IKEv2.</t>
         
-        <section title="Additional Changes">
-            <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
-            <t>It is assumed that RFCXXXX refers to this specification.</t>
+            <t>The following changes to IANA are also requested. It is assumed that
+            RFCXXXX refers to this specification.</t>
             <t><list style="symbols">
               
               <t>Add a reference to RFCXXXX in the "Transform Type 4 - Diffie-Hellman Group Transform IDs"
@@ -998,6 +1029,12 @@ Type     Description                   Used In
     	the algorithm defined in the Transform Type 2 is quantum resistant.
     	</t>
 
+        <t>The ordering of the additional key exchanges should not matter in general,
+        as only the final shared secret is of interest.  Nonetheless, because the strength
+        of the running shared secret increases with every additional key exchange, an
+        implementer may want to first perform the most secure method (in some metrics) and
+        followed by less secure one(s).</t>
+
         <t> The main focus of this document is to prevent a passive attacker
         performing a "harvest and decrypt" attack.  In other words, an attacker
         that records messages exchanged today and proceeds to decrypt them once
@@ -1013,13 +1050,7 @@ Type     Description                   Used In
         long enough, is post-quantum secure, the other algorithms are not.   Moreover,
         in implementations where scalability is a requirement, the pre-shared
         key method may not be suitable.  Post-quantum authenticity may be
-        provided by using a post-quantum digital signature and several
-        of them have been being explored by
-        IETF.  For example, if the implementation is able to reliably
-        track state, the hash based method, XMSS has the status of an RFC,
-        see <xref target="RFC8391"/>.  Currently, post-quantum authentication
-        methods are not specified in this document, but are planned to be
-        incorporated in due course.
+        provided by using a post-quantum digital signature.
         </t>
 
         <t> Secondly, it should be noted that the purpose of post-quantum algorithms is
@@ -1033,7 +1064,7 @@ Type     Description                   Used In
         attack.  Consequently there is less urgency for
         post-quantum authenticity compared to post-quantum confidentiality.</t>
 
-        <t> Performing multiple key exchanges while establishing IKEv2 SA 
+        <t> Performing multiple key exchanges while establishing IKE SA 
         increases the responder's susceptibility to DoS attacks, because 
         of an increased amount of resources needed before the initiator
         is authenticated.  This is especially true for post-quantum
@@ -1074,8 +1105,6 @@ Type     Description                   Used In
 	    &RFC9242;
 	</references>
     <references title='Informative References'>
-        &RFC4302;
-        &RFC4303;
         &RFC6023;
         &RFC7383;
         &RFC8019;
@@ -1087,7 +1116,6 @@ Type     Description                   Used In
             </front>
             <seriesInfo name="Proc." value="of the Twenty-Eighth Annual ACM Symposium on the Theory of Computing (STOC 1996)"/>
         </reference>
-    	&RFC8391;
 	    &RFC8784;
         &I-D.ietf-ipsecme-g-ikev2;
 	    &I-D.tjhai-ikev2-beyond-64k-limit;
@@ -1242,18 +1270,18 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
     <section title="Additional Key Exchange in the CREATE_CHILD_SA Exchange only" anchor="sample-exchanges-ake-child-sas">
       <t>The exchanges below show that the initiator does not propose the use of additional key exchanges
       to establish an IKE SA, but they are required in order to establish a Child SA.  In order
-      to establish a fully quantum-resistant IPsec SA, both peers include CHILDLESS_IKEV2_SUPPORTED
-      notification in their exchange so that the first Child SA is not created in IKE_AUTH, but instead
-      the IKE SA is immediately rekeyed using CREATED_CHILD_SA. Any Child SA will have to be created via
-      subsequent CREATED_CHILD_SA exchange.
+      to establish a fully quantum-resistant IPsec SA, the responder includes a CHILDLESS_IKEV2_SUPPORTED
+      notification in their IKE_SA_INIT response message.  The initiator understands
+      and supports this notification, then exchanges a modified IKE_AUTH message with the
+      responder and rekeys the IKE SA immediately with additional key exchanges.  Any
+      Child SA will have to be created via subsequent CREATED_CHILD_SA exchange.
       </t>
 
       <figure><artwork align="center"><![CDATA[
 Initiator                     Responder
 ---------------------------------------------------------------------
 HDR(IKE_SA_INIT), SAi1, --->
-KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED),
-N(CHILDLESS_IKEV2_SUPPORTED)
+KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED)
                    <--- HDR(IKE_SA_INIT), SAr1,
                         KEr(Curve25519), Nr, N(IKEV2_FRAG_SUPPORTED),
                         N(CHILDLESS_IKEV2_SUPPORTED)
@@ -1291,7 +1319,7 @@ N(ADDITIONAL_KEY_EXCHANGE)(link2) }
       ]]></artwork></figure>
     </section>
 
-    <section title="Not Matching Proposal for Additional Key Exchanges" anchor="sample-exchanges-no-proposal-chosen">
+    <section title="No Matching Proposal for Additional Key Exchanges" anchor="sample-exchanges-no-proposal-chosen">
       <t>The initiator proposes the combination of PQ_KEM_1, PQ_KEM_2, PQ_KEM_3, and PQ_KEM_4 as
       the additional key exchanges.  The initiator indicates that either PQ_KEM_1 or PQ_KEM_2 must be
       used to establish a security association, but Additional Key Exchange 2 is optional so the responder
