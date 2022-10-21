@@ -887,8 +887,8 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             the IKE_SA_INIT message, the very first Child SA created in IKE_AUTH will offer no resistance against the
             quantum threats.  Consequently, if the peers' local policy requires that all Child SAs to be post-quantum
             secure, then the peers can avoid creating the very first Child SA by adopting <xref target="RFC6023"/>.  In this case, the initiator sends two types of
-            proposal in the IKE_SA_INIT request, one with and another one without additional
-            key exchanges.  The responder chooses the latter proposal type and includes
+            proposal in the IKE_SA_INIT request, one with and another one without Additional
+            Key Exchange transform(s).  The responder chooses the latter proposal type and includes
             CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT response.  Assuming that
             the initiator supports childless IKE SA extension, then both peers performs
             the modified IKE_AUTH exchange described in <xref target="RFC6023"/> and no
@@ -896,8 +896,8 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             the IKE SA and subsequently create the child SAs, all with additional key
             exchanges using CREATE_CHILD_SA exchange.</t>
 
-            <t>It is also possible for the initiator to send proposals without additional key
-            exchange in the IKE_SA_INIT message and in this instance, the responder will have
+            <t>It is also possible for the initiator to send proposals without Additional Key
+            Exchange transform(s) in the IKE_SA_INIT message and in this instance, the responder will have
             no information whether or not the initiator supports the extension in this
             specification.  This may not be efficient as the responder will have to wait for
             the subsequent CREATE_CHILD_SA request to determine whether or not the initiator's 
@@ -958,20 +958,20 @@ Type     Description                   Used In
         <figure align="center"><artwork align="left"><![CDATA[
 47         STATE_NOT_FOUND
         ]]></artwork></figure>
-
-        <t>The IANA is requested to add the following instructions for designated experts
-        for Transform Type 4 sub-registry.</t>
     
-        <t>While adding new KE methods, the following considerations must be applied.
-        A KE method must take exactly one round-trip (one IKE exchange) and at the end
-        of this exchange, both peers must be able to derive the shared secret. In addition,
-        any public value peers exchanged during a KE method must fit into a single IKE message.
-        If these restrictions are not met for a KE method, then there must be documentation on
-        how this KE method is used in IKEv2.</t>
+        <section title="Additional Considerations and Changes">
+
+            <t>The IANA is requested to add the following instructions for designated experts
+            for Transform Type 4 sub-registry.</t>
+
+            <t>While adding new KE methods, the following considerations must be applied.
+            A KE method must take exactly one round-trip (one IKE exchange) and at the end
+            of this exchange, both peers must be able to derive the shared secret. In addition,any public value peers exchanged during a KE method must fit into a single IKE
+            message.  If these restrictions are not met for a KE method, then there must be
+            documentation on how this KE method is used in IKEv2.</t>
         
-        <section title="Additional Changes">
-            <t>RFC EDITOR PLEASE DELETE THIS SECTION.</t>
-            <t>It is assumed that RFCXXXX refers to this specification.</t>
+            <t>The following changes to IANA are also requested. It is assumed that
+            RFCXXXX refers to this specification.</t>
             <t><list style="symbols">
               
               <t>Add a reference to RFCXXXX in the "Transform Type 4 - Diffie-Hellman Group Transform IDs"
