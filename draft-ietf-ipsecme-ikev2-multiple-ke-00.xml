@@ -1,11 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!ENTITY RFC9242 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml">
-<!-- TODO:
-There seems to be a bug on the reference for ikev2-beyond64k-limit draft, for time being
-we have to specify the version number. Hopefully this is just a glitch that can resolve itself
-after we submit a new draft to ikev2-beyond64k-limit. -->
-<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-tjhai-ikev2-beyond-64k-limit-03.xml">
+<!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.tjhai-ikev2-beyond-64k-limit.xml">
 <!ENTITY I-D.ietf-ipsecme-g-ikev2 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-g-ikev2.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC6023 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6023.xml">
