@@ -1281,8 +1281,10 @@ KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED)
                    <--- HDR(IKE_SA_INIT), SAr1,
                         KEr(Curve25519), Nr, N(IKEV2_FRAG_SUPPORTED),
                         N(CHILDLESS_IKEV2_SUPPORTED)
+			
 HDR(IKE_AUTH), SK{ IDi, AUTH  } --->
                    <--- HDR(IKE_AUTH), SK{ IDr, AUTH }
+
 HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi(Curve25519) } --->
   Proposal #1
     Transform ECR (ID = ENCR_AES_GCM_16,
@@ -1309,6 +1311,7 @@ HDR(IKE_FOLLOWUP_KE), SK{ KEi(1)(PQ_KEM_2), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link1) }
                   <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1)(PQ_KEM_2),
                         N(ADDITIONAL_KEY_EXCHANGE)(link2) }
+
 HDR(IKE_FOLLOWUP_KE), SK{ KEi(2)(PQ_KEM_5), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link2) }
                   <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2)(PQ_KEM_5) }
