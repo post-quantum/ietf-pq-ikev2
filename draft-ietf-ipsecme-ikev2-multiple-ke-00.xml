@@ -11,7 +11,7 @@
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-08" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
+<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-09" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -436,7 +436,7 @@
             <t> In order to be able to use IKE fragmentation <xref target="RFC7383"/> for those key exchanges
             that may have long public keys, this specification utilizes the IKE_INTERMEDIATE exchange 
             defined in <xref target="RFC9242"/>.
-            The initial IKE_INIT messages do not have any inherent fragmentation support within IKE; however IKE_INIT messages can include a
+            The initial IKE_SA_INIT messages do not have any inherent fragmentation support within IKE; however, IKE_SA_INIT messages can include a
             relatively short KE payload.  The additional key exchanges are performed 
             using IKE_INTERMEDIATE messages; because these messages are encrypted, the standard IKE fragmentation 
             mechanism is available.
