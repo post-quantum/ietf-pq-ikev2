@@ -562,7 +562,7 @@ Initiator                             Responder
                 transforms can be the same, but the attributes must be different.  Additionally, the order of the attributes
                 does not affect the equality of the algorithm, so two transforms (ID=alg1,ATTR1=attr1,ATTR2=attr2) and
                 (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm.  If the initiator's proposal includes more mandatory Additional Key Exchange transforms
-		(those, that include no NONE Transform ID), than the number of Transform IDs they contain, 
+		(those that include no NONE Transform ID) than the number of Transform IDs they contain, 
 		then the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN,
 		because in this case the responder cannot choose different Key Exchange methods for each of these Additional Key exchanges.
 		If the responder's message contains one or more duplicated choices, the initiator
