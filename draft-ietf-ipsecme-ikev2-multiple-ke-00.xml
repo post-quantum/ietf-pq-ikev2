@@ -11,7 +11,7 @@
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-08" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
+<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-09" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -436,7 +436,7 @@
             <t> In order to be able to use IKE fragmentation <xref target="RFC7383"/> for those key exchanges
             that may have long public keys, this specification utilizes the IKE_INTERMEDIATE exchange 
             defined in <xref target="RFC9242"/>.
-            The initial IKE_INIT messages do not have any inherent fragmentation support within IKE; however IKE_INIT messages can include a
+            The initial IKE_SA_INIT messages do not have any inherent fragmentation support within IKE; however, IKE_SA_INIT messages can include a
             relatively short KE payload.  The additional key exchanges are performed 
             using IKE_INTERMEDIATE messages; because these messages are encrypted, the standard IKE fragmentation 
             mechanism is available.
@@ -530,7 +530,7 @@ Initiator                             Responder
                 in the IKE_SA_INIT exchange, as defined in <xref target="RFC7296" />.  Additional key exchanges negotiated via newly
                 defined transforms MUST take place in a series of IKE_INTERMEDIATE exchanges following the IKE_SA_INIT exchange, 
                 performed in an order of the values of their transform types, so that key exchange negotiated using Additional Key Exchange i always precedes that of
-                Additional Key Exchange i+1. Each additional key exchange method MUST be fully completed before the next one is started.
+                Additional Key Exchange i + 1. Each additional key exchange method MUST be fully completed before the next one is started.
                 </t>
 
                 <t> Note that with this semantics, Additional Key Exchange transforms are not associated
@@ -561,9 +561,11 @@ Initiator                             Responder
                 could include a set of associated attributes that define details of the algorithm. In this case, two 
                 transforms can be the same, but the attributes must be different.  Additionally, the order of the attributes
                 does not affect the equality of the algorithm, so two transforms (ID=alg1,ATTR1=attr1,ATTR2=attr2) and
-                (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm.  In the event of duplicated algorithms in the
-                initiator's message, the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN.
-                On the other hand, if the responder's message contains one or more duplicated choices, the initiator
+                (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm.  If the initiator's proposal includes more mandatory Additional Key Exchange transforms
+		(those that include no NONE Transform ID) than the number of Transform IDs they contain, 
+		then the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN,
+		because in this case the responder cannot choose different Key Exchange methods for each of these Additional Key exchanges.
+		If the responder's message contains one or more duplicated choices, the initiator
                 should log the error and MUST stop creating the SA or delete the SA if it is a rekey.
                 </t>
 
@@ -888,8 +890,8 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT response.  Assuming that
             the initiator supports childless IKE SA extension, then both peers performs
             the modified IKE_AUTH exchange described in <xref target="RFC6023"/> and no
-            child SA is created in this exchange.  The peers should then immediately rekey
-            the IKE SA and subsequently create the child SAs, all with additional key
+            Child SA is created in this exchange.  The peers should then immediately rekey
+            the IKE SA and subsequently create the Child SAs, all with additional key
             exchanges using CREATE_CHILD_SA exchange.</t>
 
             <t>It is also possible for the initiator to send proposals without Additional Key
@@ -1281,8 +1283,10 @@ KEi(Curve25519), Ni, N(IKEV2_FRAG_SUPPORTED)
                    <--- HDR(IKE_SA_INIT), SAr1,
                         KEr(Curve25519), Nr, N(IKEV2_FRAG_SUPPORTED),
                         N(CHILDLESS_IKEV2_SUPPORTED)
+			
 HDR(IKE_AUTH), SK{ IDi, AUTH  } --->
                    <--- HDR(IKE_AUTH), SK{ IDr, AUTH }
+
 HDR(CREATE_CHILD_SA), SK{ SAi(.. AKE*...), Ni, KEi(Curve25519) } --->
   Proposal #1
     Transform ECR (ID = ENCR_AES_GCM_16,
@@ -1309,6 +1313,7 @@ HDR(IKE_FOLLOWUP_KE), SK{ KEi(1)(PQ_KEM_2), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link1) }
                   <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(1)(PQ_KEM_2),
                         N(ADDITIONAL_KEY_EXCHANGE)(link2) }
+
 HDR(IKE_FOLLOWUP_KE), SK{ KEi(2)(PQ_KEM_5), --->
 N(ADDITIONAL_KEY_EXCHANGE)(link2) }
                   <--- HDR(IKE_FOLLOWUP_KE), SK{ KEr(2)(PQ_KEM_5) }
@@ -1355,7 +1360,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         We considered combining the various key exchanges into a single large
         KE payload; this effort is documented in a previous version of this
         draft (draft-tjhai-ipsecme-hybrid-qske-ikev2-01).  This does allow us
-        to cleanly apply hybrid key exchanges during the child SA; however it
+        to cleanly apply hybrid key exchanges during the Child SA; however it
         does add considerable complexity, and requires an independent
         fragmentation solution.
         </t>
