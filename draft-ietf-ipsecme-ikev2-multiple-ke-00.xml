@@ -530,7 +530,7 @@ Initiator                             Responder
                 in the IKE_SA_INIT exchange, as defined in <xref target="RFC7296" />.  Additional key exchanges negotiated via newly
                 defined transforms MUST take place in a series of IKE_INTERMEDIATE exchanges following the IKE_SA_INIT exchange, 
                 performed in an order of the values of their transform types, so that key exchange negotiated using Additional Key Exchange i always precedes that of
-                Additional Key Exchange i+1. Each additional key exchange method MUST be fully completed before the next one is started.
+                Additional Key Exchange i + 1. Each additional key exchange method MUST be fully completed before the next one is started.
                 </t>
 
                 <t> Note that with this semantics, Additional Key Exchange transforms are not associated
