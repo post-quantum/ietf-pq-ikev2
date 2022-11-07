@@ -890,8 +890,8 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             CHILDLESS_IKEV2_SUPPORTED notification in the IKE_SA_INIT response.  Assuming that
             the initiator supports childless IKE SA extension, then both peers performs
             the modified IKE_AUTH exchange described in <xref target="RFC6023"/> and no
-            child SA is created in this exchange.  The peers should then immediately rekey
-            the IKE SA and subsequently create the child SAs, all with additional key
+            Child SA is created in this exchange.  The peers should then immediately rekey
+            the IKE SA and subsequently create the Child SAs, all with additional key
             exchanges using CREATE_CHILD_SA exchange.</t>
 
             <t>It is also possible for the initiator to send proposals without Additional Key
@@ -1360,7 +1360,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         We considered combining the various key exchanges into a single large
         KE payload; this effort is documented in a previous version of this
         draft (draft-tjhai-ipsecme-hybrid-qske-ikev2-01).  This does allow us
-        to cleanly apply hybrid key exchanges during the child SA; however it
+        to cleanly apply hybrid key exchanges during the Child SA; however it
         does add considerable complexity, and requires an independent
         fragmentation solution.
         </t>
