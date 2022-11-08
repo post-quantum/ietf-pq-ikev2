@@ -562,7 +562,7 @@ Initiator                             Responder
                 transforms can be the same, but the attributes must be different.  Additionally, the order of the attributes
                 does not affect the equality of the algorithm, so two transforms (ID=alg1,ATTR1=attr1,ATTR2=attr2) and
                 (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm. If the responder is unable 
-		to select non-duplicated algorithm for each proposed key exchanhge (either 
+		to select non-duplicated algorithm for each proposed key exchange (either 
 		because the proposal contains too few choices or due to the local policy restrictions on using the proposed algorithms),
 		then the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN.
 		If the responder's message contains one or more duplicated choices, the initiator
