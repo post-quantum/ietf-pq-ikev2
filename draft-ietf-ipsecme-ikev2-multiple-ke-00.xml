@@ -11,7 +11,7 @@
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-09" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
+<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-10" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -561,10 +561,10 @@ Initiator                             Responder
                 could include a set of associated attributes that define details of the algorithm. In this case, two 
                 transforms can be the same, but the attributes must be different.  Additionally, the order of the attributes
                 does not affect the equality of the algorithm, so two transforms (ID=alg1,ATTR1=attr1,ATTR2=attr2) and
-                (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm.  If the initiator's proposal includes more mandatory Additional Key Exchange transforms
-		(those that include no NONE Transform ID) than the number of Transform IDs they contain, 
-		then the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN,
-		because in this case the responder cannot choose different Key Exchange methods for each of these Additional Key exchanges.
+                (ID=alg1,ATTR2=attr2,ATTR1=attr1) define the same algorithm. If the responder is unable 
+		to select non-duplicated algorithm for each proposed key exchanhge (either 
+		because the proposal contains too few choices or due to the local policy restrictions on using the proposed algorithms),
+		then the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN.
 		If the responder's message contains one or more duplicated choices, the initiator
                 should log the error and MUST stop creating the SA or delete the SA if it is a rekey.
                 </t>
