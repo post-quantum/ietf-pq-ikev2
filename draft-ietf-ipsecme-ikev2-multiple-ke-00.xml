@@ -191,7 +191,7 @@
         are a number of key exchanges available that would not have such
         a requirement.  However, if such a requirement is needed,
         <xref target="I-D.tjhai-ikev2-beyond-64k-limit"/> discusses approaches
-        that should be taken to exchange huge payloads.</t>
+        that could be taken to exchange huge payloads.</t>
 
 		</section>
 
@@ -318,24 +318,24 @@
     
     	<t><list style="hanging" hangIndent="5"><t hangText="1)">
     	Need for PQC in IPsec.  Quantum computers, which might become feasible in the near future, pose a threat to
-        classical public key cryptography.  PQC, a family of public key cryptography that is believed to
-        be resistant against these computers, needs to be integrated into IPsec protocol suite to restore
+        our classical public key cryptography.  PQC, a family of public key cryptography that is believed to
+        be resistant against these computers, needs to be integrated into the IPsec protocol suite to restore
         confidentiality and authenticity.</t>
     
     	<t hangText="2)">
-    	Hybrid.  Currently, there does not exist a post-quantum key
-    	exchange that is trusted at the level that (EC)DH is trusted
-        against conventional (non-quantum) adversaries.  A hybrid
-        post-quantum algorithm to be introduced
-        next to well-established primitives, since the overall security
-        is at least as strong as each individual primitive.
+    	Hybrid.  There is currently no post-quantum key exchange that is trusted at
+        the level that (EC)DH is trusted for against conventional (non-quantum)
+        adversaries.  A hybrid post-quantum algorithm to be introduced along
+        with the well-established primitives addresses this concern, since the
+        overall security is at least as strong as each individual primitive.
     	</t>
     
     	<t hangText="3)">
     	Focus on post-quantum confidentiality.  A passive attacker
-    	can eavesdrop on IPsec communication today and decrypt it once a
-        quantum computer is available in the future.  This is a very
-        serious attack and it cannot be prevented.  An attacker
+    	can store all monitored encrypted IPsec communication today and decrypt it 
+	once a quantum computer is available in the future. This attack can have serious 
+	consequences that won't be visible for years to come. This document presents 
+	a defense against this serious attack. An attacker
         can only perform active attacks such as impersonation of the
         communicating peers once a quantum computer is available,
         sometime in the future.  Thus, this specification focuses on
@@ -403,7 +403,7 @@
         However, at the time of writing, none of the algorithms that is believed
         to be post-quantum is FIPS compliant yet.  Nonetheless, it is possible to combine
         this post-quantum algorithm with a FIPS complaint key establishment method so that
-        the overall design is FIPS compliant <xref target="NISTPQCFAQ"/>.
+        the overall design remains FIPS compliant <xref target="NISTPQCFAQ"/>.
     	</t>
     
         <t hangText="12)">
@@ -437,9 +437,10 @@
             that may have long public keys, this specification utilizes the IKE_INTERMEDIATE exchange 
             defined in <xref target="RFC9242"/>.
             The initial IKE_SA_INIT messages do not have any inherent fragmentation support within IKE; however, IKE_SA_INIT messages can include a
-            relatively short KE payload.  The additional key exchanges are performed 
-            using IKE_INTERMEDIATE messages; because these messages are encrypted, the standard IKE fragmentation 
-            mechanism is available.
+            relatively short KE payload.  The additional key exchanges are performed using IKE_INTERMEDIATE messages
+            that follow the IKE_SA_INIT exchange. This is to allow for standard IKE
+            fragmentation mechanisms (which cannot be used in IKE_SA_INIT) to be available for the potentially large
+            post-quantum Key Exchange algorithm payloads.
             </t>
 
             <t> Note that this document assumes, that each key exchange method requires one round trip and consumes exactly one IKE_INTERMEDIATE exchange.
@@ -464,7 +465,7 @@
             Transform Type 4 from "Diffie-Hellman Group (D-H)" to "Key Exchange Method (KE)"; 
             the corresponding renaming to the IANA registry is described in <xref target="IANA"/>.</t>
 
-            <t> The fact, that newly defined transforms share
+            <t> The fact that newly defined transforms share
             the same registry for possible Transform IDs with Transform Type 4, allows additional key exchanges
             to be of any type - either post-quantum or classical (EC)DH
             one.  This approach allows any combination of the defined key exchange methods
@@ -550,13 +551,13 @@ Initiator                             Responder
                 indicates performing standard IKEv2, as defined in <xref target="RFC7296"/>.
                 On the other hand, if the initiator includes any Additional Key Exchange transform in the proposal, 
                 the responder MUST select one of the algorithms proposed using this type.  Note that this is not a
-                new requirement, but this behavior is already specified in Section 2.7 of <xref target="RFC7296"/>.
+                new requirement, but that this behavior is already specified in Section 2.7 of <xref target="RFC7296"/>.
                 A transform ID NONE MAY be added to those transform types which contain key exchange methods that
                 the initiator believes is optional according to its local policy.
                 </t>
 
-                <t> The responder performs negotiation using the standard IKEv2 procedure described in Section 3.3 of <xref target="RFC7296"/>.
-                However, for the Additional Key Exchange types, the responder's choice MUST NOT contain duplicated algorithms,
+                <t> The responder performs the negotiation using the standard IKEv2 procedure described in Section 3.3 of <xref target="RFC7296"/>.
+                However, for the Additional Key Exchange types, the responder's choice MUST NOT contain duplicated algorithms (those with identical Transform ID and attributes),
                 except for the transform ID of NONE.  An algorithm is represented as a transform, in some cases the transform
                 could include a set of associated attributes that define details of the algorithm. In this case, two 
                 transforms can be the same, but the attributes must be different.  Additionally, the order of the attributes
@@ -566,11 +567,13 @@ Initiator                             Responder
 		because the proposal contains too few choices or due to the local policy restrictions on using the proposed algorithms),
 		then the responder MUST reject the message with an error notification of type NO_PROPOSAL_CHOSEN.
 		If the responder's message contains one or more duplicated choices, the initiator
-                should log the error and MUST stop creating the SA or delete the SA if it is a rekey.
+                should log the error and MUST treat this situation as a permanent error for the IKE SA
+		the invalid response was received over. If this SA is fully authenticated 
+		at this point, then the initiator MUST delete it by sending a Delete payload.
                 </t>
 
                 <t> If the responder selects NONE for some Additional Key Exchange types (provided they are proposed by the initiator), 
-                then the corresponding IKE_INTERMEDIATE exchanges MUST NOT take place.
+                then the corresponding Additional Key Exchange(s) in the IKE_INTERMEDIATE exchanges MUST NOT take place.
                 Therefore if the initiator includes NONE in all of the Additional Key Exchange transforms and the
                 responder selects this value for all of them, then no IKE_INTERMEDIATE messages performing additional key
                 exchanges will take place between the peers.  Note that the IKE_INTERMEDIATE exchanges may still take place for other purposes.
@@ -707,7 +710,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 <t> where SK(n) is the resulting shared secret of this key exchange,
                 Ni and Nr are nonces from the IKE_SA_INIT exchange and SK_d(n-1) is the 
                 last generated SK_d, (derived from IKE_SA_INIT for the first use of IKE_INTERMEDIATE, otherwise from the previous IKE_INTERMEDIATE exchange).
-                The other keying materials SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, SK_pr are updated as:</t>
+                The other keying materials SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, SK_pr are generated from the SKEYSEED(n) as per RFC 7296.</t>
     
                 <figure><artwork align="center" ><![CDATA[
 {SK_d(n) | SK_ai(n) | SK_ar(n) | SK_ei(n) | SK_er(n) | SK_pi(n) | 
@@ -721,16 +724,16 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
         	<section title="IKE_AUTH Exchange">
                 <t> After all IKE_INTERMEDIATE exchanges have completed, the initiator and
         		the responder perform an IKE_AUTH exchange.  This exchange is
-        		the standard IKE exchange, except that the initiator and responder
-        		signed octets are modified as described in
-        		<xref target="RFC9242"/>.</t>
+        		the standard IKE exchange as described in <xref target="RFC7296"/> with
+			the modification of AUTH payload calculation described in 
+			<xref target="RFC9242"/>.</t>
         	</section>
         
             <section title="CREATE_CHILD_SA Exchange" anchor="create_child_sa_exchange">
                 <t> The CREATE_CHILD_SA exchange is used in IKEv2 for the purposes 
-                of creating additional Child SAs, rekeying them and rekeying IKE SA itself.
+                of creating additional Child SAs, rekeying these and rekeying IKE SA itself.
                 When creating or rekeying Child SAs, the peers may optionally 
-                perform a Diffie-Hellman key exchange to add a fresh entropy into the session keys. 
+                perform a key exchange to add a fresh entropy into the session keys. 
                 In case of IKE SA rekey, the key exchange is mandatory.
                 Peers supporting this specification may want to use multiple key exchanges
                 in these situations.
@@ -743,7 +746,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 key exchanges, then the additional key exchanges are performed in a series 
                 of new IKE_FOLLOWUP_KE exchanges that follows the CREATE_CHILD_SA exchange.
                 The IKE_FOLLOWUP_KE exchange is introduced as a dedicated exchange for transferring data of additional key exchanges 
-                following the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type is 44.
+                following the key exchange performed in the CREATE_CHILD_SA. Its Exchange Type value is 44.
                 </t>
 
                 <t> Key exchange negotiated via Transform Type 4 always takes place in the CREATE_CHILD_SA exchange, as per IKEv2 specification. 
@@ -755,10 +758,12 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 methods are split into several IKE_FOLLOWUP_KE exchanges.
                 </t>
 
-                <t> After IKE SA is created the window size may be greater than one and multiple
+                <t> After an IKE SA is created the window size may be greater than one and multiple
                 concurrent exchanges may be in progress, it is essential to link the IKE_FOLLOWUP_KE exchanges together and 
-                with the corresponding CREATE_CHILD_SA exchange.  A new status type notification ADDITIONAL_KEY_EXCHANGE
-                is used for this purpose.  Its Notify Message Type is 16441, and Protocol ID and SPI Size 
+                with the corresponding CREATE_CHILD_SA exchange.  Due to the fact that once IKE SA is created all IKE exchanges 
+		are independent and don't have built-in means to link one with another, a new status type
+   		notification ADDITIONAL_KEY_EXCHANGE is introduced for this purpose.
+  		Its Notify Message Type value is 16441, and Protocol ID and SPI Size 
                 are both set to 0.  The data associated with this notification is a blob meaningful 
                 only to the responder, so that the responder can correctly link successive
                 exchanges.  For the initiator the content of this notification is an opaque blob.
@@ -766,7 +771,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
 
                 <t> The responder MUST include this notification in a CREATE_CHILD_SA or 
                 IKE_FOLLOWUP_KE response message in case the next IKE_FOLLOWUP_KE exchange is expected, filling it with
-                some data that would allow linking current exchange to the next one.  The initiator 
+                some data that would allow linking the current exchange to the next one.  The initiator 
                 MUST send back this notification intact in the request message of the next IKE_FOLLOWUP_KE exchange.
                 </t>
         
@@ -828,7 +833,7 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 as a fatal error and delete IKE SA by sending a DELETE payload.
                 </t>
 
-                <t> When rekeying IKE SA or Child SA, it is possible that the peers start doing this
+                <t> When rekeying the IKE SA or the Child SA, it is possible that the peers start doing this
                 at the same time, which is called simultaneous rekeying.  Sections 2.8.1 and 2.8.2 of 
                 <xref target="RFC7296" /> describe how IKEv2 handles this situation.  In a nutshell
                 IKEv2 follows the rule that if in case of simultaneous rekeying, two identical new
@@ -907,14 +912,11 @@ KEYMAT = prf+ (SK_d, SK(0) | Ni | Nr | SK(1) |  ... SK(n))
             initiator does not support this extension and sends IKE_AUTH request as per
             <xref target="RFC7296"/> instead of <xref target="RFC6023"/>.  In this case, the
             responder may respond with non-fatal error such as NO_PROPOSAL_CHOSEN notify message type.</t>
-
+            
             <t>Note that if the initial IKE SA is used to transfer sensitive information, then this information
-            will not be protected using the additional key exchanges, which may use post-quantum algorithms.  Consider
-            G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/> where the cryptographic materials are sent from
-            the group controller to the group members when the initial IKE SA is created.  In this arrangement,
-            the peers will have to use post-quantum algorithm in Transform Type 4 in order to mitigate the risk of quantum attack. </t>
+            will not be protected using the additional key exchanges, which may use post-quantum algorithms.  In this arrangement,
+            the peers will have to use post-quantum algorithm in Transform Type 4 in order to mitigate the risk of quantum attack. </t>	
             </section>
-
         </section>
     </section>
 
@@ -1002,7 +1004,7 @@ Type     Description                   Used In
         and the potential compromise of existing or future PQC key exchange algorithms.  To address the
         former threat, this extension allows the establishment of a shared secret by using multiple key
         exchanges, typically one classical (EC)DH and the other one post-quantum algorithm.  In order to
-        address the latter threat, multiple key exchanges using post-quantum algorithm can be composed to
+        address the latter threat, multiple key exchanges using a post-quantum algorithm can be composed to
         form the shared key.   
         </t>
 
@@ -1081,10 +1083,13 @@ Type     Description                   Used In
         against quantum computers. Nevertheless the rekeyed IKE SA (and Child
         SAs that will be created over it) will have a full protection.
         This is similar to the scenario described in <xref target="RFC8784" />.
-        Depending on peers' policy, this scenario may or may not be appropriate.
+        Depending on the arrangement and peers' policy, this scenario may or may not be appropriate.
+	For example, in the G-IKEv2 protocol <xref target="I-D.ietf-ipsecme-g-ikev2"/> 
+	the cryptographic materials are sent from the group controller to the group members 
+	when the initial IKE SA is created. 
         </t>
-	</section>
-
+    </section>
+    
     <section title="Acknowledgements" anchor="acknowledgements">
         <t> The authors would like to thank Frederic Detienne and Olivier
         Pelerin for their comments and suggestions, including the idea to
@@ -1100,7 +1105,7 @@ Type     Description                   Used In
     	&RFC2119;
     	&RFC7296;
     	&RFC8174;
-	    &RFC9242;
+	&RFC9242;
 	</references>
     <references title='Informative References'>
         &RFC6023;
@@ -1216,7 +1221,7 @@ SKEYSEED(2) = prf(SK_d(1), SK(2) | Ni | Nr)
     SK_pr(2)} = prf+ (SKEYSEED(2), Ni | Nr | SPIi | SPIr)
             ]]></artwork></figure>
             
-            <t>where SK(2) is the shared secret from the third additional key exchange, i.e. PQ_KEM_5.  Both peers then computes
+            <t>where SK(2) is the shared secret from the third additional key exchange, i.e. PQ_KEM_5.  Both peers then compute
             the values of IntAuth_[i/r]2 using the SK_p[i/r](2) keys.
             </t>
 
