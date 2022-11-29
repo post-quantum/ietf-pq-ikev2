@@ -104,7 +104,7 @@
 		<section title="Problem Description" ><t>
 			Internet Key Exchange Protocol (IKEv2) as specified in <xref target="RFC7296"/> 
             uses the Diffie-Hellman (DH) or Elliptic Curve
-			Diffie-Hellman (ECDH) algorithm, which we shall refer to as (EC)DH collectively,
+			Diffie-Hellman (ECDH) algorithm, which shall be referred to as (EC)DH collectively,
             to establish a shared secret
 			between an initiator and a responder.  The security of the (EC)DH algorithms relies
             on the difficulty to solve a discrete logarithm
@@ -128,7 +128,7 @@
 			maintaining backwards compatibility, to derive a set of IKE keys that
 			is resistant to quantum computer attacks.  This extension allows the
 			negotiation of one or more PQC algorithm to exchange data, in addition
-			to the existing (EC)DH key exchange data.  We believe that the
+			to the existing (EC)DH key exchange data.  It is believed that the
 			feature of using more than one post-quantum algorithms is important as
 			many of these algorithms are relatively new and there may be a need to
 			hedge the security risk with multiple key exchange data from several
@@ -155,9 +155,9 @@
 			fragmentation at the IP layer.  In order to allow using those larger payload
             sizes, this mechanism relies on the IKE_INTERMEDIATE exchange as specified
             in <xref target="RFC9242"/>.  With this
-			mechanism, we do an initial key exchange, using a smaller, possibly
-			classical primitive, such as (EC)DH.  Then, before we do
-			the IKE_AUTH exchange, we perform one or more IKE_INTERMEDIATE exchanges,
+			mechanism, the key exchange is initiated using a smaller, possibly
+			classical primitive, such as (EC)DH.  Then, before
+			the IKE_AUTH exchange, one or more IKE_INTERMEDIATE exchanges are carried out,
 			each of which contains an additional key exchange.  As the IKE_INTERMEDIATE
 			exchange is encrypted, the IKE fragmentation protocol <xref target="RFC7383" />
 			can be used. The IKE SK_* values are updated after each exchange as described in
@@ -281,12 +281,12 @@
     
             <t>draft-tjhai-ipsecme-hybrid-qske-ikev2-00</t>
             <t><list style="symbols">
-    		<t>We added a feature to allow more than one post-quantum key
-            exchange algorithms to be negotiated and used to exchange a post-
-            quantum shared secret.</t>
-    		<t>Instead of relying on TCP encapsulation to deal with IP level
-    		fragmentation, we introduced a new key exchange payload that can
-    		be sent as multiple fragments within IKE_SA_INIT message.</t>
+              <t>Added a feature to allow more than one post-quantum key
+              exchange algorithms to be negotiated and used to exchange a post-
+              quantum shared secret.</t>
+              <t>Instead of relying on TCP encapsulation to deal with IP level
+              fragmentation, a new key exchange payload that can
+              be sent as multiple fragments within IKE_SA_INIT message was introduced.</t>
     	    </list>
             </t>
         </section>
@@ -318,7 +318,7 @@
     
     	<t><list style="hanging" hangIndent="5"><t hangText="1)">
     	Need for PQC in IPsec.  Quantum computers, which might become feasible in the near future, pose a threat to
-        our classical public key cryptography.  PQC, a family of public key cryptography that is believed to
+        classical public key cryptography.  PQC, a family of public key cryptography that is believed to
         be resistant against these computers, needs to be integrated into IPsec protocol suite to restore
         confidentiality and authenticity.</t>
     
@@ -335,10 +335,10 @@
     	Focus on post-quantum confidentiality.  A passive attacker
     	can eavesdrop on IPsec communication today and decrypt it once a
         quantum computer is available in the future.  This is a very
-        serious attack for which we do not have a solution.  An attacker
+        serious attack and it cannot be prevented.  An attacker
         can only perform active attacks such as impersonation of the
         communicating peers once a quantum computer is available,
-        sometime in the future.  Thus, our design focuses on
+        sometime in the future.  Thus, this specification focuses on
         confidentiality due to the urgency of this problem.
         This document does not address authentication
         since it is less urgent at this stage.
@@ -453,9 +453,9 @@
             These transforms and Transform Type 4 share the same Transform IDs.
             </t>
 
-            <t> We assume that new Transform Type 4 identifiers will be assigned later for
+            <t> It is assumed that new Transform Type 4 identifiers will be assigned later for
 			various post-quantum key exchanges <xref target="IKEV2TYPE4ID"></xref>.  
-            We specifically do not make a distinction between classical (EC)DH
+            This specification does not make a distinction between classical (EC)DH
 			and post-quantum key exchanges, nor post-quantum algorithms which are
 			true key exchanges versus post-quantum algorithms that act as key
 			transport mechanisms; all are treated equivalently by the
@@ -582,12 +582,12 @@ Initiator                             Responder
                 Transform ID NONE.</t>
     
                 <t> Below is an example of the SA payload in the initiator's IKE_SA_INIT request message.
-                Here we use an abbreviation AKEi to denote the i-th Additional Key Exchange transform defined in this document, 
+                Here the abbreviation AKEi is used to denote the i-th Additional Key Exchange transform defined in this document,
                 and an abbreviation KE for the Key Exchange transform,
                 that this document renames from the Diffie-Hellman Group transform.
-                We also use some not-yet defined Transform IDs, namely PQ_KEM_1, PQ_KEM_2
-                and PQ_KEM_3 to denote some popular post-quantum key exchange methods.
-                </t>
+                Additionally, the notations PQ_KEM_1, PQ_KEM_2 and PQ_KEM_3 are used to
+                represent some not-yet defined Transform IDs of some popular post-quantum
+                key exchange methods.</t>
 
                 <figure><artwork align="center" ><![CDATA[
 SA Payload
@@ -1352,13 +1352,13 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
     <section title="Alternative Design" anchor="altdesign">
         <t>
         This section gives an overview on a number of alternative approaches
-        that we have considered, but later discarded.  These approaches are:</t>
+        that have been considered, but later discarded.  These approaches are:</t>
 
         <t><list style="symbols">
         <t>Sending the classical and post-quantum key
         exchanges as a single transform<vspace blankLines="1"/>
-        We considered combining the various key exchanges into a single large
-        KE payload; this effort is documented in a previous version of this
+        A method to combine the various key exchanges into a single large
+        KE payload was considered; this effort is documented in a previous version of this
         draft (draft-tjhai-ipsecme-hybrid-qske-ikev2-01).  This does allow us
         to cleanly apply hybrid key exchanges during the Child SA; however it
         does add considerable complexity, and requires an independent
@@ -1368,18 +1368,18 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         <t>Sending post-quantum proposals and policies in KE payload
         only<vspace blankLines="1"/>
         With the objective of not introducing unnecessary notify
-        payloads, we considered communicating the hybrid post-quantum proposal
-        in the KE payload during the first pass of the protocol
-        exchange.   Unfortunately, this design is susceptible to the following
+        payloads, a method to communicate the hybrid post-quantum proposal
+        in the KE payload during the first pass of the protocol exchange
+        was considered.  Unfortunately, this design is susceptible to the following
         downgrade attack.  Consider the scenario where there is an on-path attacker
         sitting between an initiator and a responder.  The initiator proposes,
-        through SAi payload, to use a hybrid post-quantum group and as a backup
+        through SAi payload, to use a hybrid post-quantum group and as a fallback
         a Diffie-Hellman group, and through KEi payload, the initiator proposes
         a list of hybrid post-quantum proposals and policies.  The on-path attacker
         intercepts this traffic and replies with N(INVALID_KE_PAYLOAD) suggesting
-        to downgrade to the backup Diffie-Hellman group instead.  The initiator
+        to downgrade to the fallback Diffie-Hellman group instead.  The initiator
         then resends the same SAi payload and the KEi payload containing the
-        public value of the backup Diffie-Hellman group.  Note that the attacker
+        public value of the fallback Diffie-Hellman group.  Note that the attacker
         may forward the second IKE_SA_INIT message only to the responder, and
         therefore at this point in time, the responder will not have the
         information that the initiator prefers the hybrid group.  Of course,
@@ -1402,13 +1402,14 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         payload type that mimics the KE payload, could be used to transport hybrid
         public value.  Although, in theory a new payload type could be made
         backwards compatible by not setting its critical flag as per Section 2.5
-        of RFC7296, we believe that it may not be that simple in practice.  Since
+        of <xref target="RFC7296" />, it is believed that it may not be that simple
+        in practice.  Since
         the original release of IKEv2 in RFC4306, no new payload type has ever
         been proposed and therefore, this creates a potential risk of having a
-        backward compatibility issue from non-conforming RFC IKEv2
-        implementations.  Since we could not see any other compelling advantages
-        apart from a semantic one, we use the existing transform type and
-        notify payloads instead.
+        backward compatibility issue from non-conformant IKEv2
+        implementations.  Since there appears to be no other compelling advantages
+        apart from a semantic one, the existing transform type and
+        notify payloads are used instead.
         </t>
 
         <t>Hybrid public value payload<vspace blankLines="1"/>
@@ -1420,7 +1421,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         a good idea from a backward compatibility perspective.  Using a single
         KE payload would require an encoding or formatting to be defined so
         that both peers are able to compose and extract the individual public
-        values.  However, we believe that it is cleaner to send the hybrid
+        values.  However, it is believed that it is cleaner to send the hybrid
         public values in multiple KE payloads--one for each group or
         algorithm.  Furthermore, at this point in the protocol exchange, both
         peers should have indicated support of handling multiple KE payloads.
@@ -1429,14 +1430,14 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         <t>Fragmentation<vspace blankLines="1"/>
         Handling of large IKE_SA_INIT messages has been one of the most
         challenging tasks.  A number of approaches have been considered
-        and the two prominent ones that we have discarded are outlined as
+        and the two prominent ones that have been discarded are outlined as
         follows.
         <vspace blankLines="1"/>
-        The first approach was to treat the entire IKE_SA_INIT message as
-        a stream of bytes, which we then split it into a number of
-        fragments, each of which is wrapped onto a payload that would fit
+        The first approach is to treat the entire IKE_SA_INIT message as
+        a stream of bytes, which is then split it into a number of
+        fragments, each of which is wrapped onto a payload that will fit
         into the size of the network MTU.  The payload that wraps each
-        fragment is a new payload type and it was envisaged that this new
+        fragment has a new payload type and it is envisaged that this new
         payload type will not cause a backward compatibility issue because
         at this stage of the protocol, both peers should have indicated
         support of fragmentation in the first pass of the IKE_SA_INIT
@@ -1446,13 +1447,13 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         new payload that wraps each fragment of the messages in this
         exchange is assigned the same fragment identifier. Furthermore, it
         also has other parameters such as a fragment index and total
-        number of fragments.  We decided to discard this approach due to
+        number of fragments.  This approach has been discarded due to
         its blanket approach to fragmentation.  In cases where only a few
-        payloads need to be fragmented, we felt that this approach is
+        payloads need to be fragmented, this approach appears to be
         overly complicated.
         <vspace blankLines="1"/>
-        Another idea that was discarded was fragmenting an individual
-        payload without introducing a new payload type.  The idea was to
+        Another idea that has been discarded was fragmenting an individual
+        payload without introducing a new payload type.  The idea is to
         use the 9-th bit (the bit after the critical flag in the RESERVED
         field) in the generic payload header as a flag to mark that this
         payload is fragmented.  As an example, if a KE payload is to be
@@ -1496,10 +1497,10 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         </t>
 
         <t><list hangIndent="3" style="hanging"><t>
-        We discarded this approach because we believe that the working
-        group may not be happy using the RESERVED field to change the
+        This approach has been discarded because it is believed that the working
+        group may not want to use the RESERVED field to change the
         format of a packet and that implementers may not like the
-        complexity added from checking the fragmentation flag in each
+        added complexity from checking the fragmentation flag in each
         received payload.  More importantly, fragmenting the messages
         in this way may leave the system to be more prone to denial of
         service (DoS) attacks.  By using IKE_INTERMEDIATE to transport the large
@@ -1509,8 +1510,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
         </t>
 
         <t><list style="symbols"><t>Group sub-identifier<vspace blankLines="1"/>
-        As discussed before, each group identifier
-        is used to
+        As discussed before, each group identifier is used to
         distinguish a post-quantum algorithm.  Further classification
         could be made on a particular post-quantum algorithm by assigning
         additional value alongside the group identifier.  This sub-
