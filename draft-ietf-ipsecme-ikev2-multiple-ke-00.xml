@@ -186,7 +186,7 @@
       </t>
 
     	<t>This specification does not attempt to address key exchanges with KE payloads
-        longer than 64k; the current IKE payload format does not allow such as
+        longer than 64 Kbytes; the current IKE payload format does not allow such as
         possibility.  At the time of writing, it appears likely that there
         are a number of key exchanges available that would not have such
         a requirement.  However, if such a requirement is needed,
