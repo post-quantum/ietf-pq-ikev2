@@ -11,7 +11,7 @@
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-10" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
+<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-11" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -188,7 +188,7 @@
     	<t>This specification does not attempt to address key exchanges with KE payloads
         longer than 64k; the current IKE payload format does not allow such as
         possibility.  At the time of writing, it appears likely that there
-        are a number of key exchanges available that would not require such
+        are a number of key exchanges available that would not have such
         a requirement.  However, if such a requirement is needed,
         <xref target="I-D.tjhai-ikev2-beyond-64k-limit"/> discusses approaches
         that should be taken to exchange huge payloads.</t>
@@ -533,7 +533,7 @@ Initiator                             Responder
                 Additional Key Exchange i + 1. Each additional key exchange method MUST be fully completed before the next one is started.
                 </t>
 
-                <t> Note that with this semantics, Additional Key Exchange transforms are not associated
+                <t> Note that with these semantics, Additional Key Exchange transforms are not associated
                 with any particular type of key exchange and do not have any specific per transform type transform IDs IANA registry. 
                 Instead they all share a single registry for transform IDs, namely "Key Exchange Method Transform IDs", which are also shared by Transform Type 4. 
                 All key exchange algorithms (both classical or post-quantum) should be added to this registry.
@@ -964,7 +964,7 @@ Type     Description                   Used In
 
             <t>While adding new KE methods, the following considerations must be applied.
             A KE method must take exactly one round-trip (one IKE exchange) and at the end
-            of this exchange, both peers must be able to derive the shared secret. In addition,any public value peers exchanged during a KE method must fit into a single IKE
+            of this exchange, both peers must be able to derive the shared secret. In addition, any public value peers exchanged during a KE method must fit into a single IKE
             message.  If these restrictions are not met for a KE method, then there must be
             documentation on how this KE method is used in IKEv2.</t>
         
@@ -1010,12 +1010,12 @@ Type     Description                   Used In
         the Pseudorandom Function (Transform Type 2) and the Integrity Algorithm (Transform Type 3) are
         not susceptible to Shor's algorithm.  However, they are susceptible to Grover's attack <xref target="GROVER"/>,
         which allows a quantum computer to perform a brute force key search using quadratically fewer
-        steps than the classical counterpart.  Simply increasing the key length can dwarfed this attack.
+        steps than the classical counterpart.  Simply increasing the key length can mitigate this attack.
         It was previously believed that one needed to double the key length of these algorithms.  However,
         there are a number of factors that suggest that it is quite unlikely to achieve the quadratic speed up
         using Grover's algorithm.  According to NIST <xref target="NISTPQCFAQ"/>, current applications can
         continue using AES algorithm with the minimum key length of 128 bit.  Nevertheless, if the data
-        need to remain secure for many years to come, one may want to consider using a longer key size for the
+        needs to remain secure for many years to come, one may want to consider using a longer key size for the
         algorithms in Transform Types 1-3.
         </t>
     
@@ -1191,17 +1191,17 @@ HDR(IKE_AUTH), SK{ IDi, AUTH, SAi2, TSi, TSr } --->
             As per <xref target="RFC7296"/> specification, a set of keying materials are derived, in particular
             SK_d, SK_a[i/r], SK_e[i/r].  Both peers then perform an IKE_INTERMEDIATE exchange carrying PQ_KEM_2 payload
             which is protected with SK_e[i/r] and SK_a[i/r] keys.  After the completion of this IKE_INTERMEDIATE exchange,
-            the SKEYSEED is updated using SK(1), which is the PQ_KEM_2 shared secret, as follows</t>
+            the SKEYSEED is updated using SK(1), which is the PQ_KEM_2 shared secret, as follows.</t>
              
             <figure><artwork align="left" ><![CDATA[
-SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr).
+SKEYSEED(1) = prf(SK_d, SK(1) | Ni | Nr)
             ]]></artwork></figure>
             
             <t>The updated SKEYSEED value is then used to derive the following keying materials</t>
             
             <figure><artwork align="left" ><![CDATA[
 {SK_d(1) | SK_ai(1) | SK_ar(1) | SK_ei(1) | SK_er(1) | SK_pi(1) | 
- SK_pr(1)} = prf+ (SKEYSEED(1), Ni | Nr | SPIi | SPIr).
+ SK_pr(1)} = prf+ (SKEYSEED(1), Ni | Nr | SPIi | SPIr)
             ]]></artwork></figure>
 
             <t>As per <xref target="RFC9242"/> specification, both peers compute IntAuth_i1 and IntAuth_r1 using the SK_pi(1)
@@ -1323,7 +1323,7 @@ N(ADDITIONAL_KEY_EXCHANGE)(link2) }
     <section title="No Matching Proposal for Additional Key Exchanges" anchor="sample-exchanges-no-proposal-chosen">
       <t>The initiator proposes the combination of PQ_KEM_1, PQ_KEM_2, PQ_KEM_3, and PQ_KEM_4 as
       the additional key exchanges.  The initiator indicates that either PQ_KEM_1 or PQ_KEM_2 must be
-      used to establish a security association, but Additional Key Exchange 2 is optional so the responder
+      used to establish an IKE SA, but Additional Key Exchange 2 is optional so the responder
       can either select PQ_KEM_3 or PQ_KEM_4 or omit this key exchange by selecting NONE.  The responder,
       although supports the optional PQ_KEM_3 and PQ_KEM_4 methods, does not support either PQ_KEM_1 or
       PQ_KEM_2 mandatory method and therefore responds with NO_PROPOSAL_CHOSEN notification.  </t>
