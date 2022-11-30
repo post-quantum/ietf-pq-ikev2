@@ -119,7 +119,7 @@
             on the difficulty to solve a discrete logarithm
 			problem in multiplicative (and respectively elliptic curve) groups when
 			the order of the group parameter is large enough.  While solving such
-			a problem remains difficult with current computing power, it is
+			a problem remains infeasible with current computing power, it is
 			believed that general purpose quantum computers will be able to solve
 			this problem, implying that the security of IKEv2 is compromised.
 			There are, however, a number of cryptosystems that are conjectured to
@@ -343,14 +343,13 @@
     	Focus on post-quantum confidentiality.  A passive attacker
     	can store all monitored encrypted IPsec communication today and decrypt it 
 	once a quantum computer is available in the future. This attack can have serious 
-	consequences that won't be visible for years to come. This document presents 
-	a defense against this serious attack. An attacker
-        can only perform active attacks such as impersonation of the
+	consequences that won't be visible for years to come. On the other hand,
+	an attacker can only perform active attacks such as impersonation of the
         communicating peers once a quantum computer is available,
-        sometime in the future.  Thus, this specification focuses on
-        confidentiality due to the urgency of this problem.
-        This document does not address authentication
-        since it is less urgent at this stage.
+        sometime in the future. Thus, this specification focuses on
+        confidentiality due to the urgency of this problem and 
+        presents a defense against the serious attack described above, but 
+	it does not address authentication since it is less urgent at this stage.
     	</t>
     
     	<t hangText="4)">
