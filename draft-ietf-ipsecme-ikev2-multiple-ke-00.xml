@@ -80,12 +80,21 @@
 	<workgroup>Internet Engineering Task Force (IETF)</workgroup>
 	<abstract>
         <t> This document describes how to extend the Internet Key Exchange Protocol
-		Version 2 (IKEv2) to allow multiple key exchanges to take place 
+	Version 2 (IKEv2) to allow multiple key exchanges to take place 
         while computing a shared secret during a Security Association (SA) setup.
-        The primary application of this feature in IKEv2 is the ability to perform one or more 
-        post-quantum key exchanges in conjunction with the classical (Elliptic Curve) Diffie-Hellman key exchange,
+	</t>
+	
+        <t> The primary application of this feature in IKEv2 is the ability to perform one or more 
+        post-quantum key exchanges in conjunction with the classical (Elliptic Curve) Diffie-Hellman (EC)DH key exchange,
         so that the resulting shared key is resistant against quantum computer attacks.
-        Another possible application is the ability to combine several key exchanges 
+	Since there is currently no post-quantum key exchange that is trusted at
+        the level that (EC)DH is trusted for against conventional (non-quantum)
+        adversaries, performing multiple key exchanges with different post-quantum algorithms along
+        with the well-established classical key exchange algorithms addresses this concern, since the
+        overall security is at least as strong as each individual primitive.
+	</t>
+	
+        <t> Another possible application for this extension is the ability to combine several key exchanges 
         in situations when no single key exchange algorithm is trusted by both initiator and responder.
         </t>
 
@@ -398,7 +407,7 @@
     	</t>
     
     	<t hangText="11)">
-    	Federal Information Processing Standards (FIPS) compliance.  IPsec is widely used in Federal Information
+    	USA Federal Information Processing Standards (FIPS) compliance.  IPsec is widely used in Federal Information
     	Systems and FIPS certification is an important requirement.
         However, at the time of writing, none of the algorithms that is believed
         to be post-quantum is FIPS compliant yet.  Nonetheless, it is possible to combine
