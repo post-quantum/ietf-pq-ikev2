@@ -411,7 +411,7 @@
     	Systems and FIPS certification is an important requirement.
         However, at the time of writing, none of the algorithms that is believed
         to be post-quantum is FIPS compliant yet.  Nonetheless, it is possible to combine
-        this post-quantum algorithm with a FIPS complaint key establishment method so that
+        this post-quantum algorithm with a FIPS compliant key establishment method so that
         the overall design remains FIPS compliant <xref target="NISTPQCFAQ"/>.
     	</t>
     
