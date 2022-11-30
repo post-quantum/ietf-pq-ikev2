@@ -302,14 +302,17 @@
     
     	<section title="Document Organization" >
             <t>
-            The remainder of this document is organized as follows.  <xref target="design"/>
-            summarizes design criteria.  <xref target="specification"/> describes how
+            The remainder of this document is organized as follows.
+            <xref target="specification"/> describes how
     	    multiple key exchanges are performed between two IKE peers and how
-    	    keying materials are derived for both SAs and Child SAs.  A summary of alternative
+            keying materials are derived for both SAs and Child SAs.
+            <xref target="IANA"/> discusses IANA considerations for the namespaces
+            introduced in this document, and <xref target="security"/> discusses security
+            considerations.  On Appendices sections, some examples of multiple key exchanges
+            are illustrated in <xref target="sample-exchanges"/>,
+            <xref target="design"/> summarizes design criteria and a summary of alternative
     	    approaches that have been considered, but later discarded, are described
-    	    in <xref target="altdesign"/>.  <xref target="IANA"/>
-            discusses IANA considerations for the namespaces introduced in this
-    	    document, and lastly <xref target="security"/> discusses security considerations.
+            in <xref target="altdesign"/>.
             </t>
     
             <t> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", 
@@ -318,114 +321,6 @@
             they appear in all capitals, as shown here.
             </t>
      	</section>
-	</section>
-
-	<section title="Design Criteria" anchor="design">
-        <t>
-        The design of the extension is driven by the
-        following criteria:</t>
-    
-    	<t><list style="hanging" hangIndent="5"><t hangText="1)">
-    	Need for PQC in IPsec.  Quantum computers, which might become feasible in the near future, pose a threat to
-        our classical public key cryptography.  PQC, a family of public key cryptography that is believed to
-        be resistant against these computers, needs to be integrated into the IPsec protocol suite to restore
-        confidentiality and authenticity.</t>
-    
-    	<t hangText="2)">
-    	Hybrid.  There is currently no post-quantum key exchange that is trusted at
-        the level that (EC)DH is trusted for against conventional (non-quantum)
-        adversaries.  A hybrid post-quantum algorithm to be introduced along
-        with the well-established primitives addresses this concern, since the
-        overall security is at least as strong as each individual primitive.
-    	</t>
-    
-    	<t hangText="3)">
-    	Focus on post-quantum confidentiality.  A passive attacker
-    	can store all monitored encrypted IPsec communication today and decrypt it 
-	once a quantum computer is available in the future. This attack can have serious 
-	consequences that won't be visible for years to come. On the other hand,
-	an attacker can only perform active attacks such as impersonation of the
-        communicating peers once a quantum computer is available,
-        sometime in the future. Thus, this specification focuses on
-        confidentiality due to the urgency of this problem and 
-        presents a defense against the serious attack described above, but 
-	it does not address authentication since it is less urgent at this stage.
-    	</t>
-    
-    	<t hangText="4)">
-    	Limit amount of exchanged data.  The protocol design should be
-    	such that the amount of exchanged data, such as public-keys, is
-        kept as small as possible even if initiator and responder need
-        to agree on a hybrid group or multiple public-keys need to be
-        exchanged.
-    	</t>
-    
-    	<t hangText="5)">
-    	Future proof.  Any cryptographic algorithm could be potentially
-    	broken in the future by currently unknown or impractical
-        attacks: quantum computers are merely the most concrete example
-        of this.  The design does not categorize algorithms as "post-quantum"
-    	or "non post-quantum" nor does it create assumptions
-        about the properties of the algorithms, meaning that if
-        algorithms with different properties become necessary in the future,
-        this extension can be used unchanged to facilitate migration to
-        those algorithms.
-    	</t>
-    
-    	<t hangText="6)">
-    	Limited amount of changes.  A key goal is to limit the number of
-    	changes required when enabling a post-quantum handshake.  This
-        ensures easier and quicker adoption in existing implementations.
-    	</t>
-    
-    	<t hangText="7)">
-    	Localized changes.  Another key requirement is that changes to
-    	the protocol are limited in scope, in particular, limiting
-        changes in the exchanged messages and in the state machine, so
-        that they can be easily implemented.
-    	</t>
-    
-    	<t hangText="8)">
-    	Deterministic operation.  This requirement means that the hybrid
-    	post-quantum exchange, and thus, the computed keys, will be based
-        on algorithms that both client and server wish to support.
-    	</t>
-    
-    	<t hangText="9)">
-    	Fragmentation support.  Some PQC algorithms could be relatively
-    	bulky and they might require fragmentation.  Thus, a design goal
-        is the adaptation and adoption of an existing fragmentation
-        method or the design of a new method that allows for the
-        fragmentation of the key shares.
-    	</t>
-    
-    	<t hangText="10)">
-    	Backwards compatibility and interoperability.  This is a
-    	fundamental requirement to ensure that hybrid post-quantum IKEv2
-        and standard IKEv2 implementations as per <xref target="RFC7296"/> specification are interoperable.
-    	</t>
-    
-    	<t hangText="11)">
-    	USA Federal Information Processing Standards (FIPS) compliance.  IPsec is widely used in Federal Information
-    	Systems and FIPS certification is an important requirement.
-        However, at the time of writing, none of the algorithms that is believed
-        to be post-quantum is FIPS compliant yet.  Nonetheless, it is possible to combine
-        this post-quantum algorithm with a FIPS compliant key establishment method so that
-        the overall design remains FIPS compliant <xref target="NISTPQCFAQ"/>.
-    	</t>
-    
-        <t hangText="12)">
-        Ability to use this method with multiple classical (EC)DH key exchanges.
-        In some situations peers have no single mutually trusted key exchange
-        algorithm (e.g., due to local policy restrictions).
-        The ability to combine two (or more) key exchange methods
-        in such a way that the resulting shared key depends on all of them
-        allows peers to communicate in this situation.
-        </t>
-
-        </list>
-    	</t>
-
 	</section>
 
 	<section title="Multiple Key Exchanges" anchor="specification">
@@ -1361,6 +1256,114 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
       ]]></artwork></figure>
     </section>
   </section>
+
+	<section title="Design Criteria" anchor="design">
+        <t>
+        The design of the extension is driven by the
+        following criteria:</t>
+    
+    	<t><list style="hanging" hangIndent="5"><t hangText="1)">
+    	Need for PQC in IPsec.  Quantum computers, which might become feasible in the near future, pose a threat to
+        our classical public key cryptography.  PQC, a family of public key cryptography that is believed to
+        be resistant against these computers, needs to be integrated into the IPsec protocol suite to restore
+        confidentiality and authenticity.</t>
+    
+    	<t hangText="2)">
+    	Hybrid.  There is currently no post-quantum key exchange that is trusted at
+        the level that (EC)DH is trusted for against conventional (non-quantum)
+        adversaries.  A hybrid post-quantum algorithm to be introduced along
+        with the well-established primitives addresses this concern, since the
+        overall security is at least as strong as each individual primitive.
+    	</t>
+    
+    	<t hangText="3)">
+    	Focus on post-quantum confidentiality.  A passive attacker
+    	can store all monitored encrypted IPsec communication today and decrypt it 
+	once a quantum computer is available in the future. This attack can have serious 
+	consequences that won't be visible for years to come. On the other hand,
+	an attacker can only perform active attacks such as impersonation of the
+        communicating peers once a quantum computer is available,
+        sometime in the future. Thus, this specification focuses on
+        confidentiality due to the urgency of this problem and 
+        presents a defense against the serious attack described above, but 
+	it does not address authentication since it is less urgent at this stage.
+    	</t>
+    
+    	<t hangText="4)">
+    	Limit amount of exchanged data.  The protocol design should be
+    	such that the amount of exchanged data, such as public-keys, is
+        kept as small as possible even if initiator and responder need
+        to agree on a hybrid group or multiple public-keys need to be
+        exchanged.
+    	</t>
+    
+    	<t hangText="5)">
+    	Future proof.  Any cryptographic algorithm could be potentially
+    	broken in the future by currently unknown or impractical
+        attacks: quantum computers are merely the most concrete example
+        of this.  The design does not categorize algorithms as "post-quantum"
+    	or "non post-quantum" nor does it create assumptions
+        about the properties of the algorithms, meaning that if
+        algorithms with different properties become necessary in the future,
+        this extension can be used unchanged to facilitate migration to
+        those algorithms.
+    	</t>
+    
+    	<t hangText="6)">
+    	Limited amount of changes.  A key goal is to limit the number of
+    	changes required when enabling a post-quantum handshake.  This
+        ensures easier and quicker adoption in existing implementations.
+    	</t>
+    
+    	<t hangText="7)">
+    	Localized changes.  Another key requirement is that changes to
+    	the protocol are limited in scope, in particular, limiting
+        changes in the exchanged messages and in the state machine, so
+        that they can be easily implemented.
+    	</t>
+    
+    	<t hangText="8)">
+    	Deterministic operation.  This requirement means that the hybrid
+    	post-quantum exchange, and thus, the computed keys, will be based
+        on algorithms that both client and server wish to support.
+    	</t>
+    
+    	<t hangText="9)">
+    	Fragmentation support.  Some PQC algorithms could be relatively
+    	bulky and they might require fragmentation.  Thus, a design goal
+        is the adaptation and adoption of an existing fragmentation
+        method or the design of a new method that allows for the
+        fragmentation of the key shares.
+    	</t>
+    
+    	<t hangText="10)">
+    	Backwards compatibility and interoperability.  This is a
+    	fundamental requirement to ensure that hybrid post-quantum IKEv2
+        and standard IKEv2 implementations as per <xref target="RFC7296"/> specification are interoperable.
+    	</t>
+    
+    	<t hangText="11)">
+    	USA Federal Information Processing Standards (FIPS) compliance.  IPsec is widely used in Federal Information
+    	Systems and FIPS certification is an important requirement.
+        However, at the time of writing, none of the algorithms that is believed
+        to be post-quantum is FIPS compliant yet.  Nonetheless, it is possible to combine
+        this post-quantum algorithm with a FIPS compliant key establishment method so that
+        the overall design remains FIPS compliant <xref target="NISTPQCFAQ"/>.
+    	</t>
+    
+        <t hangText="12)">
+        Ability to use this method with multiple classical (EC)DH key exchanges.
+        In some situations peers have no single mutually trusted key exchange
+        algorithm (e.g., due to local policy restrictions).
+        The ability to combine two (or more) key exchange methods
+        in such a way that the resulting shared key depends on all of them
+        allows peers to communicate in this situation.
+        </t>
+
+        </list>
+    	</t>
+
+	</section>
 
     <section title="Alternative Design" anchor="altdesign">
         <t>
