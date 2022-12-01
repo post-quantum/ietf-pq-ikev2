@@ -4,6 +4,7 @@
 <!ENTITY I-D.tjhai-ikev2-beyond-64k-limit SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.tjhai-ikev2-beyond-64k-limit.xml">
 <!ENTITY I-D.ietf-ipsecme-g-ikev2 SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-g-ikev2.xml">
 <!ENTITY RFC2119 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC5723 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5723.xml">
 <!ENTITY RFC6023 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6023.xml">
 <!ENTITY RFC7296 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml">
 <!ENTITY RFC7383 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7383.xml">
@@ -11,7 +12,7 @@
 <!ENTITY RFC8174 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8784 SYSTEM "https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml">
 ]>
-<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-11" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
+<rfc docName="draft-ietf-ipsecme-ikev2-multiple-ke-12" updates="7296" category="std" ipr="*trust200902" consensus="true"><?rfc compact="yes"?>
 	<?rfc text-list-symbols="ooo*-o+"?>
 	<?rfc subcompact="no"?>
 	<?rfc sortrefs="yes"?>
@@ -87,9 +88,8 @@
         <t> The primary application of this feature in IKEv2 is the ability to perform one or more 
         post-quantum key exchanges in conjunction with the classical (Elliptic Curve) Diffie-Hellman (EC)DH key exchange,
         so that the resulting shared key is resistant against quantum computer attacks.
-	Since there is currently no post-quantum key exchange that is trusted at
-        the level that (EC)DH is trusted against conventional (non-quantum)
-        adversaries, performing multiple key exchanges with different post-quantum algorithms along
+	    Since there is currently no post-quantum key exchange that is as well-studied as (EC)DH,
+        performing multiple key exchanges with different post-quantum algorithms along
         with the well-established classical key exchange algorithms addresses this concern, since the
         overall security is at least as strong as each individual primitive.
 	</t>
@@ -98,9 +98,9 @@
         in situations when no single key exchange algorithm is trusted by both initiator and responder.
         </t>
 
-	<t> This document utilizes the IKE_INTERMEDIATE exchange to perform multiple key exchanges when
-	an IKE SA is being established and introduces a new IKEv2 exchange IKE_FOLLOWUP_KE to perform 
-	them when IKE SA is up (during rekeys or creating additional Child SAs).
+	<t> This document utilizes the IKE_INTERMEDIATE exchange, by means of which multiple key exchanges are 
+    performed when an IKE SA is being established.  It also introduces a new IKEv2 exchange IKE_FOLLOWUP_KE, 
+    which is used for the same purpose when the IKE SA is up (during rekeys or creating additional Child SAs).
 	</t>
 
         <t> This document updates RFC7296 by renaming a transform type 4 from "Diffie-Hellman Group (D-H)"
@@ -348,7 +348,7 @@
             relatively short KE payload.  The additional key exchanges are performed using IKE_INTERMEDIATE messages
             that follow the IKE_SA_INIT exchange. This is to allow the standard IKE
             fragmentation mechanisms (which cannot be used in IKE_SA_INIT) to be available for the potentially large
-            post-quantum Key Exchange algorithm payloads.
+            Key Exchange payloads with post-quantum algorithm data.
             </t>
 
             <t> Note that this document assumes, that each key exchange method requires one round trip and consumes exactly one IKE_INTERMEDIATE exchange.
@@ -482,7 +482,7 @@ Initiator                             Responder
                 </t>
 
                 <t> If the responder selects NONE for some Additional Key Exchange types (provided they are proposed by the initiator), 
-                then the corresponding Additional Key Exchange(s) in the IKE_INTERMEDIATE exchanges MUST NOT take place.
+                then the corresponding Additional Key Exchange(s) in the IKE_INTERMEDIATE exchange(s) MUST NOT take place.
                 Therefore if the initiator includes NONE in all of the Additional Key Exchange transforms and the
                 responder selects this value for all of them, then no IKE_INTERMEDIATE messages performing additional key
                 exchanges will take place between the peers.  Note that the IKE_INTERMEDIATE exchanges may still take place for other purposes.
@@ -674,7 +674,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 <t> After an IKE SA is created the window size may be greater than one and multiple
                 concurrent exchanges may be in progress, it is essential to link the IKE_FOLLOWUP_KE exchanges together 
                 with the corresponding CREATE_CHILD_SA exchange.  Due to the fact that once an IKE SA is created, all IKE exchanges 
-		are independent and don't have built-in means to link one with another, a new status type
+		are independent and do not have built-in means to link one with another, a new status type
    		notification ADDITIONAL_KEY_EXCHANGE is introduced for this purpose.
   		Its Notify Message Type value is 16441, and Protocol ID and SPI Size 
                 are both set to 0.  The data associated with this notification is a blob meaningful 
@@ -733,8 +733,8 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
 		prepare and send the next IKE_FOLLOWUP_KE request or due to the network
 		conditions, the request is retransmitted. In this case, the message may reach the responder  
 		when it has already deleted the associated state
-		following the advice above. If the responder receives IKE_FOLLOWUP_KE and the content of this notify does not correspond
-                to any active key exchange state the responder has, it MUST send back a new error type notification
+		following the advice above.  If the responder receives an IKE_FOLLOWUP_KE message for which it does not have a key exchange state, 
+        it MUST send back a new error type notification
                 STATE_NOT_FOUND.  This is a non-fatal error notification, its Notify Message Type is 47, 
                 Protocol ID and SPI Size are both set to 0 and the data is empty.  If the initiator receives
                 this notification in response to IKE_FOLLOWUP_KE exchange performing additional
@@ -1302,11 +1302,11 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)
     	<t hangText="3)">
     	Focus on post-quantum confidentiality.  A passive attacker
     	can store all monitored encrypted IPsec communication today and decrypt it 
-	once a quantum computer is available in the future. This attack can have serious 
-	consequences that won't be visible for years to come. On the other hand,
+	once a quantum computer is available in the future.  This attack can have serious 
+	consequences that will not be visible for years to come.  On the other hand,
 	an attacker can only perform active attacks such as impersonation of the
         communicating peers once a quantum computer is available,
-        sometime in the future. Thus, this specification focuses on
+        sometime in the future.  Thus, this specification focuses on
         confidentiality due to the urgency of this problem and 
         presents a defense against the serious attack described above, but 
 	it does not address authentication since it is less urgent at this stage.
