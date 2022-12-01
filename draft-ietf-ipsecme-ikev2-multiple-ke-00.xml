@@ -346,7 +346,7 @@
             defined in <xref target="RFC9242"/>.
             The initial IKE_SA_INIT messages do not have any inherent fragmentation support within IKE; however, IKE_SA_INIT messages can include a
             relatively short KE payload.  The additional key exchanges are performed using IKE_INTERMEDIATE messages
-            that follow the IKE_SA_INIT exchange. This is to allow for standard IKE
+            that follow the IKE_SA_INIT exchange. This is to allow the standard IKE
             fragmentation mechanisms (which cannot be used in IKE_SA_INIT) to be available for the potentially large
             post-quantum Key Exchange algorithm payloads.
             </t>
