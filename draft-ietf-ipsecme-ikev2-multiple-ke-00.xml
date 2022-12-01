@@ -672,7 +672,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
                 </t>
 
                 <t> After an IKE SA is created the window size may be greater than one and multiple
-                concurrent exchanges may be in progress, it is essential to link the IKE_FOLLOWUP_KE exchanges together and 
+                concurrent exchanges may be in progress, it is essential to link the IKE_FOLLOWUP_KE exchanges together 
                 with the corresponding CREATE_CHILD_SA exchange.  Due to the fact that once an IKE SA is created, all IKE exchanges 
 		are independent and don't have built-in means to link one with another, a new status type
    		notification ADDITIONAL_KEY_EXCHANGE is introduced for this purpose.
