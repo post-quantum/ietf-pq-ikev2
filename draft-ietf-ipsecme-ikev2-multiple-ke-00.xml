@@ -583,7 +583,7 @@ N(INTERMEDIATE_EXCHANGE_SUPPORTED)    --->
                 ]]></artwork></figure>
 
 		<t> It is possible that an attacker manages to send a response to the initiator's IKE_SA_INIT request 
-		before the genuine responder. If the initiator continues creating IKE SA using this response, the attempt will fail.
+		before the legitimate responder does.  If the initiator continues to create the IKE SA using this response, the attempt will fail.
 		Implementers may wish to consider a possible defense technique described in Section 2.4 of <xref target="RFC7296" />.
 		</t>
             </section>
@@ -673,7 +673,7 @@ SKEYSEED(n) = prf(SK_d(n-1), SK(n) | Ni | Nr)
 
                 <t> After an IKE SA is created the window size may be greater than one and multiple
                 concurrent exchanges may be in progress, it is essential to link the IKE_FOLLOWUP_KE exchanges together and 
-                with the corresponding CREATE_CHILD_SA exchange.  Due to the fact that once IKE SA is created all IKE exchanges 
+                with the corresponding CREATE_CHILD_SA exchange.  Due to the fact that once an IKE SA is created, all IKE exchanges 
 		are independent and don't have built-in means to link one with another, a new status type
    		notification ADDITIONAL_KEY_EXCHANGE is introduced for this purpose.
   		Its Notify Message Type value is 16441, and Protocol ID and SPI Size 
@@ -729,10 +729,10 @@ HDR(IKE_FOLLOWUP_KE), SK {KEi(3),
                 seconds of waiting time should be appropriate in most cases.  
                 </t>
 
-                <t> It is also possible that it takes too long for the initiator to 
+                <t> It is also possible that the initiator may take too long to 
 		prepare and send the next IKE_FOLLOWUP_KE request or due to the network
-		conditions it is retransmitted. In this case the request may reach the responder  
-		when it may have already deleted the associated state
+		conditions, the request is retransmitted. In this case, the message may reach the responder  
+		when it has already deleted the associated state
 		following the advice above. If the responder receives IKE_FOLLOWUP_KE and the content of this notify does not correspond
                 to any active key exchange state the responder has, it MUST send back a new error type notification
                 STATE_NOT_FOUND.  This is a non-fatal error notification, its Notify Message Type is 47, 
