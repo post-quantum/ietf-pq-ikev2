@@ -313,7 +313,7 @@
             keying materials are derived for both SAs and Child SAs.
             <xref target="IANA"/> discusses IANA considerations for the namespaces
             introduced in this document, and <xref target="security"/> discusses security
-            considerations.  On Appendices sections, some examples of multiple key exchanges
+            considerations.  In the Appendices sections, some examples of multiple key exchanges
             are illustrated in <xref target="sample-exchanges"/>,
             <xref target="design"/> summarizes design criteria and a summary of alternative
     	    approaches that have been considered, but later discarded, are described
